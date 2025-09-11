@@ -1,0 +1,40 @@
+User Shortcuts
+1. bfe - build and fix errors
+2. g - go ahead
+3. ho - hold on, let's step back and look at the bigger picture
+4. wus - work unit session (1 complete user-agent session)
+5. swus - start wus: 
+   Step 1: Get the correct date (run date command)
+   Step 2: Create a new wus log (wus_logs.txt, with proper date)
+6. ewus - end wus: close wus log - review user-agent sops file for any updates; create a concise summary of what was done in the wus, and state of things at time of ewus; make sure env_log is also updated
+7. k - Keep a log of all the commands needed to recreate the environment in climate-finance-dashboard/local/env_log.txt
+8. r - review and update agent's context by reviewing local folder files for any updates
+9. cpt - clean-up and plant trace - do the misc loggings (sops, wus, env)
+
+SOPs (IMPORTANT! FOLLOW THESE IN OUR SESSIONS!)
+1. Agent should analyse and plan out moves together with the user. Agent updates the code from its end, but should explain every change and should wait for user's approval before implementing changes. Give enough multi-perspective context for the user to be able to have an informed decision on the next move. ALWAYS IMPLEMENT DRYLY.
+2. Agent runs commands from its end whenever possible, including DB investigative queries. For DB changes, the agent should give the user a mysql command that the user can copy-paste on mysql cli
+3. Agent will do a build (npm run build) after every code update; the user will do the server restart (npm run run)
+4. Agent can only run DB commands in the local env. For qa/uat/prod, the agent needs to give the user the commands he can run from his end.
+5. Agent should NOT modify local/dev_db_changes.txt - user maintains this file manually to track DB changes
+6. Explain-first interaction style for code edits
+   - Before edits: state What/Why (1–2 lines), list files, and show minimal diffs/snippets.
+   - Then apply edits and run build (bfe). Afterward: report Impact/Test and a quick Rollback tip.
+   - Group larger changes; parallelize read-only lookups.
+   - Log key milestones to wus_logs.txt (SWUS/EWUS and checkpoints).
+7. Keep a log of all the commands needed to recreate the environment in climate-finance-dashboard/local/env_log.txt
+
+Initial Techstack: 
+NodeJS 
+Python (data processing)
+NextJS (+ HeroUI)
+Postgres
+Typescript (!)
+Ubuntu
+Nginx
+PM2
+
+Local DB creds:
+localhost
+user: root 
+pwd: root 

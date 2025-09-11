@@ -1,0 +1,430 @@
+DOF: Philippine Climate Finance Dashboard
+
+
+Elaborated User Stories
+Product Goal: To provide Philippine leaders with access to data to support policymaking and decision-making for national, regional, and international climate commitments, strengthen sustainable finance initiatives, and clearly communicate the Philippines' commitment to sustainable development. The dashboard aims to show patterns of climate financing in the Philippines by tracking and analyzing investments aligned with the National Adaptation Plan (NAP) and Nationally Determined Contributions Implementation Plan (NDCIP).
+
+1.0 Epic: Dashboard Core Functionality & Reporting 
+This epic covers all user-facing features for data visualization, analysis, and reporting on climate finance.
+1.1 Dashboard Overview & Investment Tracking
+As a Philippine Leader/Policymaker, I want to view the total investment in climate change response, so that I can understand the overall financial commitment to climate action.
+As a Policymaker/DOF Official, I want to monitor annual Climate Finance (CF) commitments from both public and private sectors, so that I can track yearly financial pledges towards climate goals.
+As a Policymaker/DOF Official, I want to analyze climate finance trends over the past 5-10 years, showing both commitments and actual investments, so that I can identify patterns and evaluate the evolution of climate funding.
+As a Policymaker/DOF Official, I want to visualize climate finance distribution by category (adaptation, biodiversity, mitigation), so that I can understand how funds are allocated across different climate action areas.
+As a Policymaker/DOF Official, I want to assess the average size of climate finance projects, so that I can gauge the scale of individual initiatives.
+As a Policymaker/DOF Official, I want to identify climate action funding sources (government, ODA, development partners, private sector), including specific sources like national budget, ODA, and private investment, so that I can understand where climate funds originate.
+As a Policymaker/DOF Official, I want to identify the specific financing instruments being used (e.g., grants, loans, budget, bonds, CSR), so that I can understand the mechanisms through which funds are channeled.
+As a Policymaker/DOF Official, I want to evaluate how much private sector investment is leveraged through public climate finance, so that I can understand the catalytic effect of public funds.
+
+1.2 Allocation & Beneficiary Analysis
+As a Policymaker/DOF Official, I want to examine climate finance distribution by sector, LGU, and adaptation/mitigation categories, disaggregated by funding source, so that I can understand who benefits and where funds are directed.
+As a Policymaker/DOF Official, I want to display international funding distribution by sector and LGU, so that I can see the geographical and thematic focus of international support.
+As a Policymaker/DOF Official, I want to identify LGUs that require more climate funding, so that resource allocation can be strategically prioritized.
+As a Policymaker/DOF Official, I want to compare which LGUs receive the most and least climate finance for adaptation and mitigation, so that funding disparities can be addressed.
+As a Policymaker/CCC Official, I want to assess LGU climate vulnerability (based on NAP data), so that I can align funding with areas most at risk.
+As a Policymaker/DOF Official, I want to identify LGUs that lack the funding capability for climate projects (based on LGU income classification), so that targeted support can be provided.
+As a Policymaker/DOF Official, I want to identify sectors typically associated with adaptation and mitigation, so that I can understand the primary beneficiaries of these types of projects.
+As a Policymaker/DOF Official, I want to identify LGUs not currently reached by climate finance projects, so that outreach and new project development can target these areas.
+As a CCC Official, I want to see individual project information, including the CF facility or partner providing CF, so that I can monitor specific project details and funding sources.
+As a CCC Official, I want projects to include gender elements and indicate if they underwent a gender risk assessment, so that I can ensure inclusive and equitable climate action.
+
+1.3 Alignment & Impact Measurement
+As a Policymaker/DEPDev Official, I want to evaluate project impact on adaptation and NDCs, so that I can verify alignment with national priorities and international obligations.
+As a Policymaker/DEPDev Official, I want to understand how projects and funds align by sector, outcome, and strategy, so that I can ensure coherence with national climate plans.
+As a Policymaker/SEC Official, I want to determine sectoral GHG reduction targets (conditional and unconditional), so that I can assess national commitments.
+As a Policymaker/SEC Official, I want to report the actual GHG reductions achieved by each sector, so that I can measure progress towards targets.
+As a Policymaker/SEC Official, I want to monitor achieved GHG reductions versus commitments, so that I can track progress against national and international goals.
+As a Policymaker/SEC Official, I want to correlate GHG reduction achievements with allocated funds for climate projects, so that I can assess the effectiveness and efficiency of investments.
+As a Policymaker/DOF Official, I want to monitor the implementation status of climate projects, so that I can track progress and identify any delays.
+As a Policymaker/DOF Official, I want to identify which government organizations are implementing climate finance projects, so that I can understand institutional responsibilities.
+As a Policymaker/DOF Official, I want to display the projected pipeline of climate-aligned projects, so that I can plan for future investments and track potential projects.
+
+1.4 Advanced Data Views & Tools
+As a BOI Official, I want to view a visual mapping of investments reflecting areas and sectors that need more support and promotion, so that I can strategically guide investment promotion efforts.
+As a Policymaker/DENR Official, I want a geospatial visualization of climate finance projects, so that I can understand their geographical distribution and impact.
+As a DENR Official, I want an overlay of base maps with selected baseline thematic studies (e.g., hazard maps, risk exposure), so that I can analyze climate and disaster risks in relation to investments.
+As a Government Agency Official, I want mapping/tagging of facilities/projects with specific details (e.g., location of sanitary landfills), so that I can manage and monitor infrastructure relevant to climate action.
+As a Government Agency Official, I want tagging of events/scenarios (e.g., reported cholera cases), so that I can identify patterns and potential climate-related impacts.
+As a Government Agency Official, I want generation of priority strategic options for a selected area of interest and sector, so that I can inform targeted interventions and planning.
+As a Government Agency Official, I want generation of a Geospatial Climate Change Action Plan, so that I can visualize and implement localized climate strategies.
+As a SEC Official, I want to display Scope 1, 2, and 3 for GHG emissions, so that I can get a comprehensive view of emissions from listed companies.
+As a SEC Official, I want to see granular data such as actual vs. earmarked funds and specific industries within a sector, so that I can conduct detailed analysis.
+2.0 Epic: Data Ingestion & Management
+ This epic focuses on acquiring, preparing, and integrating data from various sources into the Climate Finance Data Platform. UBQTY is primarily responsible for these tasks, with the benefit being a comprehensive and accurate dashboard for users.
+2.1 General Data Acquisition & Integration
+As UBQTY, I need to develop data pipelines connecting internal systems of contributors to the CF Data Platform, so that data can be efficiently transferred and updated.
+As UBQTY, I need to establish data cleansing and transformation processes for raw data, so that the data is standardized and ready for analysis.
+As UBQTY, I need to implement data validation procedures, so that the data quality and accuracy are ensured before being used in the dashboard.
+As UBQTY, I need to integrate the unified tagging nomenclature for climate expenditure, programs, and projects (to be provided by DOF), so that all data is consistently categorized and comparable.
+As UBQTY, I need to ensure adherence to DOF/CCC Data Governance Policies, so that the data handling practices meet established standards.
+
+2.2 Specific Data Set Integration Tasks
+As UBQTY, I need to integrate BOI-Registered Projects (Private Sector) data, detailing the amount and type of investments, including climate-related tags, so that private climate investments are captured.
+As UBQTY, I need to integrate BOI Industry Roadmaps, so that users can access strategic industry development plans.
+As UBQTY, I need to integrate BOI Industry and Investment Geomap data, so that interactive maps with economic and industry-specific information can be displayed.
+As UBQTY, I need to integrate BOI Investors' Guidebook information, so that relevant business establishment procedures are available.
+As UBQTY, I need to integrate BOI READY-FOR-OCCUPANCY (RFO) INVESTMENT LOCATIONS database, so that investment-ready locations are reflected.
+As UBQTY, I need to integrate BOI Electric Vehicle roadmap data, so that progress and plans for EV development are included.
+As UBQTY, I need to integrate BOI data on critical minerals/green minerals, raw materials, and supply chains supporting renewable energy, so that essential inputs for green industries are tracked.
+As UBQTY, I need to integrate BOI Strategic Investment Priority Plan (SIPP) activities data for fiscal incentives, specifically environment and climate-related projects, so that incentivized climate projects are visible.
+As UBQTY, I need to integrate BOI database of approved investments, filtered to show climate-related projects, so that specific climate investments are highlighted.
+As UBQTY, I need to integrate BOI fiscal and non-fiscal incentives data, so that available investment perks are known.
+As UBQTY, I need to integrate BSP Banking System Loans, so that aggregate loans extended by banks are available for analysis.
+As UBQTY, I need to integrate BSP consolidated data on banks, including bonds issued by banks/capital market players, so that a holistic view of financial sector contributions is available.
+As UBQTY, I need to integrate BSP data to identify and locate climate-related private investments, so that these specific investments can be mapped.
+As UBQTY, I need to integrate BSP data to identify damages and losses, so that the financial impact of climate events can be assessed.
+As UBQTY, I need to integrate BSP policies on sustainability financing of banks, so that regulatory frameworks are understood.
+As UBQTY, I need to integrate BTr Sustainability Bond Allocation and Impact Report, so that an overview of issuances and allocation to projects, SDG Goals, and GHG emission reductions is available.
+As UBQTY, I need to integrate BTr National Government External Direct Loans and Bonds Borrowings, so that project and program loan availments are tracked.
+As UBQTY, I need to integrate BTr data on sustainability-linked bond issuance, so that specific bond types are included.
+As UBQTY, I need to integrate BTr government financial obligations on climate projects, so that financial commitments are monitored.
+As UBQTY, I need to integrate BTr ESG performance reports to investors, so that reporting standards are reflected.
+As UBQTY, I need to integrate BTr Sovereign Issuances data, so that government bonds are tracked.
+As UBQTY, I need to integrate CCC National Climate Change Expenditure Tagging (CCET) List of Programs/Activities/Projects (PAPs), so that climate-related expenditures are tracked and monitored.
+As UBQTY, I need to integrate CCC 2015 and 2020 Philippine GHG Inventory Report, including sector-specific GHG emissions, so that greenhouse gas emissions data is available.
+As UBQTY, I need to integrate DBM Budget of Expenditures and Sources of Financing (BESF) B.21, showing Climate Change Expenditures by Department and Special Purpose Fund, so that public climate budgets are accessible.
+As UBQTY, I need to integrate DBM BESF B.22, showing Climate Change Expenditures by National Climate Change Action Plan (NCCAP) Strategic Priorities, so that budget alignment with national plans is visible.
+As UBQTY, I need to integrate DBM BESF D.2. Salient Features of Program Loans, so that details of program loans are available.
+As UBQTY, I need to integrate DBM public budgets for Climate Change Adaptation (CCA), so that the dashboard reflects government adaptation spending.
+As UBQTY, I need to integrate DBM Disbursements Data, so that actual spending can be tracked.
+As UBQTY, I need to integrate DBM National Budget Call data, so that the budget formulation context is available.
+As UBQTY, I need to integrate DENR Risk Resiliency Program (RRP) - Program Convergence Budgeting data on proposed PAPs aligned with NAP and NDCIP, so that a pipeline of resilience-focused projects is included.
+As UBQTY, I need to integrate DENR Consolidated Resilience Roadmap with Investment Portfolio for Risk Resilience (IPRR), including assessment of climate and disaster risks and recommended actions, so that resilience planning is reflected.
+As UBQTY, I need to integrate DENR-led NAP Implementation data, specifically IPRRs for climate vulnerable provinces/MUC in Ecosystems and Biodiversity, Water Resources, and other applicable sectors, so that detailed adaptation plans are available.
+As UBQTY, I need to integrate DENR information from the TWG on NAP and NDC, so that policy alignment insights are incorporated.
+As UBQTY, I need to integrate data from DENR's ongoing Initiative towards a Climate Change Information Management System (CCIMS), so that relevant CCIMS data is leveraged.
+As UBQTY, I need to integrate DENR mapping of development partner & NGA initiatives relating to the 8 pillars of NAP, so that comprehensive implementation efforts are visible.
+As UBQTY, I need to integrate DENR development partners initiatives on NDCIP, so that international support for NDCs is tracked.
+As UBQTY, I need to integrate DENR CCIMS Database for overlaying base maps with selected baseline thematic studies (e.g., hazard maps, risk exposure), so that geospatial analysis is enhanced.
+As UBQTY, I need to integrate DEPDev ODA on Climate Change Adaptation and Mitigation (loans or grants), so that official development assistance related to climate is captured.
+As UBQTY, I need to integrate DEPDev Philippine Development Plan (PDP) 2023-2028 Midterm Update, specifically Chapter 15 outcomes on climate action and disaster risk resilience, so that alignment with national development goals is ensured.
+As UBQTY, I need to integrate DEPDev SDG Tagging in the Updated Public Investment Program 2023-2028, specifically the SDG tagging for each PAP, so that contributions to Sustainable Development Goals are visible.
+As UBQTY, I need to integrate DEPDev evaluations of policies and projects based on their alignment and responsiveness to national climate strategies (PDP, NAP, NDCIP), so that impact assessments are incorporated.
+As UBQTY, I need to integrate DEPDev validation of alignment with the PDP, so that policy coherence is verified.
+As UBQTY, I need to integrate DEPDev tagging of Programs/Activities/Projects (PAPs) in the Public Investment Program (PIP), so that public investment projects are categorized.
+As UBQTY, I need to integrate DEPDev reviews of potentially qualifying PAPs if they comply with eligibility criteria for social/green projects, so that eligible projects are identified.
+As UBQTY, I need to integrate DOF People's Survival Fund (PSF) allocation data, so that the climate adaptation fund for LGUs is tracked.
+As UBQTY, I need to integrate DOF ITSF Pipeline data, showing priority projects and programs of ITSF member agencies towards NAP and NDCIP, so that strategic project pipelines are visible.
+As UBQTY, I need to integrate DOF Program Loans data, so that financing for sector needs and policy reforms is tracked.
+As UBQTY, I need to integrate DOF Project Loans data, so that funding for long-term business and infrastructure projects is included.
+As UBQTY, I need to integrate DOF GCF Grants data, so that support from the Green Climate Fund is tracked.
+As UBQTY, I need to integrate IC Disaster Risk Financing Insurance Reports, including Catastrophe Risk Insurance Database Templates and Property Insurance Policy/Incurred Loss databases, so that financial protection during disasters is monitored.
+As UBQTY, I need to integrate IC Property and Reinsurance Reports (PRR) on Fire, Motor car, and Bonds, so that insurance sector contributions are captured.
+As UBQTY, I need to integrate LGU data on conceptualized and implemented Climate Change Adaptation (CCA) projects, so that local adaptation efforts are reflected.
+As UBQTY, I need to integrate LGU tagged climate budgets, so that local climate expenditures are visible.
+As UBQTY, I need to integrate LGU reported emissions (if applicable), so that local contributions to GHG inventories are included.
+As UBQTY, I need to integrate MDBs Climate Finance (CF) Investment Data and Projects Data, so that contributions from multilateral development banks are available.
+As UBQTY, I need to integrate NAP LGU Vulnerability data, so that risk exposure at the local level is mapped.
+As UBQTY, I need to integrate NGAs data on conceptualized and implemented CCA projects, so that national government adaptation efforts are reflected.
+As UBQTY, I need to integrate NGAs tagged climate budgets, so that national government climate expenditures are visible.
+As UBQTY, I need to integrate NGAs reported emissions (if applicable), so that national government contributions to GHG inventories are included.
+As UBQTY, I need to integrate NGAs database of facilities/projects with specific details, so that infrastructure data relevant to climate action is available.
+As UBQTY, I need to integrate ODAs/Development Partners funding for climate projects (in grants, loans, and other innovative mechanisms), so that international financial support is tracked.
+As UBQTY, I need to integrate ODAs/Development Partners data on conceptualized and implemented CCA projects with government partners, so that collaborative adaptation efforts are visible.
+As UBQTY, I need to integrate ODAs/Development Partners Measurement, Reporting, Verification (MRV) data to measure impacts of projects against baseline/targets, so that project effectiveness can be assessed.
+As UBQTY, I need to integrate Private Sector data on sustainable activities and instruments from MSMEs, PLCs, and capital markets, so that the private sector's contribution to sustainable development is captured.
+As UBQTY, I need to integrate Private Sector funding for climate projects, so that non-governmental financial contributions are tracked.
+As UBQTY, I need to integrate Private Sector SDG pledges, so that corporate commitments to sustainable development are visible.
+As UBQTY, I need to integrate PSA LGU Income Classification data, so that the financial capacity of LGUs can be assessed.
+As UBQTY, I need to integrate Public Sector General Appropriations Act (GAA) data, so that the national budget allocations are visible.
+As UBQTY, I need to integrate SEC Philippine ASEAN-Labeled Green, Social, Sustainability and Sustainability-Linked (GSS+) Bonds Issuances data, including issuer name, type, amount, use of proceeds, dates, and currency, so that thematic bond market activity is tracked.
+As UBQTY, I need to integrate SEC Sustainability Reporting of PLCs (SuRE) data, so that corporate sustainability disclosures are included.
+As UBQTY, I need to integrate SEC Report of Publicly Listed Companies, so that a broader view of private sector activity is available.
+As UBQTY, I need to integrate SEC PSF TG data, so that information on the People's Survival Fund technical group is included.
+As UBQTY, I need to integrate SEC Sure Form content, so that detailed reporting requirements are captured.
+As UBQTY, I need to integrate SEC Disclosure Requirements of PLCs, so that regulatory compliance is reflected.
+As UBQTY, I need to integrate Academe data (if available), so that research and academic contributions are included.
+As UBQTY, I need to integrate "Other Government Agencies" database of facilities/projects with specific details, so that relevant infrastructure data is comprehensive.
+As UBQTY, I need to integrate "Other Government Agencies" tagging of events/scenarios, so that context for climate impacts is available.
+As UBQTY, I need to integrate various CF Commitment Data and CF Investment Data from Public and Private sectors, DBM, CCC, DEPDev, PPPC, BSP, DENR, DOF, MDBs, and SEC, so that comprehensive financial data is available for the dashboard.
+3.0 Epic: User Experience & Accessibility 
+This epic ensures the dashboard is intuitive, user-friendly, and accessible to target stakeholders.
+3.1Dashboard Design & User Interface (UI)
+As a Product Owner, I want the final dashboard design and mockups to be based on conceptualization workshops and feedback, so that the user interface is intuitive and meets requirements.
+As a Policymaker, I want interactive filters and drill-down capabilities (e.g., by year, project status, fund source, fund type, funder, implementing agency, region, vulnerability index, income class), so that I can quickly narrow down information relevant to my specific inquiry.
+As any user, I want user-friendly navigation for various dashboard elements, so that I can easily find the information I need without confusion.
+As a DOF Official, I want brief descriptions of data sets in the dashboard, so that I have context for the information presented.
+As a DOF Official, I want citation of data sources, so that the credibility and origin of the information are clear.
+As a CCC Official, I want to explore other language options for the dashboard, so that it can be more accessible to the general public.
+
+3.2 Data Export & Interoperability
+As a BSP Official/DOF Official, I want data download functionality (e.g., CSV, XLS formats), so that I can perform my own offline analysis or include data in my reports.
+As a DOF Official, I want the interoperability of the dashboard, so that it can seamlessly connect with other systems and data platforms.
+As a DENR Official, I want linking capability to DENR's CCIMS (Climate Change Information Management System), so that existing data infrastructure can be leveraged and data is synchronized.
+
+4.0 Epic: Technical Architecture & Non-Functional Requirements (NFRs) 
+This epic covers the foundational technical aspects and quality attributes of the dashboard.
+4.1 System Architecture
+As UBQTY, I need to develop the technical design for the data platform and dashboard, so that the system is robust, scalable, and meets performance requirements.
+As UBQTY, I need to design the overall architectural framework, so that the system components are well-organized and function coherently.
+As Product Owners (DOF, CCC), we need infrastructure setup for development and production environments, so that the dashboard can be developed, tested, and deployed effectively.
+4.2 Data Quality & Security
+As UBQTY, I need to implement robust data quality checks and monitoring mechanisms, so that the information presented on the dashboard is accurate and reliable.
+As a Product Owner (DOF, CCC), I want data visibility and access control defined and implemented (e.g., tiered access for different user roles), so that sensitive information is protected and users only see relevant data.
+As a Product Owner (DOF, CCC), I want data security measures in place, so that the integrity and confidentiality of climate finance data are maintained.
+
+4.3 Performance & Scalability
+As any user, I want optimized dashboard performance for fast loading and responsiveness, especially for high-usage data, so that I can access information efficiently without delays.
+As UBQTY, I need to design the system for scalability, so that it can accommodate future data growth and increased user load without performance degradation.
+
+5.0 Epic: Deployment & Operational Readiness 
+This epic encompasses activities required for testing, deployment, launch, and ongoing sustainability of the dashboard.
+5.1 Testing & Quality Assurance
+As Product Owners (DOF, CCC), we want to conduct User Acceptance Testing (UAT) Round 1 and Round 2, so that we can verify the dashboard meets requirements and is fit for purpose before release.
+As UBQTY, I need to perform bug fixing based on UAT feedback, so that the dashboard is stable and error-free.
+As UBQTY, I need to perform Quality Assurance (QA) testing, so that the dashboard meets all specified quality standards.
+
+5.2 Documentation & Training
+As UBQTY, I need to develop user manuals for the dashboard, so that users have comprehensive guidance on how to use the system.
+As UBQTY, I need to conduct user training for key stakeholders and administrators, so that they are proficient in operating and managing the dashboard.
+As UBQTY, I need to facilitate technical transfer and turnover to DOF and CCC, so that they can effectively own, operate, and maintain the platform.
+
+5.3 Launch & Communication
+As the DOF, I need to develop communication materials for the CF Dashboard launch, so that the launch is effectively publicized.
+As the DOF, I need to design the program and logistics for the public launch, so that the event is well-organized.
+As the DOF, I want the public launch on the DOF's website, so that the dashboard is officially accessible to a broad audience.
+As the DOF/UNDP, I want the public launch at the COP Pavilion (November 10-21, 2025), so that the Philippines' commitment to sustainable development is showcased internationally.
+As the DOF/UNDP, I want to conduct a soft launch and pilot with ITSF, so that initial feedback on functionality, data accuracy, and user experience can be gathered.
+
+5.4 Sustainability & Maintenance
+As the DOF, I need to develop a sustainability plan for the ongoing operation and maintenance of the CF Data Platform, so that the dashboard remains functional and relevant long-term.
+As the DOF/CCC, I need to establish processes for regular updating and validation of data in coordination with implementing agencies, development partners, and other stakeholders, so that the dashboard always presents current and accurate information.
+As the DOF, I want a dashboard updates schedule, so that users are aware of when new information or features will be available.
+
+6.0 Epic: Stakeholder Engagement & Project Coordination 
+This epic outlines the continuous engagement and coordination activities vital for the project's success, running in parallel with development.
+6.1 Requirements Gathering & Refinement
+As Product Owners (DOF, CCC, UNDP), we want to conduct a Product Conceptualization Workshop, so that we can define initial requirements and the dashboard design.
+As the UNDP, I need to conduct design discussions with CF Contributors, so that all perspectives are considered in the dashboard's development.
+As the UNDP, I need to perform requirements analysis and documentation, so that all needs are clearly captured and understood.
+As the UNDP, I need to update requirements based on feedback, so that the dashboard evolves to meet changing needs.
+
+6.2   Consultations & Feedback
+As the DOF/UNDP, I want to convene the CF Data Platform Technical Working Group (TWG), so that key stakeholders are continuously engaged and provide expert input.
+As the DOF/UNDP, I want to present updated dashboard mock-ups to Usec Alu, DOF, CCC, and the CF TWG, so that stakeholders can visualize progress and provide feedback.
+As the DOF/UNDP, I want to present mock-up 1.3 to ITSF, so that they can provide early feedback.
+As the DOF/UNDP, I want to conduct Focused Group Discussions (FGDs) with CCC, ICC Secretariat, SDG-TWG, BTr, IFG, PPP Center, DBM, CMIO, DICT, PSA, GOCCs, BSP, DOE, SEC, LGUs, so that government agencies' perspectives are gathered.
+As the DOF/UNDP, I want to conduct FGDs with non-government representatives (Private Sector, CSO, NGO, Academe), so that a broad range of stakeholder data and insights are consolidated.
+As the DOF/UNDP, I want to present Work-in-Progress (WIP) to the CF TWG, so that continuous feedback can be incorporated.
+
+6.3 Procurement
+As the UNDP, I need to develop the first draft of the Terms of Reference (TOR) for UBQTY, so that the project scope and deliverables are clearly defined.
+As the DOF, CCC, UNDP, we need to review and finalize the TOR, so that all stakeholders agree on the procurement terms.
+As the UNDP, I need to procure UBQTY, so that the technical development of the dashboard can commence.
+
+Note on Scope: Data collection itself is "not in scope" as the project relies on data already managed by stakeholders; the backlog focuses on acquiring and integrating this data. Data governance capacity development, planning, and implementation are also "not in scope" for the project's direct deliverables but are done in parallel by DOF/CCC, and the project will adhere to these policies.
+
+
+
+
+
+Product Backlog: Philippine Climate Finance Dashboard
+Product Goal: Provide Philippine leaders with access to data to support policymaking and decision-making for national, regional, and international climate commitments, strengthen sustainable finance initiatives, and clearly communicate the Philippines' commitment to sustainable development.
+Overarching Objective: To show patterns of climate financing in the Philippines by tracking and analyzing investments aligned with the National Adaptation Plan (NAP) and Nationally Determined Contributions Implementation Plan (NDCIP), and to inform the development of a sustainable pipeline of climate-aligned projects.
+
+1.0 Epic: Dashboard Core Functionality & Reporting 
+This epic covers all user-facing features for data visualization, analysis, and reporting on climate finance.
+1.1 *   Dashboard Overview & Investment Tracking
+    *   Display Total Investment in Climate Change Response
+    *   Monitor Annual Climate Finance Commitments (CF Commitment Data) from public and private sectors
+    *   Analyze Climate Finance Trends over specified periods (e.g., 5-10 years), showing commitments and actual investments
+    *   Visualize Climate Finance Distribution by Category (adaptation, biodiversity, mitigation)
+    *   Assess Average Size of Climate Finance Projects
+    *   Identify Climate Action Funding Sources (government, ODA, development partners, private sector; e.g., national budget, ODA, private investment)
+    *   Identify Climate Finance Instruments Used (grants, loans, budget, bonds, CSR)
+    *   Evaluate Private Sector Investment Leveraged through public climate finance
+
+1.2 Allocation & Beneficiary Analysis
+    *   Examine Climate Finance Distribution by sector, Local Government Unit (LGU), adaptation/mitigation categories, and disaggregated by funding source
+    *   Display International Funding Distribution by sector and LGU
+    *   Identify LGUs Requiring More Climate Funding
+    *   Compare LGU Climate Finance Receipts (most vs. least for adaptation and mitigation)
+    *   Assess LGU Climate Vulnerability (based on NAP data)
+    *   Identify LGUs Lacking Funding Capability for climate projects (based on LGU income classification)
+    *   Identify Sectors Typically Associated with adaptation and mitigation
+    *   Identify LGUs Not Currently Reached by climate finance projects
+    *   Display Individual Project Information, including CF facility or partner providing CF
+    *   Include Gender Elements and if projects underwent gender risk assessment
+
+1.3 Alignment & Impact Measurement
+    *   Evaluate Project Impact on Adaptation and NDCs
+    *   Align Projects and Funds by Sector, Outcome, and Strategy
+    *   Determine Sectoral GHG Reduction Targets (conditional and unconditional)
+    *   Report Actual GHG Reductions Achieved by Each Sector
+    *   Monitor Achieved GHG Reductions vs. Commitments
+    *   Correlate GHG Reduction Achievements with Allocated Funds for climate projects
+    *   Monitor Climate Project Implementation Status
+    *   Identify Implementing Government Organizations for climate finance projects
+    *   Display Projected Pipeline of Climate-Aligned Projects
+
+1.4 Advanced Data Views & Tools
+    *   Visual Mapping of Investments reflecting areas and sectors needing more support and promotion
+    *   Geospatial Visualization of Climate Finance Projects
+    *   Overlay of Base Maps with selected baseline thematic studies (e.g., hazard maps, risk exposure)
+    *   Mapping/Tagging of Facilities/Projects with specific details (e.g., location of sanitary landfills)
+    *   Tagging of Events/Scenarios (e.g., reported cholera cases)
+    *   Generation of Priority Strategic Options for selected area of interest & sector
+    *   Generation of Geospatial Climate Change Action Plan
+    *   Display Scope 1, 2, 3 for GHG emissions
+    *   Show Granular Data (actual vs earmarked, industries within a sector)
+2.0  Epic: Data Ingestion & Management 
+This epic focuses on acquiring, preparing, and integrating data from various sources into the Climate Finance Data Platform.
+2.1 General Data Acquisition & Integration
+    *   Develop Data Pipelines connecting internal systems of contributors to the CF Data Platform
+    *   Establish Data Cleansing and Transformation Processes for raw data
+    *   Implement Data Validation Procedures to ensure data quality and accuracy
+    *   Integrate Unified Tagging Nomenclature for climate expenditure, programs, and projects (as provided by DOF)
+    *   Ensure Adherence to DOF/CCC Data Governance Policies
+
+2.2 Specific Data Set Integration Tasks
+    *   Integrate BOI-Registered Projects (Private Sector), including investment amounts and climate-related tagging
+    *   Integrate BOI Industry Roadmaps
+    *   Integrate BOI Industry and Investment Geomap data for interactive mapping
+    *   Integrate BOI Investors' Guidebook information
+    *   Integrate BOI READY-FOR-OCCUPANCY (RFO) INVESTMENT LOCATIONS database
+    *   Integrate BOI Electric Vehicle Roadmap data
+    *   Integrate BOI Data on Critical Minerals/Green Minerals and supply chains supporting renewable energy
+    *   Integrate BOI Strategic Investment Priority Plan (SIPP) Activities for fiscal incentives, specifically environment and climate-related projects
+    *   Integrate BOI Database of Approved Investments (filtered for climate-related projects)
+    *   Integrate BOI Fiscal and Non-Fiscal Incentives data
+    *   Integrate BSP Banking System Loans (aggregate loans)
+    *   Integrate BSP Consolidated Data on Banks, including bonds issued by banks / capital market players
+    *   Integrate BSP Data to Identify and Locate Climate-Related Private Investments
+    *   Integrate BSP Data to Identify Damages and Losses
+    *   Integrate BSP Policies on Sustainability Financing of Banks
+    *   Integrate BTr Sustainability Bond Allocation and Impact Report
+    *   Integrate BTr National Government External Direct Loans and Bonds Borrowings
+    *   Integrate BTr Data on Sustainability-Linked Bonds Issuance
+    *   Integrate BTr Government Financial Obligations on Climate Projects
+    *   Integrate BTr ESG Performance Reports to Investors
+    *   Integrate BTr Sovereign Issuances
+    *   Integrate CCC National Climate Change Expenditure Tagging (CCET) List of Programs/Activities/Projects (PAPs)
+    *   Integrate CCC 2015 and 2020 Philippine GHG Inventory Report (sector-specific GHG emissions)
+    *   Integrate DBM Budget of Expenditures and Sources of Financing (BESF) B.21 (CC Expenditures By Department and Special Purpose Fund)
+    *   Integrate DBM BESF B.22 (CC Expenditures By National Climate Change Action Plan (NCCAP) Strategic Priorities)
+    *   Integrate DBM BESF D.2 (Salient Features of Program Loans)
+    *   Integrate DBM Public Budgets for Climate Change Adaptation (CCA)
+    *   Integrate DBM Disbursements Data
+    *   Integrate DBM National Budget Call Data
+    *   Integrate DENR Risk Resiliency Program (RRP) - Program Convergence Budgeting (PCB) data on proposed PAPs
+    *   Integrate DENR Consolidated Resilience Roadmap with Investment Portfolio for Risk Resilience (IPRR)
+    *   Integrate DENR-led NAP Implementation Data (IPRRs for climate vulnerable provinces/MUC)
+    *   Integrate DENR Information from the TWG on NAP and NDC
+    *   Integrate Data from DENR's Ongoing Climate Change Information Management System (CCIMS) initiative
+    *   Integrate DENR Mapping of Development Partner & NGA Initiatives related to NAP's 8 pillars
+    *   Integrate DENR Development Partners Initiatives on NDCIP
+    *   Integrate DENR CCIMS Database for geospatial overlays
+    *   Integrate DEPDev ODA on Climate Change Adaptation and Mitigation (loans or grants)
+    *   Integrate DEPDev Philippine Development Plan (PDP) 2023-2028 Midterm Update (Chapter 15 outcomes)
+    *   Integrate DEPDev SDG Tagging in the Updated Public Investment Program 2023-2028
+    *   Integrate DEPDev Evaluations of Policies and Projects based on alignment with national climate strategies (PDP, NAP, NDCIP)
+    *   Integrate DEPDev Validation of Alignment with the PDP
+    *   Integrate DEPDev Tagging of PAPs in the Public Investment Program (PIP)
+    *   Integrate DEPDev Reviews of Potentially Qualifying PAPs against eligibility criteria for social/green projects
+    *   Integrate DOF People's Survival Fund (PSF) allocation data
+    *   Integrate DOF ITSF Pipeline (priority projects/programs of member agencies)
+    *   Integrate DOF Program Loans Data
+    *   Integrate DOF Project Loans Data
+    *   Integrate DOF GCF Grants Data
+    *   Integrate IC Disaster Risk Financing Insurance Reports (Catastrophe Risk Insurance Database Templates, Property Insurance Policy/Incurred Loss databases)
+    *   Integrate IC Property and Reinsurance Reports (PRR) on Fire, Motor car, and Bonds
+    *   Integrate LGU Data on Conceptualized and Implemented CCA Projects
+    *   Integrate LGU Tagged Climate Budgets
+    *   Integrate LGU Reported Emissions (if applicable)
+    *   Integrate MDBs Climate Finance (CF) Investment Data and Projects Data
+    *   Integrate NAP LGU Vulnerability Data
+    *   Integrate NGAs Data on Conceptualized and Implemented CCA Projects
+    *   Integrate NGAs Tagged Climate Budgets
+    *   Integrate NGAs Reported Emissions (if applicable)
+    *   Integrate NGAs Database of Facilities/Projects with specific details
+    *   Integrate ODAs/Development Partners Funding Data for climate projects (grants, loans, innovative mechanisms)
+    *   Integrate ODAs/Development Partners Data on Conceptualized and Implemented CCA Projects with government partners
+    *   Integrate ODAs/Development Partners Measurement, Reporting, Verification (MRV) Data
+    *   Integrate Private Sector Data on Sustainable Activities and Instruments from MSMEs, PLCs, capital markets
+    *   Integrate Private Sector Funding for Climate Projects
+    *   Integrate Private Sector SDG Pledges
+    *   Integrate PSA LGU Income Classification Data
+    *   Integrate Public Sector General Appropriations Act (GAA) Data
+    *   Integrate SEC Philippine ASEAN-Labeled Green, Social, Sustainability and Sustainability-Linked (GSS+) Bonds Issuances
+    *   Integrate SEC Sustainability Reporting of PLCs (SuRE) Data
+    *   Integrate SEC Report of Publicly Listed Companies
+    *   Integrate SEC PSF TG Data
+    *   Integrate SEC Sure Form Content
+    *   Integrate SEC Disclosure Requirements of PLCs
+    *   Integrate Academe Data (if available)
+    *   Integrate "Other Government Agencies" Database of Facilities/Projects with specific details
+    *   Integrate "Other Government Agencies" Tagging of Events/Scenarios
+    *   Integrate various CF Commitment Data and CF Investment Data from Public and Private sectors, DBM, CCC, DEPDev, PPPC, BSP, DENR, DOF, MDBs, and SEC
+3.0 Epic: User Experience & Accessibility 
+This epic ensures the dashboard is intuitive, user-friendly, and accessible to target stakeholders.
+3.1 Dashboard Design & User Interface (UI)
+    *   Finalize Dashboard Design and Mockups based on conceptualization workshops and feedback
+    *   Implement Interactive Filters and Drill-down Capabilities (e.g., by year, project status, fund source, fund type, funder, implementing agency, region, vulnerability index, income class)
+    *   Implement User-Friendly Navigation for various dashboard elements
+    *   Display Brief Descriptions of Data Sets for context
+    *   Display Citation of Data Sources
+    *   Explore Other Language Options for increased public access
+
+3.2 Data Export & Interoperability
+    *   Enable Data Download Functionality (e.g., CSV, XLS formats)
+    *   Ensure Interoperability of the Dashboard
+    *   Implement Linking Capability to DENR's CCIMS
+4.0 Epic: Technical Architecture & Non-Functional Requirements (NFRs) 
+This epic covers the foundational technical aspects and quality attributes of the dashboard.
+4.1 System Architecture
+    *   Develop Technical Design for the Data Platform and Dashboard
+    *   Design the Overall Architectural Framework
+    *   Set Up Infrastructure for development and production environments
+
+4.2 Data Quality & Security
+    *   Implement Robust Data Quality Checks and monitoring mechanisms
+    *   Define and Implement Data Visibility and Access Control (e.g., tiered access for different user roles)
+    *   Ensure Data Security Measures are in place (implicit for government and financial data)
+
+4.3 Performance & Scalability
+    *   Optimize Dashboard Performance for fast loading and responsiveness, especially for high-usage data
+    *   Design for Scalability to accommodate future data growth and increased user load
+5.0  Epic: Deployment & Operational Readiness 
+This epic encompasses activities required for testing, deployment, launch, and ongoing sustainability of the dashboard.
+5.1 Testing & Quality Assurance
+    *   Conduct User Acceptance Testing (UAT) Round 1 with Product Owners (DOF, CCC)
+    *   Conduct User Acceptance Testing (UAT) Round 2 with Product Owners (DOF, CCC)
+    *   Perform Bug Fixing based on UAT feedback
+    *   Perform Quality Assurance (QA) Testing
+
+5.2 Documentation & Training
+    *   Develop User Manuals for the dashboard
+    *   Conduct User Training for key stakeholders and administrators
+    *   Facilitate Technical Transfer and Turnover to DOF and CCC
+
+5.3 Launch & Communication
+    *   Develop Communication Materials for the CF Dashboard launch
+    *   Design Program and Logistics for the public launch
+    *   Execute Public Launch on the DOF's Website
+    *   Execute Public Launch at the COP Pavilion (November 10-21, 2025)
+    *   Conduct Soft Launch and Pilot with ITSF to gather initial feedback on functionality, data accuracy, and user experience
+5.4 Sustainability & Maintenance
+    *   Develop a Sustainability Plan for ongoing operation and maintenance of the CF Data Platform
+    *   Establish Processes for Regular Updating and Validation of Data in coordination with implementing agencies, development partners, and other stakeholders
+    *   Establish Dashboard Update Schedule
+6.0 Epic: Stakeholder Engagement & Project Coordination 
+This epic outlines the continuous engagement and coordination activities vital for the project's success, running in parallel with development.
+6.1 Requirements Gathering & Refinement
+    *   Conduct Product Conceptualization Workshop with Product Owners (DOF, CCC, UNDP) to define requirements and dashboard design
+    *   Conduct Design Discussions with CF Contributors
+    *   Perform Requirements Analysis and Documentation
+    *   Update Requirements based on feedback
+
+6.2 Consultations & Feedback
+    *   Convene CF Data Platform Technical Working Group (TWG)
+    *   Present Updated Dashboard Mock-ups to Usec Alu, DOF, CCC, CF TWG
+    *   Present Mock-up to ITSF
+    *   Conduct Focused Group Discussions (FGDs) with CCC, ICC Secretariat, SDG-TWG, BTr, IFG, PPP Center, DBM, CMIO, DICT, PSA, GOCCs, BSP, DOE, SEC, LGUs
+    *   Conduct FGDs with Non-Government Representatives (Private Sector, CSO, NGO, Academe) to consolidate data
+    *   Present Work-in-Progress (WIP) to CF TWG
+
+6.3 Procurement
+    *   Develop First Draft of Terms of Reference (TOR) for firm
+    *   Review and Finalize TOR
+    *   Procure Development Firm
+
