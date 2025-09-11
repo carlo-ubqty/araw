@@ -19,7 +19,7 @@ export function FundsMobilizedChart() {
     <div className="relative w-full h-full">
       <ResponsiveContainer width="100%" height="100%">
         <AreaChart data={data} margin={{ top: 10, right: 16, left: 0, bottom: 0 }}>
-        <CartesianGrid strokeDasharray="2 6" stroke="#eeeeee" />
+        <CartesianGrid strokeDasharray="2 6" stroke="#eeeeee" vertical={false} />
         <XAxis
           dataKey="year"
           axisLine={false}

@@ -487,3 +487,4 @@ CURRENT STATE:
 
 HANDOFF STATUS: READY FOR PRECISION WORK ✅
 2025-09-11 18:23:23 PST - EWUS: Build succeeded; DoF logo integrated; Charts and FilterBar updates deployed.
+2025-09-11 23:07:53 PST - EWUS: Region bars updated; choropleth integrated; build ok.

@@ -3,8 +3,13 @@
 import { TrendingUp, Cloud, Layers, Boxes, Banknote, Coins } from "lucide-react";
 import { FundsMobilizedChart } from "@/components/charts/FundsMobilizedChart";
 import { GHGLevelsChart } from "@/components/charts/GHGLevelsChart";
+import { GHGBySectorChart } from "@/components/charts/GHGBySectorChart";
+import { InvestmentBySectorChart } from "@/components/charts/InvestmentBySectorChart";
 import { DashboardLayout } from "@/templates/DashboardLayout";
 import { ChartContainer } from "@/components/ui/ChartContainer";
+import dynamic from "next/dynamic";
+const PhilippinesChoropleth = dynamic(() => import("@/components/map/PhilippinesChoropleth"), { ssr: false });
+import InvestmentsByRegionHorizontal from "@/components/charts/InvestmentsByRegionHorizontal";
 
 export default function ClimateFinanceDashboard() {
   return (
@@ -106,6 +111,57 @@ export default function ClimateFinanceDashboard() {
             >
               <GHGLevelsChart />
             </ChartContainer>
+          </div>
+
+          
+          {/* Investment by Sector - full width */}
+          <div className="grid grid-cols-1 gap-4 mb-6">
+            <ChartContainer
+              title="INVESTMENT BY SECTOR"
+              icon={<Coins className="w-4 h-4 text-purple-600" />}
+              trendText="Trending up by 5.2% this year"
+              heightClass="h-96"
+            >
+              <InvestmentBySectorChart />
+            </ChartContainer>
+          </div>
+
+          {/* GHG Reduction by Sector - full width */}
+          <div className="grid grid-cols-1 gap-4 mb-6">
+            <ChartContainer
+              title="GHG REDUCTION ACTUAL VS 2020 BASELINE BY SECTOR"
+              icon={<Cloud className="w-4 h-4 text-purple-600" />}
+              trendText="Trending up by 5.2% this year"
+              heightClass="h-96"
+            >
+              <GHGBySectorChart />
+            </ChartContainer>
+          </div>
+
+          {/* Region Investments & Choropleth (newest sections placed last) */}
+          <div className="grid grid-cols-3 gap-4 mb-6">
+            <div className="col-span-1">
+              <ChartContainer
+                title="INVESTMENTS BY REGION"
+                icon={<Coins className="w-4 h-4 text-purple-600" />}
+                trendText="Trending up by 5.2% this year"
+                heightClass="h-[520px]"
+              >
+                <InvestmentsByRegionHorizontal />
+              </ChartContainer>
+            </div>
+            <div className="col-span-2">
+              <ChartContainer
+                title="VULNERABILITY/INCOME CLASS VS INVESTMENTS"
+                icon={<Cloud className="w-4 h-4 text-purple-600" />}
+                trendText="Trending up by 5.2% this year"
+                heightClass="h-[520px]"
+              >
+                <div className="h-[460px]">
+                  <PhilippinesChoropleth />
+                </div>
+              </ChartContainer>
+            </div>
           </div>
 
         </div>

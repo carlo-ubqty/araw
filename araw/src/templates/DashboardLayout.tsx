@@ -40,3 +40,4 @@ export function DashboardLayout({
 
 // Export types for external use
 export type { DashboardLayoutProps };
+

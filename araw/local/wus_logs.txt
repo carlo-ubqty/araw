@@ -410,3 +410,11 @@ Status: STARTING - Ready to continue development
 - FilterBar: Restored compact text-with-chevrons; right date pill; width limited.
 - Build: Success (Next 15.5.3).
 
+[EWUS] 2025-09-11 23:07:53 PST
+- Charts: squared bar corners (2px). Sector/sector+GHG legends intact.
+- Funds/GHG charts stable; Funds legend centered.
+- Region section: placed last; split 1/3 (bars) + 2/3 (map). Bars thicker, header purple, inside-left labels.
+- Choropleth: migrated to Leaflet/react-leaflet. Loads PH ADM1 from 3 mirrors; fallback to country polygon; added fitBounds, zoom. Tiles removed; mock 5-class palette and static legend; hover tooltip shows region, vuln, mock ₱ investment.
+- Outstanding: finalize exact palette/legend layout, remove OSM tiles permanently, resolve two eslint any-typing warnings in PhilippinesChoropleth.tsx, add dynamic data once API is ready.
+- Build: success.
+

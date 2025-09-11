@@ -9,7 +9,7 @@ User Shortcuts
 6. ewus - end wus: close wus log - review user-agent sops file for any updates; create a concise summary of what was done in the wus, and state of things at time of ewus; make sure env_log is also updated
 7. k - Keep a log of all the commands needed to recreate the environment in climate-finance-dashboard/local/env_log.txt
 8. r - review and update agent's context by reviewing local folder files for any updates
-9. cpt - clean-up and plant trace - do the misc loggings (sops, side this wus, env)
+9. cpt - clean-up and plant trace - do the misc loggings (sops, wus, env) - log all env-related commands executed
 
 SOPs (IMPORTANT! FOLLOW THESE IN OUR SESSIONS!)
 1. Agent should analyse and plan out moves together with the user. Agent updates the code from its end, but should explain every change and should wait for user's approval before implementing changes. Give enough multi-perspective context for the user to be able to have an informed decision on the next move. ALWAYS IMPLEMENT DRYLY.
