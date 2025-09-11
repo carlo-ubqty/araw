@@ -1,8 +1,8 @@
 "use client";
 
-import { MapContainer, GeoJSON, useMap } from 'react-leaflet';
+import { MapContainer, GeoJSON, useMap, ZoomControl } from 'react-leaflet';
 import L, { GeoJSONOptions, Layer, TooltipOptions } from 'leaflet';
-import { useEffect, useMemo, useState } from 'react';
+import { useCallback, useEffect, useMemo, useState } from 'react';
 import 'leaflet/dist/leaflet.css';
 
 type FeatureProperties = { [key: string]: unknown } & { adm1_en?: string; geo_level?: string };
@@ -77,10 +77,12 @@ export default function PhilippinesChoropleth() {
     load();
   }, []);
 
-  // simple mock scale for demo
-  // 5-class palette (Very Low -> Very High) to match mockup
-  const PALETTE = ['#fff8e6', '#fde7b8', '#f6cf7a', '#e89b3a', '#67120a'];
-  const getColor = (idx: number) => PALETTE[Math.max(0, Math.min(PALETTE.length - 1, idx))];
+  // 5-class palette (Very Low -> Very High) based on mockup (pale to deep maroon)
+  const PALETTE = ['#FFF6DD', '#FBE7AE', '#F4CF70', '#E59A3A', '#5E0F08'];
+  const getColor = useCallback((idx: number) => {
+    const clamped = Math.max(0, Math.min(PALETTE.length - 1, idx));
+    return PALETTE[clamped];
+  }, []);
 
   // Mock vulnerability and investment values (stable per region)
   function stringHash(s: string): number {
@@ -88,16 +90,16 @@ export default function PhilippinesChoropleth() {
     for (let i = 0; i < s.length; i++) h = (h * 31 + s.charCodeAt(i)) >>> 0;
     return h;
   }
-  function computeVulnIndex(regionName?: string): number {
+  const computeVulnIndex = useCallback((regionName?: string): number => {
     if (!regionName) return 2;
     const h = stringHash(regionName.toLowerCase());
     return h % 5; // 0..4
-  }
-  function computeInvestment(regionName?: string): number {
+  }, []);
+  const computeInvestment = useCallback((regionName?: string): number => {
     if (!regionName) return 50;
     const h = stringHash(regionName);
     return 20 + (h % 90); // ₱20–₱110 M
-  }
+  }, []);
   const style: GeoJSONOptions['style'] = useMemo(() => {
     return (feature?: { properties?: { adm1_en?: string } }) => ({
       fillColor: getColor(computeVulnIndex(feature?.properties?.adm1_en)),
@@ -108,6 +110,7 @@ export default function PhilippinesChoropleth() {
     });
   }, [getColor, computeVulnIndex]);
 
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
   const onEachFeature: GeoJSONOptions['onEachFeature'] = (feature: any, layer: Layer) => {
     const name: string = feature?.properties?.adm1_en || feature?.properties?.name || 'Region';
     const idx = computeVulnIndex(name);
@@ -119,6 +122,7 @@ export default function PhilippinesChoropleth() {
       Vulnerability: <strong>${vulnLabels[idx]}</strong></div>
       <div style="margin-top:4px">Investment: <strong>₱${inv} M</strong></div>
     </div>`;
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
     (layer as any).bindTooltip(html, { sticky: true } as TooltipOptions);
   };
 
@@ -129,11 +133,12 @@ export default function PhilippinesChoropleth() {
         zoom={6}
         scrollWheelZoom={false}
         doubleClickZoom={false}
-        zoomControl={true}
+        zoomControl={false}
         className="w-full h-full rounded-lg"
         attributionControl={false}
         style={{ background: '#ffffff' }}
       >
+        <ZoomControl position="topright" />
         {boundaries && (
           <GeoJSON
             data={boundaries as unknown as GeoJSON.GeoJsonObject}

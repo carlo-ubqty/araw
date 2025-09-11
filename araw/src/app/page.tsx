@@ -5,6 +5,9 @@ import { FundsMobilizedChart } from "@/components/charts/FundsMobilizedChart";
 import { GHGLevelsChart } from "@/components/charts/GHGLevelsChart";
 import { GHGBySectorChart } from "@/components/charts/GHGBySectorChart";
 import { InvestmentBySectorChart } from "@/components/charts/InvestmentBySectorChart";
+import { InvestmentsByVulnerabilityChart } from "@/components/charts/InvestmentsByVulnerabilityChart";
+import { InvestmentsByIncomeClassChart } from "@/components/charts/InvestmentsByIncomeClassChart";
+import { FundSourceChart } from "@/components/charts/FundSourceChart";
 import { DashboardLayout } from "@/templates/DashboardLayout";
 import { ChartContainer } from "@/components/ui/ChartContainer";
 import dynamic from "next/dynamic";
@@ -162,6 +165,36 @@ export default function ClimateFinanceDashboard() {
                 </div>
               </ChartContainer>
             </div>
+          </div>
+
+          {/* Three Analysis Charts - placed below choropleth */}
+          <div className="grid grid-cols-3 gap-4 mb-6">
+            <ChartContainer
+              title="INVESTMENTS BY VULNERABILITY INDEX"
+              icon={<Layers className="w-4 h-4 text-purple-600" />}
+              trendText="Trending up by 5.2% this year"
+              heightClass="h-48"
+            >
+              <InvestmentsByVulnerabilityChart />
+            </ChartContainer>
+
+            <ChartContainer
+              title="INVESTMENTS BY INCOME CLASS"
+              icon={<Coins className="w-4 h-4 text-purple-600" />}
+              trendText="Trending up by 5.2% this year"
+              heightClass="h-48"
+            >
+              <InvestmentsByIncomeClassChart />
+            </ChartContainer>
+
+            <ChartContainer
+              title="FUND SOURCE"
+              icon={<TrendingUp className="w-4 h-4 text-purple-600" />}
+              trendText="Trending up by 5.2% this year"
+              heightClass="h-48"
+            >
+              <FundSourceChart />
+            </ChartContainer>
           </div>
 
         </div>

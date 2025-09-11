@@ -23,7 +23,7 @@ export function DashboardLayout({
   className = "",
 }: DashboardLayoutProps) {
   return (
-    <div className={`min-h-screen bg-gray-50 ${className}`}>
+    <div className={`min-h-screen bg-gray-50 flex flex-col ${className}`}>
       {/* Header Section */}
       <Header {...headerProps} />
       
@@ -34,10 +34,20 @@ export function DashboardLayout({
       <main className="flex-1">
         {children}
       </main>
+      
+      {/* Footer Section */}
+      <footer className="bg-[#4b1f63] text-white py-3">
+        <div className="max-w-6xl mx-auto px-6">
+          <div className="text-center text-sm">
+            © 2025 Climate Finance Dashboard. All rights reserved
+          </div>
+        </div>
+      </footer>
     </div>
   );
 }
 
 // Export types for external use
 export type { DashboardLayoutProps };
+
 
