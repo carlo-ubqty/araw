@@ -14,7 +14,7 @@ User Shortcuts
 SOPs (IMPORTANT! FOLLOW THESE IN OUR SESSIONS!)
 1. Agent should analyse and plan out moves together with the user. Agent updates the code from its end, but should explain every change and should wait for user's approval before implementing changes. Give enough multi-perspective context for the user to be able to have an informed decision on the next move. ALWAYS IMPLEMENT DRYLY.
 2. Agent runs commands from its end whenever possible, including DB investigative queries. For DB changes, the agent should give the user a mysql command that the user can copy-paste on mysql cli
-3. Agent will do a build (npm run build) after every code update; the user will do the server restart (npm run run)
+3. Agent will do a build (npm run build) after every code update; the user will do the server restart (npm run dev) from their end. Agent should NOT start development servers.
 4. Agent can only run DB commands in the local env. For qa/uat/prod, the agent needs to give the user the commands he can run from his end.
 5. Agent should NOT modify local/dev_db_changes.txt - user maintains this file manually to track DB changes
 6. Explain-first interaction style for code edits
