@@ -654,3 +654,94 @@ Goals:
 
 **STATUS: DASHBOARD FULLY RESPONSIVE FOR ALL DEVICES** ✅
 
+### 🚨 AUTO-DEPLOY ROLLBACK SYSTEM ATTEMPTED & REVERTED
+**Date:** 2025-09-12 (18:00-01:00 PST)
+**Status:** REVERTED FOR DEMO STABILITY
+
+#### Auto-Deploy Implementation Attempted:
+- ✅ **Webhook Server**: Node.js server (webhook-deploy.js) for GitHub webhooks
+- ✅ **PM2 Management**: Ecosystem config for webhook process
+- ✅ **Health Checks**: Auto-rollback on deployment failures  
+- ✅ **State Management**: Save/restore last known good deployments
+- ✅ **Manual Rollback**: Emergency rollback endpoints
+- ✅ **PM2 Compatibility**: Fixed older PM2 version issues (pm2 jlist vs pm2 show --json)
+
+#### Critical Issue Discovered:
+- ❌ **Next.js Hanging**: Production `next start` processes hanging on startup
+- ❌ **Repeated Restarts**: PM2 showing online but app not responding on port 3000
+- ❌ **502 Errors**: Nginx unable to proxy to unresponsive Next.js process
+- ❌ **Demo Risk**: Site inaccessible during user's 20-minute demo deadline
+
+#### Emergency Rollback Actions:
+- 🚨 **Automation Removed**: Deleted webhook PM2 process and scripts
+- 🚨 **Git Reset**: Reverted to commit fd2642f (dashboard layout v1) - WORKING STATE
+- 🚨 **Clean Rebuild**: Removed .next, node_modules, fresh npm install + build
+- 🚨 **Simple PM2**: Basic ecosystem.config.js without automation
+- ✅ **Demo Success**: Site restored to working state for user demo
+
+#### Lessons Learned:
+- ⚠️ **Next.js Production Issues**: Need investigation of hanging `next start` processes
+- ⚠️ **PM2 Compatibility**: Older PM2 versions have different command syntax
+- ⚠️ **Staging vs Demo**: Automation testing should not risk production demos
+- ✅ **Basic Deployment**: Simple PM2 + Nginx setup remains stable and reliable
+
+=============================================================================
+
+### 🎯 EWUS - SEPTEMBER 12, 2025 - EMERGENCY DEMO RECOVERY SESSION
+
+## CRITICAL SUCCESS: DEMO SAVED ✅
+
+### 🚨 EMERGENCY SITUATION RESOLVED:
+**Problem:** Auto-deploy system causing Next.js crashes during user's 20-minute demo deadline
+**Solution:** Complete automation rollback + clean deployment restoration  
+**Result:** Demo successfully delivered with fully functional HTTPS site
+
+### ✅ FINAL DEPLOYMENT STATE:
+**Live Site:** https://araw-qa.ncience.com 🔒 SECURED
+- ✅ **HTTPS**: SSL certificate configured and working
+- ✅ **Application**: Next.js production build running stable  
+- ✅ **Infrastructure**: PM2 + Nginx + AWS EC2 operational
+- ✅ **Responsive**: Tablet and mobile layouts functional
+- ✅ **Performance**: 264 kB optimized bundle, fast loading
+
+### 🏗️ TECHNICAL FOUNDATION SOLID:
+- ✅ **Architecture**: NextJS 15.5.3 + HeroUI 2.8.4 + TypeScript
+- ✅ **All Dashboard Sections**: 8 complete sections matching mockups
+- ✅ **Production Ready**: Clean build, proper error handling
+- ✅ **Repository**: QA branch strategy with GitHub integration
+
+### 📋 FOR NEXT AGENT - AUTO-DEPLOY SYSTEM RECOMMENDATIONS:
+
+#### 🔍 INVESTIGATION NEEDED:
+1. **Next.js Hanging Issue**: Why `next start` processes hang in production
+   - Check Node.js version compatibility with Next.js 15.5.3
+   - Investigate memory/resource constraints on EC2
+   - Test standalone build mode vs standard production mode
+
+2. **PM2 Process Management**: Improve process stability
+   - Consider standalone server.js instead of `npm start`
+   - Add better health check monitoring
+   - Implement graceful shutdown handling
+
+#### 🚀 AUTO-DEPLOY SYSTEM RECOVERY:
+**Previous Implementation Available in Git History:**
+- Commit: 10f036b "Add auto-deploy with rollback system"  
+- Files: scripts/webhook-deploy.js, scripts/setup-auto-deploy.sh
+- Features: GitHub webhooks, health checks, automatic rollback
+
+**Recommended Approach for Re-implementation:**
+1. **Start Simple**: Basic webhook without auto-restart first
+2. **Test Thoroughly**: Use staging environment, not live demo site
+3. **Gradual Rollout**: Add features incrementally with rollback points
+4. **Monitoring**: Comprehensive logging and health checks
+
+#### 🔒 CURRENT STABLE STATE:
+- **Deployment Method**: Manual git pull + npm run build + pm2 restart
+- **Reliability**: Proven stable during emergency demo recovery
+- **SSL**: Configured and working properly  
+- **Performance**: Fast and responsive
+
+**HANDOFF STATUS: PRODUCTION STABLE, AUTOMATION FOR FUTURE ITERATION** ✅
+
+**END OF EMERGENCY SESSION** 🎉
+

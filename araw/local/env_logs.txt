@@ -632,3 +632,59 @@ Application: NextJS 15.5.3 + HeroUI 2.8.4
 Domain Target: araw-qa.ncience.com
 SSL: Let's Encrypt ready
 Branch Strategy: qa for QA, main for production
+
+# FINAL PRODUCTION DEPLOYMENT (2025-09-12) - DEMO EMERGENCY RECOVERY
+# ==================================================================
+
+# After automation rollback - stable deployment commands
+pm2 delete all
+pkill -f node
+
+# Revert to stable commit
+git reset --hard fd2642f  # dashboard layout v1 - working state
+rm -rf .next node_modules package-lock.json
+
+# Clean production build
+npm install
+npm run build
+
+# Simple stable PM2 config
+cat > ecosystem.config.js << 'EOF'
+module.exports = {
+  apps: [{
+    name: 'araw-dashboard',
+    script: 'npm',
+    args: 'start',
+    cwd: '/var/www/ubqty/araw',
+    instances: 1,
+    autorestart: true,
+    watch: false,
+    max_memory_restart: '1G',
+    env: {
+      NODE_ENV: 'production',
+      PORT: 3000
+    }
+  }]
+}
+EOF
+
+# Start stable deployment
+pm2 start ecosystem.config.js
+pm2 save
+
+# SSL certificate setup (final working configuration)
+sudo certbot --nginx -d araw-qa.ncience.com
+sudo nginx -t
+sudo systemctl restart nginx
+
+# Final verification 
+pm2 status
+curl -I https://araw-qa.ncience.com
+curl -I http://araw-qa.ncience.com
+
+# PRODUCTION STATUS: LIVE AND STABLE ✅
+# ====================================
+# Site: https://araw-qa.ncience.com (SSL secured)
+# Infrastructure: AWS EC2 + PM2 + Nginx + Let's Encrypt
+# Performance: 264 kB optimized bundle, responsive design
+# Deployment: Manual process (automation reverted for stability)
