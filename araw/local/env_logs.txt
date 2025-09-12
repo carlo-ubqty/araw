@@ -509,11 +509,126 @@ DEPLOYMENT PREPARATION COMPLETED
 # All lint warnings documented, no errors
 # Ready for DevOps deployment to AWS EC2 + araw-qa.ncience.com
 
-NEXT STEPS FOR DEVOPS:
-======================
-1. Git repository upload
-2. AWS EC2 server setup  
-3. Domain configuration (araw-qa.ncience.com)
-4. Production deployment scripts
-5. SSL certificate setup
-6. Environment variables configuration
+AWS EC2 DEPLOYMENT COMMANDS (2025-09-12)
+========================================
+
+## LOCAL REPOSITORY SETUP
+# Create QA branch for deployment
+git checkout -b qa
+git push -u origin qa
+
+## EC2 SERVER SETUP (as araw_admin)
+# Directory structure fix
+sudo mkdir -p /var/www/ubqty
+sudo chown -R araw_admin:www-data /var/www/ubqty
+sudo mv /opt/araw /var/www/ubqty/araw
+cd /var/www/ubqty/araw
+sudo mv araw/* . 2>/dev/null || true
+sudo mv araw/.[^.]* . 2>/dev/null || true
+sudo rmdir araw 2>/dev/null || true
+sudo chown -R araw_admin:www-data /var/www/ubqty/araw
+chmod -R 755 /var/www/ubqty/araw
+
+# QA Branch deployment  
+git fetch origin
+git checkout qa
+git pull origin qa
+
+# Application setup
+npm install                    # 611 packages, 0 vulnerabilities
+npm run build                 # 264 kB optimized, 14.8s build time
+
+# PM2 Process Manager
+cat > ecosystem.config.js << 'EOF'
+module.exports = {
+  apps: [{
+    name: 'araw-dashboard',
+    script: 'npm',
+    args: 'start', 
+    cwd: '/var/www/ubqty/araw',
+    instances: 1,
+    autorestart: true,
+    watch: false,
+    max_memory_restart: '1G',
+    env: {
+      NODE_ENV: 'production',
+      PORT: 3000
+    }
+  }]
+}
+EOF
+
+pm2 start ecosystem.config.js  # Started successfully, PID: 9499
+pm2 save                      # Configuration saved
+
+## NEXT DEPLOYMENT STEPS
+# PM2 auto-startup
+sudo env PATH=$PATH:/usr/bin /usr/lib/node_modules/pm2/bin/pm2 startup systemd -u araw_admin --hp /home/araw_admin
+
+# Nginx reverse proxy setup  
+sudo apt update && sudo apt install nginx -y
+
+# Nginx site configuration
+sudo tee /etc/nginx/sites-available/araw-qa.ncience.com << 'EOF'
+server {
+    listen 80;
+    server_name araw-qa.ncience.com;
+    
+    location / {
+        proxy_pass http://localhost:3000;
+        proxy_http_version 1.1;
+        proxy_set_header Upgrade $http_upgrade;
+        proxy_set_header Connection 'upgrade';
+        proxy_set_header Host $host;
+        proxy_set_header X-Real-IP $remote_addr;
+        proxy_set_header X-Forwarded-For $proxy_add_x_forwarded_for;
+        proxy_set_header X-Forwarded-Proto $scheme;
+        proxy_cache_bypass $http_upgrade;
+    }
+}
+EOF
+
+# Enable Nginx site
+sudo ln -s /etc/nginx/sites-available/araw-qa.ncience.com /etc/nginx/sites-enabled/
+sudo rm /etc/nginx/sites-enabled/default
+sudo nginx -t
+sudo systemctl restart nginx
+sudo systemctl enable nginx
+
+# SSL Certificate (after DNS setup)
+sudo apt install snapd -y
+sudo snap install core; sudo snap refresh core  
+sudo snap install --classic certbot
+sudo ln -s /snap/bin/certbot /usr/bin/certbot
+sudo certbot --nginx -d araw-qa.ncience.com
+
+## DEPLOYMENT STATUS
+✅ QA Branch: Created and deployed
+✅ Application: Built and running (PM2 PID: 9499)
+✅ Dependencies: All installed (0 vulnerabilities)  
+✅ Build: 264 kB optimized bundle
+✅ Process Manager: PM2 configured and online
+🔄 Web Server: Nginx configuration ready
+🔄 Domain: DNS setup pending
+🔄 SSL: Certificate ready for installation
+
+## CURRENT SERVICES
+# Check application status
+pm2 status
+pm2 logs araw-dashboard
+
+# Test application
+curl http://localhost:3000     # Next.js direct access
+curl http://localhost          # Nginx proxy (after setup)
+
+# Verify services
+sudo systemctl status nginx
+sudo systemctl status pm2-araw_admin
+
+PRODUCTION ENVIRONMENT READY
+============================
+Infrastructure: AWS EC2 + PM2 + Nginx
+Application: NextJS 15.5.3 + HeroUI 2.8.4
+Domain Target: araw-qa.ncience.com
+SSL: Let's Encrypt ready
+Branch Strategy: qa for QA, main for production

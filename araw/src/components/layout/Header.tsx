@@ -84,11 +84,11 @@ export function Header({
                 <span className="text-purple-800 font-bold text-sm">{logoText}</span>
               </div>
             )}
-            <h1 className="text-base lg:text-lg font-normal tracking-normal">{title}</h1>
+            <h1 className="text-sm md:text-base lg:text-lg font-normal tracking-normal">{title}</h1>
           </div>
 
-          {/* Center Section: Navigation Pills */}
-          <div className="absolute left-1/2 transform -translate-x-1/2 flex gap-1">
+          {/* Center Section: Navigation Pills - Hidden on mobile */}
+          <div className="hidden sm:flex absolute left-1/2 transform -translate-x-1/2 gap-1">
             {navigationItems.map((item) => (
               <Button
                 key={item.id}
@@ -96,8 +96,8 @@ export function Header({
                 variant={activeNav === item.id ? "solid" : "light"}
                 className={
                   activeNav === item.id
-                    ? "bg-white/15 text-white text-xs px-3 py-1 h-auto min-w-0 rounded hover:bg-white/25"
-                    : "text-white/90 text-xs px-3 py-1 h-auto min-w-0 rounded hover:bg-white/10"
+                    ? "bg-white/15 text-white text-xs px-2 md:px-3 py-1 h-auto min-w-0 rounded hover:bg-white/25"
+                    : "text-white/90 text-xs px-2 md:px-3 py-1 h-auto min-w-0 rounded hover:bg-white/10"
                 }
                 onPress={() => handleNavClick(item.id)}
               >
@@ -107,10 +107,10 @@ export function Header({
           </div>
 
           {/* Right Section: DateTime & Actions */}
-          <div className="flex items-center gap-4">
-            {/* Real-time DateTime */}
+          <div className="flex items-center gap-2 md:gap-4">
+            {/* Real-time DateTime - Hidden on small tablets and below */}
             {showDateTime && (
-              <div className="text-xs lg:text-sm text-white/90 font-mono tracking-wider">
+              <div className="hidden lg:block text-xs lg:text-sm text-white/90 font-mono tracking-wider">
                 {currentDateTime}
               </div>
             )}

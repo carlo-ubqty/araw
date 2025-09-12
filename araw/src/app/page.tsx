@@ -19,20 +19,20 @@ export default function ClimateFinanceDashboard() {
     <DashboardLayout headerProps={{ logoSrc: "/Department_of_Finance_(DOF).svg" }}>
 
       {/* Dashboard Title */}
-      <div className="px-6 py-6">
+      <div className="px-4 md:px-6 py-4 md:py-6">
         <div className="max-w-6xl mx-auto">
-          <h2 className="text-3xl font-bold text-gray-900 mb-6">Dashboard</h2>
+          <h2 className="text-2xl md:text-3xl font-bold text-gray-900 mb-4 md:mb-6">Dashboard</h2>
           
-          {/* KPI Cards - Exact Mockup Styling */}
-          <div className="grid grid-cols-5 gap-4 mb-6">
+          {/* KPI Cards - Responsive Grid */}
+          <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-5 gap-4 mb-6">
             {/* Total Investment */}
-            <div className="bg-gradient-to-r from-[#2f8964] to-[#54d06c] text-white p-5 rounded-lg shadow-lg">
+            <div className="bg-gradient-to-r from-[#2f8964] to-[#54d06c] text-white p-3 md:p-5 rounded-lg shadow-lg">
               <div className="flex items-center gap-2 mb-3">
                 <Banknote className="w-4 h-4" />
                 <span className="text-[11px] font-semibold tracking-wide">TOTAL INVESTMENT</span>
               </div>
               <div className="flex items-center gap-2 mb-1">
-                <div className="text-4xl font-extrabold leading-none">₱ 980 M</div>
+                <div className="text-2xl md:text-4xl font-extrabold leading-none">₱ 980 M</div>
                 <span
                   className="inline-block w-0 h-0 border-l-[6px] border-l-transparent border-r-[6px] border-r-transparent border-b-[9px] border-b-green-400"
                   aria-hidden="true"
@@ -42,7 +42,7 @@ export default function ClimateFinanceDashboard() {
             </div>
             
             {/* Total Projects */}
-            <div className="bg-gradient-to-r from-[#476b85] to-[#5aa37a] text-white p-5 rounded-lg shadow-lg">
+            <div className="bg-gradient-to-r from-[#476b85] to-[#5aa37a] text-white p-3 md:p-5 rounded-lg shadow-lg">
               <div className="flex items-center gap-2 mb-3">
                 <svg className="w-4.5 h-4.5" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true">
                   <path d="M12 15a3 3 0 1 0 0-6 3 3 0 0 0 0 6Z"/>
@@ -51,18 +51,18 @@ export default function ClimateFinanceDashboard() {
                 <span className="text-[11px] font-semibold tracking-wide">TOTAL PROJECTS</span>
               </div>
               <div>
-                <div className="text-4xl font-extrabold leading-none mb-1">579</div>
+                <div className="text-2xl md:text-4xl font-extrabold leading-none mb-1">579</div>
                 <div className="text-xs opacity-90">Last Year: 400 Projects</div>
               </div>
             </div>
             
             {/* GHG Progress */}
-            <div className="relative bg-gradient-to-r from-[#3f7fbe] to-[#24b9d6] text-white p-5 rounded-lg shadow-lg">
+            <div className="relative bg-gradient-to-r from-[#3f7fbe] to-[#24b9d6] text-white p-3 md:p-5 rounded-lg shadow-lg">
               <div className="flex items-center gap-2 mb-3">
                 <Cloud className="w-4 h-4" />
                 <span className="text-[11px] font-semibold tracking-wide">GHG PROGRESS</span>
               </div>
-              <div className="text-4xl font-extrabold leading-none mb-1">56%</div>
+              <div className="text-2xl md:text-4xl font-extrabold leading-none mb-1">56%</div>
               <div className="text-xs opacity-90">actual vs 2020 baseline (60%)</div>
               <span
                 className="absolute right-4 top-1/2 -translate-y-1/2 inline-block w-0 h-0 border-l-[7px] border-l-transparent border-r-[7px] border-r-transparent border-t-[10px] border-t-red-500"
@@ -71,32 +71,32 @@ export default function ClimateFinanceDashboard() {
             </div>
             
             {/* Adaptation Investment */}
-            <div className="bg-gradient-to-r from-[#e85c9d] to-[#fdb38b] text-white p-5 rounded-lg shadow-lg">
+            <div className="bg-gradient-to-r from-[#e85c9d] to-[#fdb38b] text-white p-3 md:p-5 rounded-lg shadow-lg">
               <div className="flex items-center gap-2 mb-3">
                 <Layers className="w-4 h-4" />
                 <span className="text-[11px] font-semibold tracking-wide">ADAPTATION INVESTMENT</span>
               </div>
               <div>
-                <div className="text-4xl font-extrabold leading-none mb-1">₱ 700 M</div>
+                <div className="text-2xl md:text-4xl font-extrabold leading-none mb-1">₱ 700 M</div>
                 <div className="text-xs opacity-90">Last Year: ₱600 M</div>
               </div>
             </div>
             
             {/* Mitigation Investment */}
-            <div className="bg-gradient-to-r from-[#ec6faf] to-[#fdb58e] text-white p-5 rounded-lg shadow-lg">
+            <div className="bg-gradient-to-r from-[#ec6faf] to-[#fdb58e] text-white p-3 md:p-5 rounded-lg shadow-lg">
               <div className="flex items-center gap-2 mb-3">
                 <Boxes className="w-4 h-4" />
                 <span className="text-[11px] font-semibold tracking-wide">MITIGATION INVESTMENT</span>
               </div>
               <div>
-                <div className="text-4xl font-extrabold leading-none mb-1">₱ 280 M</div>
+                <div className="text-2xl md:text-4xl font-extrabold leading-none mb-1">₱ 280 M</div>
                 <div className="text-xs opacity-90">Last Year: ₱50 M</div>
               </div>
             </div>
         </div>
 
-          {/* Charts Grid - Reimplemented from scratch with ChartContainer */}
-          <div className="grid grid-cols-2 gap-4 mb-6">
+          {/* Charts Grid - Responsive Layout */}
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-4 mb-6">
             <ChartContainer 
               title="FUNDS MOBILIZED FOR CLIMATE ACTION"
               icon={<Coins className="w-4 h-4 text-purple-600" />}
@@ -141,8 +141,8 @@ export default function ClimateFinanceDashboard() {
             </ChartContainer>
           </div>
 
-          {/* Region Investments & Choropleth (newest sections placed last) */}
-          <div className="grid grid-cols-3 gap-4 mb-6">
+          {/* Region Investments & Choropleth - Responsive Stacking */}
+          <div className="grid grid-cols-1 lg:grid-cols-3 gap-4 mb-6">
             <div className="col-span-1">
               <ChartContainer
                 title="INVESTMENTS BY REGION"
@@ -167,8 +167,8 @@ export default function ClimateFinanceDashboard() {
             </div>
           </div>
 
-          {/* Three Analysis Charts - placed below choropleth */}
-          <div className="grid grid-cols-3 gap-4 mb-6">
+          {/* Three Analysis Charts - Responsive Grid */}
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4 mb-6">
             <ChartContainer
               title="INVESTMENTS BY VULNERABILITY INDEX"
               icon={<Layers className="w-4 h-4 text-purple-600" />}
