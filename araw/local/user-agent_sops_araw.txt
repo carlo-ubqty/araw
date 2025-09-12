@@ -24,6 +24,38 @@ SOPs (IMPORTANT! FOLLOW THESE IN OUR SESSIONS!)
    - Log key milestones to wus_logs.txt (SWUS/EWUS and checkpoints).
 7. Keep a log of all the commands needed to recreate the environment in climate-finance-dashboard/local/env_log.txt
 8. Include working branch details in all logs (wus_logs.txt, env_logs.txt, deployment_notes.txt) - specify which git branch work was performed on, any branch switches, and final branch state for next agent
+9. Create concise, one-liner commits - keep commit messages clear and brief
+
+PROJECT CONTEXT & DOMAIN REQUIREMENTS
+=====================================
+ARAW Philippine Climate Finance Dashboard - Critical Context for Development Decisions
+
+Purpose: Track and visualize climate finance flows in the Philippines aligned with:
+- Paris Agreement commitments (NDC: Nationally Determined Contribution)
+- National Climate Change Action Plan (NCCAP) 2011-2028
+- National Adaptation Plan (NAP) 2023-2050
+- NDC Implementation Plan (75% GHG reduction target: 2.7% unconditional, 72.3% conditional)
+
+Key Data Sources & Finance Flows:
+1. Domestic Public: National/LGU budgets, People's Survival Fund, CCET (Climate Change Expenditure Tagging)
+2. International: Green Climate Fund, GEF, MDBs, bilateral ODA, adaptation funds
+3. Private Sector: Sustainable bonds, green loans, PPPs, ESG investments
+
+Institutional Stakeholders:
+- Climate Change Commission (CCC): Lead policy coordination and MRV
+- Department of Finance (DOF): Climate finance oversight  
+- Sectoral Leads: DA, DENR, DOE, DOTr for NDC/MRV
+- Local Government Units (LGUs): Frontline implementation
+
+Critical Dashboard Requirements:
+- MRV Integration: Measurement, Reporting, Verification of climate actions
+- CCET Visualization: Climate-tagged government expenditure tracking
+- Multi-source Finance Tracking: Public, international, private flows
+- Project Pipeline Status: Adaptation/mitigation projects by sector/region
+- NDC/NAP Alignment: Progress on national climate commitments
+- Paris Agreement Compliance: Transparency and reporting standards
+
+Development Priority: All features must support Philippine government's climate finance transparency, policy implementation tracking, and international reporting obligations.
 
 Initial Techstack: 
 NodeJS 
