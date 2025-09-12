@@ -23,6 +23,7 @@ SOPs (IMPORTANT! FOLLOW THESE IN OUR SESSIONS!)
    - Group larger changes; parallelize read-only lookups.
    - Log key milestones to wus_logs.txt (SWUS/EWUS and checkpoints).
 7. Keep a log of all the commands needed to recreate the environment in climate-finance-dashboard/local/env_log.txt
+8. Include working branch details in all logs (wus_logs.txt, env_logs.txt, deployment_notes.txt) - specify which git branch work was performed on, any branch switches, and final branch state for next agent
 
 Initial Techstack: 
 NodeJS 
