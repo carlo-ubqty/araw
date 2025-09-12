@@ -109,8 +109,9 @@ async function performRollback(reason = 'Deployment failure') {
     
     // Verify rollback deployment
     await new Promise(resolve => setTimeout(resolve, 5000)); // Wait 5 seconds
-    const status = execSync('pm2 show araw-dashboard --json', { encoding: 'utf8' });
-    const appInfo = JSON.parse(status)[0];
+    const status = execSync('pm2 jlist', { encoding: 'utf8' });
+    const appList = JSON.parse(status);
+    const appInfo = appList.find(app => app.name === 'araw-dashboard');
     
     if (appInfo && appInfo.pm2_env.status === 'online') {
       log('🎉 Rollback completed successfully!');
@@ -217,8 +218,9 @@ async function deploy() {
     }
     
     // Verify PM2 status
-    const status = execSync('pm2 show araw-dashboard --json', { encoding: 'utf8' });
-    const appInfo = JSON.parse(status)[0];
+    const status = execSync('pm2 jlist', { encoding: 'utf8' });
+    const appList = JSON.parse(status);
+    const appInfo = appList.find(app => app.name === 'araw-dashboard');
     
     if (!appInfo || appInfo.pm2_env.status !== 'online') {
       throw new Error('PM2 shows application is not online');
@@ -309,8 +311,9 @@ const server = http.createServer(async (req, res) => {
       const lastGood = loadLastKnownGood();
       const currentCommit = execSync('git rev-parse HEAD', { encoding: 'utf8' }).trim();
       const currentBranch = execSync('git rev-parse --abbrev-ref HEAD', { encoding: 'utf8' }).trim();
-      const pm2Status = execSync('pm2 show araw-dashboard --json', { encoding: 'utf8' });
-      const appInfo = JSON.parse(pm2Status)[0];
+      const pm2Status = execSync('pm2 jlist', { encoding: 'utf8' });
+      const appList = JSON.parse(pm2Status);
+      const appInfo = appList.find(app => app.name === 'araw-dashboard');
       
       res.writeHead(200, { 'Content-Type': 'application/json' });
       res.end(JSON.stringify({
