@@ -4,8 +4,8 @@ User Shortcuts
 3. ho - hold on, let's step back and look at the bigger picture
 4. wus - work unit session (1 complete user-agent session)
 5. swus - start wus: 
-   Step 1: Get the correct date (run date command)
-   Step 2: Create a new wus log (wus_logs.txt, with proper date)
+   Step 1: Get the correct date for Philippines (run date command)
+   Step 2: Create a new wus log (wus_logs.txt, with proper date); create an ewus for open swus if there are any
 6. ewus - end wus: close wus log - review user-agent sops file for any updates; create a concise summary of what was done in the wus, and state of things at time of ewus; make sure env_log is also updated
 7. k - Keep a log of all the commands needed to recreate the environment in climate-finance-dashboard/local/env_log.txt
 8. r - review and update agent's context by reviewing local folder files for any updates
