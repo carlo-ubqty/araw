@@ -1,24 +1,28 @@
 ================================================================================
 ARAW PHILIPPINE CLIMATE FINANCE DASHBOARD
 DEPLOYMENT GUIDE FOR DEPARTMENT OF FINANCE
+RHEL 8/9 + MySQL 8.0+ DEPLOYMENT
 ================================================================================
 
 Document Version: 2.0
 Target Deployment: October 2025 (New Version)
+Deployment Platform: Red Hat Enterprise Linux (RHEL) 8 or 9 with MySQL 8.0+
 Prepared for: Asst. Secretary Angie, Department of Finance
 Contact: Jhonnel (Project Manager)
+
+NOTE: This guide is specifically designed for RHEL + MySQL deployment only.
 
 ================================================================================
 TABLE OF CONTENTS
 ================================================================================
 
 1. EXECUTIVE SUMMARY
-2. SYSTEM REQUIREMENTS
+2. SYSTEM REQUIREMENTS (RHEL + MySQL)
 3. PRE-DEPLOYMENT CHECKLIST
-4. DEPLOYMENT OPTIONS
-5. STEP-BY-STEP DEPLOYMENT INSTRUCTIONS
+4. DEPLOYMENT ARCHITECTURE
+5. STEP-BY-STEP DEPLOYMENT INSTRUCTIONS (RHEL + MySQL)
 6. POST-DEPLOYMENT VERIFICATION
-7. TROUBLESHOOTING GUIDE
+7. TROUBLESHOOTING GUIDE (RHEL + MySQL)
 8. MAINTENANCE & UPDATES
 9. SECURITY CONSIDERATIONS
 10. SUPPORT & CONTACTS
@@ -44,14 +48,16 @@ TECHNOLOGY STACK:
 - UI Framework: HeroUI 2.8.4 + Tailwind CSS 4
 - Charts: Recharts 3.2.0
 - Maps: Leaflet 1.9.4 + React-Leaflet 5.0.0
-- Database: PostgreSQL (optional for production)
+- Operating System: Red Hat Enterprise Linux (RHEL) 8+
+- Database: MySQL 8.0+
+- Web Server: Nginx (reverse proxy)
 - Authentication: NextAuth 4.24.11
 
 BUILD SIZE: ~128kB (optimized)
 PERFORMANCE: <2s initial load, <200ms interaction response
 
 ================================================================================
-2. SYSTEM REQUIREMENTS
+2. SYSTEM REQUIREMENTS (RHEL + MySQL)
 ================================================================================
 
 MINIMUM REQUIREMENTS:
@@ -63,10 +69,7 @@ Server/Hardware:
 - Network: 10 Mbps internet connection
 
 Operating System:
-- Red Hat Enterprise Linux (RHEL) 8+ (REQUIRED FOR DOF)
-- Windows Server 2016+ (alternative)
-- CentOS 8+ (alternative)
-- Any OS supporting Node.js 20+
+- Red Hat Enterprise Linux (RHEL) 8 or 9
 
 Software Prerequisites:
 - Node.js v20.0.0 or higher (LTS version recommended)
@@ -81,9 +84,9 @@ RECOMMENDED FOR PRODUCTION:
 - Storage: 50GB SSD
 - Network: 100 Mbps dedicated connection
 - Load Balancer (for high traffic)
-- MySQL 8.0+ database server (REQUIRED FOR DOF)
+- MySQL 8.0+ database server
 - SSL/TLS certificate (for HTTPS)
-- Reverse proxy (Nginx/Apache)
+- Nginx reverse proxy
 
 ================================================================================
 3. PRE-DEPLOYMENT CHECKLIST
@@ -116,77 +119,42 @@ PERSONNEL REQUIRED:
 [ ] Application Support Personnel (post-deployment)
 
 ================================================================================
-4. DEPLOYMENT OPTIONS
+4. DEPLOYMENT ARCHITECTURE
 ================================================================================
 
-OPTION A: RHEL STANDALONE SERVER DEPLOYMENT (REQUIRED FOR DOF)
---------------------------------------------------------------
-Best for: On-premise deployment, full control, government compliance
+RHEL STANDALONE SERVER DEPLOYMENT
+----------------------------------
+On-premise deployment for complete data sovereignty and government compliance.
 
 Server Specifications:
-- OS: Red Hat Enterprise Linux (RHEL) 8 or 9
+- Operating System: Red Hat Enterprise Linux (RHEL) 8 or 9
 - Database: MySQL 8.0+
 - Web Server: Nginx (reverse proxy)
+- Process Manager: PM2
+- Security: SELinux + firewalld + SSL/TLS
 
-Pros:
+Key Benefits:
 - Complete data sovereignty
-- No dependency on external services
+- No dependency on external cloud services
 - Full customization capability
 - Meets government security requirements
 - RHEL enterprise support and compliance
+- Government audit compliance
 
-Cons:
-- Requires in-house infrastructure
-- Manual updates needed
-- IT team required for maintenance
-- RHEL subscription required
+Requirements:
+- In-house infrastructure
+- RHEL subscription
+- IT team for maintenance
+- Regular security updates
 
-Deployment Time: 3-5 hours (including MySQL setup)
-
-
-OPTION B: CLOUD DEPLOYMENT (VERCEL/AWS/AZURE)
----------------------------------------------
-Best for: Quick deployment, automatic scaling
-
-Pros:
-- Fast deployment (minutes)
-- Automatic updates and scaling
-- Minimal infrastructure management
-
-Cons:
-- Data hosted outside DOF premises
-- Recurring subscription costs
-- Less control over infrastructure
-
-Deployment Time: 30 minutes - 1 hour
-
-
-OPTION C: CONTAINERIZED DEPLOYMENT (DOCKER)
--------------------------------------------
-Best for: Consistent environments, easy scaling
-
-Pros:
-- Environment consistency
-- Easy replication across servers
-- Simplified updates
-
-Cons:
-- Requires Docker knowledge
-- Additional layer of complexity
-
-Deployment Time: 2-3 hours
-
-
-REQUIRED FOR DOF: OPTION A (RHEL Standalone Server Deployment)
-This guide focuses on Option A with RHEL 8+ and MySQL 8.0+ for maximum control,
-enterprise support, and government compliance.
+Estimated Deployment Time: 3-5 hours
 
 ================================================================================
-5. STEP-BY-STEP DEPLOYMENT INSTRUCTIONS
+5. STEP-BY-STEP DEPLOYMENT INSTRUCTIONS (RHEL + MySQL)
 ================================================================================
 
-PHASE 1: SERVER PREPARATION
----------------------------
+PHASE 1: RHEL SERVER PREPARATION
+---------------------------------
 
 Step 1.1: Install Node.js on RHEL
 ----------------------------------
@@ -575,7 +543,7 @@ MONITORING SETUP:
 [ ] Memory usage monitoring
 
 ================================================================================
-7. TROUBLESHOOTING GUIDE
+7. TROUBLESHOOTING GUIDE (RHEL + MySQL)
 ================================================================================
 
 ISSUE: npm install fails
