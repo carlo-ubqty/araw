@@ -1,6 +1,6 @@
 "use client";
 
-import { TrendingUp, Cloud, Layers, Boxes, Banknote, Coins, Target, Activity, TreePine, Database, Download } from "lucide-react";
+import { TrendingUp, Cloud, Layers, Boxes, Banknote, Coins, Target, Activity, TreePine } from "lucide-react";
 import { FundsMobilizedChart } from "@/components/charts/FundsMobilizedChart";
 import { GHGLevelsChart } from "@/components/charts/GHGLevelsChart";
 import { GHGBySectorChart } from "@/components/charts/GHGBySectorChart";
@@ -10,17 +10,12 @@ import { FundSourceChart } from "@/components/charts/FundSourceChart";
 import { DashboardLayout } from "@/templates/DashboardLayout";
 import { DatasetNavigation } from "@/components/layout/DatasetNavigation";
 import { useDatasetController } from "@/controllers/useDatasetController";
-import { useDataIntegration } from "@/hooks/useDataIntegration";
-import { ExportButton } from "@/components/common/ExportButton";
 import dynamic from "next/dynamic";
 const PhilippinesChoropleth = dynamic(() => import("@/components/map/PhilippinesChoropleth"), { ssr: false });
 import InvestmentsByRegionHorizontal from "@/components/charts/InvestmentsByRegionHorizontal";
 
 export default function OriginalMockupDashboard() {
-  const { activeDataset, handleDatasetChange, getDatasetConfig } = useDatasetController("nap");
-  const { integrationStatus, isLoading, getInvestments } = useDataIntegration();
-  
-  const currentDatasetConfig = getDatasetConfig();
+  const { activeDataset, handleDatasetChange } = useDatasetController("nap");
   
   return (
     <DashboardLayout headerProps={{ logoSrc: "/Department_of_Finance_(DOF).svg" }} showFilterBar={false}>
@@ -56,24 +51,8 @@ export default function OriginalMockupDashboard() {
             </div>
             
             <div>
-              <h3 className="text-sm font-semibold mb-4 uppercase tracking-wider opacity-75">DATA SOURCES</h3>
+              <h3 className="text-sm font-semibold mb-4 uppercase tracking-wider opacity-75">FILTERS</h3>
               <div className="space-y-2">
-                {integrationStatus && (
-                  <div className="space-y-1">
-                    <div className="px-3 py-2 text-xs bg-white/10 rounded">
-                      <div className="flex items-center gap-2 mb-1">
-                        <Database className="w-3 h-3" />
-                        <span className="font-medium">Integration Status</span>
-                      </div>
-                      <div className="text-[10px] opacity-80">
-                        {integrationStatus.connectedSources}/{integrationStatus.totalSources} Sources
-                      </div>
-                      <div className="text-[10px] opacity-80">
-                        {integrationStatus.dataQuality.completeness.toFixed(1)}% Complete
-                      </div>
-                    </div>
-                  </div>
-                )}
                 <div className="px-3 py-2 text-sm cursor-pointer hover:bg-white/10 opacity-80">All Regions</div>
                 <div className="px-3 py-2 text-sm cursor-pointer hover:bg-white/10 opacity-80">All Sectors</div>
                 <div className="px-3 py-2 text-sm cursor-pointer hover:bg-white/10 opacity-80">2020-2024</div>
@@ -92,32 +71,6 @@ export default function OriginalMockupDashboard() {
           
           {/* Content */}
           <div className="flex-1 p-6">
-            {/* Data Integration Status Banner */}
-            {isLoading && (
-              <div className="mb-6 p-4 bg-blue-50 border border-blue-200 rounded-lg">
-                <div className="flex items-center gap-3">
-                  <div className="animate-spin rounded-full h-4 w-4 border-b-2 border-blue-600"></div>
-                  <span className="text-blue-800 text-sm font-medium">Initializing data integration...</span>
-                </div>
-              </div>
-            )}
-            
-            {/* Dashboard Header with Export */}
-            <div className="flex items-center justify-between mb-6">
-              <div>
-                <h1 className="text-2xl font-bold text-gray-900 mb-1">
-                  {currentDatasetConfig.title}
-                </h1>
-                <p className="text-gray-600 text-sm">{currentDatasetConfig.description}</p>
-              </div>
-              <div className="flex items-center gap-3">
-                <ExportButton 
-                  data={[]} // Would pass actual filtered data
-                  dataType="investments"
-                  filename={`${activeDataset}-dashboard-export`}
-                />
-              </div>
-            </div>
             {/* KPI Cards - 5 Multi-colored Cards */}
             <div className="grid grid-cols-5 gap-4 mb-6">
               {/* Total Investment - Green */}
@@ -257,3 +210,6 @@ export default function OriginalMockupDashboard() {
     </DashboardLayout>
   );
 }
+
+
+

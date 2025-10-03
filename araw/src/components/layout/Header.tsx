@@ -4,28 +4,15 @@ import { Button } from "@heroui/react";
 import { Settings, Bell } from "lucide-react";
 import { useState, useEffect } from "react";
 
-// TypeScript interfaces for proper typing
-interface NavigationItem {
-  id: string;
-  label: string;
-  active?: boolean;
-}
 
 interface HeaderProps {
   title?: string;
   logoText?: string;
   logoSrc?: string; // optional image logo
-  navigationItems?: NavigationItem[];
   showDateTime?: boolean;
   className?: string;
 }
 
-// Navigation configuration (DRY principle)
-const DEFAULT_NAVIGATION: NavigationItem[] = [
-  { id: "all", label: "All Data", active: true },
-  { id: "nap", label: "NAP Data", active: false },
-  { id: "ndcip", label: "NDCIP Data", active: false },
-];
 
 // Real-time date formatting utility - matching mockup format (no comma between date and time)
 const formatDateTime = (): string => {
@@ -45,12 +32,10 @@ export function Header({
   title = "Climate Finance Dashboard",
   logoText = "CF",
   logoSrc,
-  navigationItems = DEFAULT_NAVIGATION,
   showDateTime = true,
   className = "",
 }: HeaderProps) {
   const [currentDateTime, setCurrentDateTime] = useState<string>("");
-  const [activeNav, setActiveNav] = useState<string>("all");
 
   // Real-time clock update
   useEffect(() => {
@@ -64,47 +49,24 @@ export function Header({
     return () => clearInterval(interval);
   }, []);
 
-  // Navigation handler
-  const handleNavClick = (navId: string) => {
-    setActiveNav(navId);
-    // TODO: Implement actual navigation logic
-  };
 
   return (
-    <header className={`bg-[#4b1f63] text-white ${className}`}>
+    <header className={`bg-[#3C6866] text-white ${className}`}>
       <div className="px-6 py-2.5">
         <div className="max-w-6xl mx-auto">
-          <div className="flex items-center justify-between relative">
+          <div className="flex items-center justify-between">
           {/* Left Section: Logo & Title */}
           <div className="flex items-center gap-3">
             {logoSrc ? (
               <img src={logoSrc} alt="Logo" className="w-8 h-8 rounded-full object-cover" />
             ) : (
               <div className="w-8 h-8 bg-white rounded-full flex items-center justify-center">
-                <span className="text-purple-800 font-bold text-sm">{logoText}</span>
+                <span className="text-[#3C6866] font-bold text-sm">{logoText}</span>
               </div>
             )}
             <h1 className="text-sm md:text-base lg:text-lg font-normal tracking-normal">{title}</h1>
           </div>
 
-          {/* Center Section: Navigation Pills - Hidden on mobile */}
-          <div className="hidden sm:flex absolute left-1/2 transform -translate-x-1/2 gap-1">
-            {navigationItems.map((item) => (
-              <Button
-                key={item.id}
-                size="sm"
-                variant={activeNav === item.id ? "solid" : "light"}
-                className={
-                  activeNav === item.id
-                    ? "bg-white/15 text-white text-xs px-2 md:px-3 py-1 h-auto min-w-0 rounded hover:bg-white/25"
-                    : "text-white/90 text-xs px-2 md:px-3 py-1 h-auto min-w-0 rounded hover:bg-white/10"
-                }
-                onPress={() => handleNavClick(item.id)}
-              >
-                {item.label}
-              </Button>
-            ))}
-          </div>
 
           {/* Right Section: DateTime & Actions */}
           <div className="flex items-center gap-2 md:gap-4">
@@ -145,4 +107,4 @@ export function Header({
 }
 
 // Export types for external use (DRY principle)
-export type { HeaderProps, NavigationItem };
+export type { HeaderProps };

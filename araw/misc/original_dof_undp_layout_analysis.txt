@@ -1,0 +1,68 @@
+ORIGINAL DOF/UNDP MOCKUP ANALYSIS
+=====================================
+Date: 2025-09-29
+Comparison vs. Current v3.0 Implementation
+
+KEY LAYOUT DIFFERENCES OBSERVED:
+================================
+
+1. LEFT SIDEBAR STRUCTURE:
+   - Full-height teal/green sidebar (not thin nav)
+   - Multiple navigation sections vertically stacked
+   - White text on dark green background
+   - Appears to have expandable/collapsible sections
+
+2. TOP NAVIGATION TABS:
+   - NAP, NDCIP, BUDGET, PROJECTS tabs (4 total vs our 2)
+   - Similar to our current dataset navigation but more tabs
+   - Blue and green color scheme for active/inactive tabs
+
+3. KPI CARDS LAYOUT:
+   - 5 horizontal KPI cards across top
+   - Different color schemes: Green, Blue, Orange, Yellow, Purple
+   - Shows: 980 Mn, 56%, 700 Mn, 280 Mn, 579 Projects
+   - Cards have gradient backgrounds and trend indicators
+
+4. CHART GRID LAYOUT:
+   - Dense 3-column grid layout
+   - Multiple chart types: Line, Bar, Stacked Bar, Map, Bubble
+   - Chart sections:
+     * Funds Mobilized for Climate Action (line chart)  
+     * GHG Levels (line chart)
+     * Investments by Sector (stacked bar)
+     * Fund Sources (bar chart) 
+     * GHG CO2 Baseline by Sector (bar chart)
+     * Investments by Region (horizontal bar)
+     * Philippine Map visualization (choropleth)
+     * Vulnerability/Climate Risk by Investment (bubble map)
+     * Investment by Vulnerability Index (horizontal bar)
+
+5. COLOR SCHEME:
+   - Primarily teal/green sidebar
+   - Multi-color KPI cards (not monochromatic teal)
+   - Various chart colors per data type
+   - White background content area
+
+FUNCTIONAL DIFFERENCES:
+======================
+- More dataset categories (4 vs 2 tabs)
+- Denser information display
+- Different chart arrangements
+- More comprehensive left navigation
+- Integrated map + data visualizations
+
+IMPACT ON CURRENT IMPLEMENTATION:
+=================================
+Current v3.0 implementation significantly differs from original:
+- Simpler sidebar vs. full-height navigation
+- Missing BUDGET and PROJECTS tabs
+- Different chart layout (fewer charts displayed)
+- Different color scheme application
+- Less dense information architecture
+
+RECOMMENDATION:
+===============
+Need to decide: Adapt current architecture to original design or restart with original as base template.
+
+
+

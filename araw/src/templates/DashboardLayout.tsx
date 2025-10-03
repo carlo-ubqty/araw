@@ -36,7 +36,7 @@ export function DashboardLayout({
       </main>
       
       {/* Footer Section */}
-      <footer className="bg-[#4b1f63] text-white py-3">
+      <footer className="bg-[#3C6866] text-white py-3">
         <div className="max-w-6xl mx-auto px-6">
           <div className="text-center text-sm">
             © 2025 Climate Finance Dashboard. All rights reserved
