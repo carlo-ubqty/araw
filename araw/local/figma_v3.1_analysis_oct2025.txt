@@ -1,0 +1,372 @@
+FIGMA MOCKUP v3.1 (WIP) - COMPREHENSIVE ANALYSIS
+================================================
+Date: October 6, 2025
+Source: Janika (Design Lead)
+Version: 3.1 Climate Finance Dashboard (09302025)
+Link: https://www.figma.com/design/kAmHRhqaUBVqpGxJ1VEqf7/2025_DoF_Climate_Finance_Dashboard?node-id=192-2968&p=f
+
+COMPARISON: Current Implementation (Sept v2.0) vs New Figma v3.1
+================================================================
+
+## SECTION-BY-SECTION ANALYSIS
+
+### 01 - MAIN HEADER
+**CURRENT:** Purple background (#4b1f63)
+**NEW v3.1:** Bright Pink/Magenta background
+**Changes Required:**
+- ✅ Keep: DoF logo on left
+- ✅ Keep: "Climate Finance Dashboard" title
+- ✅ Keep: Real-time timestamp (09/10/2025 11:42:06 AM format)
+- 🆕 ADD: Dashboard updates/notifications icon (bell icon suggested)
+- 🆕 ADD: Settings icon (gear icon)
+- 🎨 CHANGE: Background color from purple to pink/magenta
+
+### 02 - SUB HEADER / FILTER BAR (MAJOR REDESIGN)
+**CURRENT:** Simple text-based filters with date picker
+**NEW v3.1:** Multi-level filter system with pill buttons and sector selection
+
+**Section A: "Adjust display by"**
+- 🆕 Toggle buttons (pill style):
+  * NATIONAL ADAPTATION PLAN (NAP) DATA (blue, default)
+  * NDC IMPLEMENTATION PLAN (NDCIP) DATA (white)
+- 🆕 Additional filters:
+  * AMOUNT (green pill)
+  * PROJECTS (white pill)
+  * ONGOING (white pill)
+  * COMPLETED (blue pill, selected)
+
+**Section B: "Select sectors"**
+- 🆕 8 sector buttons (for NAP):
+  * Agriculture
+  * Water
+  * Forestry
+  * Health
+  * Coastal & Marine
+  * Human Settlements
+  * DRRM
+  * Energy
+- Note: NDCIP has 5 sectors (Agriculture, Waste, Industry, Transport, Energy)
+
+**FUNCTIONAL NOTES:**
+- NAP/NDCIP toggle affects sectors and fund sources displayed
+- Amount vs Projects toggle affects the violet "Total Projects" card
+- Ongoing vs Completed filter affects data shown
+- Sectors are multi-select
+
+### 03 - KPI CARDS (5 CARDS - METRICS CHANGED)
+**CURRENT:** Total Investment, Total Projects, GHG Progress, Adaptation, Mitigation
+**NEW v3.1:** Different metrics and order
+
+**Card 1: TOTAL INVESTMENT**
+- Value: ₱1.16 B
+- Color: Green gradient
+- Icon: Stack/layers icon
+- NO trend indicator in new design
+
+**Card 2: GHG REDUCTION ACTUAL**
+- Value: 56%
+- Subtitle: "vs 2020 baseline"
+- Color: Blue gradient
+- Icon: Cloud/emissions icon
+- NO trend indicator
+
+**Card 3: ADAPTATION INVESTMENT**
+- Value: ₱1.12 B
+- Color: Orange gradient
+- Icon: Shield/protection icon
+- NO trend indicator
+
+**Card 4: MITIGATION INVESTMENT**
+- Value: ₱32.64 M
+- Color: Orange gradient (slightly different shade)
+- Icon: Layers/reduction icon
+- NO trend indicator
+
+**Card 5: TOTAL PROJECTS**
+- Value: 579 Projects
+- Color: Purple/blue gradient
+- Icon: Target/circle icon
+- NO trend indicator
+
+**KEY CHANGES:**
+- ❌ REMOVE: "Last Year" comparison and up/down arrows
+- 🎨 CHANGE: Card colors and gradients
+- 🎨 CHANGE: All icons
+- 📊 CHANGE: Metrics (GHG Reduction replaces old GHG Progress)
+
+### 04 - FINANCING AND EMISSIONS TRENDS SECTION
+**CURRENT:** Two charts side by side
+**NEW v3.1:** Similar structure but refined
+
+**Chart A: FUNDS MOBILIZED FOR CLIMATE ACTION**
+- ✅ KEEP: Area chart with Adaptation (orange) and Mitigation (yellow) stacked
+- ✅ KEEP: Trending up indicator
+- 🆕 ADD: Data callout showing "2025 (GAA): Adaptation ₱123,488,391 B, Mitigation ₱2,612,534 M"
+- 🆕 ADD: Notes section with disclaimers
+- 📊 DATA: Dataset from National CCET PAPs Figures 2017 - GAA FY2025
+
+**Chart B: GHG LEVELS**
+- ✅ KEEP: Line chart showing emissions over time
+- ✅ KEEP: 2024 marker and GtCO2 label
+- 🆕 ADD: Breakdown table on right side showing:
+  * Carbon Dioxide (CO2): 138,394
+  * Methane (CH4): 10,155
+  * Nitrous Oxide (N2O): 17,933
+  * Hydrofluorocarbon (HFC): 3,078
+- 📊 DATA: Gathered from NICCDIES with values for 1994, 2000, 2010, 2015, 2020
+
+### 05 - CLIMATE INVESTMENT OVERVIEW SECTION (MAJOR CHANGES)
+**CURRENT:** Three charts (Investment by Sector, Vulnerability, Income Class)
+**NEW v3.1:** Three components but different layout and content
+
+**Component A: INVESTMENT BY SECTOR**
+- ✅ KEEP: Stacked bar chart by sector
+- 🎨 CHANGE: Now shows Government Budget, Grant, Loan, Private as stack categories
+- 📊 CHANGE: Sectors based on NAP/NDCIP selection
+- 🆕 ADD: Insights box with Lorem ipsum text
+
+**Component B: FUND SOURCE (NEW DESIGN)**
+- ❌ REMOVE: Old pie chart
+- 🆕 NEW: Large card-based layout showing:
+  * GOVERNMENT BUDGET: ₱980 M (40%) - Large teal card
+  * GRANT: ₱310 M (32%) - Medium green card
+  * LOAN: ₱175 M (18%) - Small green card
+  * PRIVATE: ₱95 M (10%) - Small yellow/lime card
+- 🆕 ADD: Breakdown showing "Government Budget - Amount: ₱980 M (40%)"
+- 🆕 ADD: Insights text about funding sources
+
+**Component C: GHG VS 2020 BASELINE BY SECTOR (REPLACES Vulnerability)**
+- ❌ REMOVE: "Investments by Vulnerability Index" chart
+- 🆕 NEW: "GHG VS 2020 BASELINE BY SECTOR"
+- Chart type: Stacked bar chart by sector
+- Shows: Actual, Conditional Target, Unconditional Target
+- Colors: Blue shades for the three categories
+- Note: "40% of 2030 reduction target achieved"
+
+### 06 - REGIONAL INVESTMENTS & CLIMATE IMPACT DRIVERS (MAJOR CHANGES)
+**CURRENT:** Investment by Region bars + Philippines Choropleth showing vulnerability
+**NEW v3.1:** Investment by Region + Climate Impact Drivers map
+
+**Component A: INVESTMENTS BY REGION**
+- ✅ KEEP: Horizontal bar chart
+- ✅ KEEP: Regions listed (BARMM, Region XIII, Region I, etc.)
+- 🎨 REFINEMENT: Styling updates
+- Note: Shows BARMM, Region IDS, and Regional Macro alliances
+
+**Component B: CLIMATE IMPACT DRIVERS/INCOME CLASS VS INVESTMENTS (REPLACES Vulnerability Map)**
+- ❌ REMOVE: Old vulnerability index choropleth
+- 🆕 NEW: "CLIMATE IMPACT DRIVERS/INCOME CLASS VS INVESTMENTS"
+- Map type: Bubble/heatmap overlay on Philippines map
+- Shows:
+  * Climate Impact Drivers (CIDs):
+    - Increased Temperature & Drought (flame icons)
+    - Sea level rise and extreme sea levels (water icons)
+    - Extreme Precipitation (rain icons)
+    - Extreme wind and tropical cyclones (wind icons)
+  * Income Classes (bubble sizes):
+    - Income Class 5 (₱1B+)
+    - Income Class 4 (₱500 M+)
+    - Income Class 3 (₱200 M+)
+    - Income Class 2 (₱100 M+)
+    - Income Class 1 (<₱50 M)
+- 🆕 ADD: Legend showing both CIDs and Income Classes
+- 🆕 ADD: General Map Legend showing fund breakdown
+- 🆕 ADD: Checkbox for "Show bubble map"
+- 📊 DATA: Static map for now (no data available, as per Oct 3 meeting)
+
+### 07 - FILTERS (LEFT SIDEBAR)
+**CURRENT:** No sidebar filters
+**NEW v3.1:** Collapsible left sidebar with multiple filter categories
+
+**Filter Categories:**
+1. **Year** (checkboxes)
+   - 2025, 2024, 2023, 2022, 2021
+
+2. **Fund Source** (expandable)
+   - (Details not fully visible in mockup)
+
+3. **Fund Type** (expandable)
+   - Public, Private, Mixed
+
+4. **Funder** (expandable)
+   - (Details not fully visible)
+
+5. **Implementing Agency** (expandable)
+   - (Details not fully visible)
+
+6. **Climate Impact Drivers** (expandable)
+   - (For Regional section)
+
+7. **Income Class** (expandable)
+   - (For Regional section)
+
+**Notes:**
+- Filters aligned with each section based on function
+- "Key Metrics" and "Financing Trends": Year and Project Status filters
+- "Funding" section: Fund Source, Fund Type, Funder, Implementing Agency
+- "Regional" section: CIDs and Income Class filters
+
+## KEY FUNCTIONAL REQUIREMENTS FROM DISCUSSION DOCUMENT
+
+### Data Toggle Behavior:
+1. **NAP vs NDCIP switching:**
+   - Same elements EXCEPT fund sourcing and sectors
+   - NAP: 8 sectors
+   - NDCIP: 5 sectors (some intersection with NAP, especially energy)
+
+2. **Amount vs Projects toggle:**
+   - Affects only the violet "Total Projects" card
+   - Amount shows total investment
+   - Projects shows total project count
+
+3. **Ongoing vs Completed:**
+   - Filter affects all data displays
+
+### Chart-Specific Notes:
+1. **Fund Source Chart:**
+   - Only sectors from NAP/NDCIP Data selection are displayed
+
+2. **GHG VS 2020 Baseline:**
+   - REPLACES old "GHG Reduction (Actual vs Baseline)"
+   - Shows sector-based breakdown
+
+3. **Climate Impact Drivers Map:**
+   - REPLACES "Vulnerability Index"
+   - Uses NAP Climate Impact Drivers (Source: NICCDIES)
+   - Shows "Nationwide" instead of project-specific locations
+   - Heat map shows PSF funds only
+   - CIDs can be visible or hidden (user preference via checkbox)
+
+### Data Sources:
+- **Total Investment, Adaptation, Mitigation:** National CCET PAPs Figures 2017 - GAA FY2025
+- **GHG Reduction vs 2020 Baseline:** No specific resources listed (initial mockup reference)
+- **Total Projects:** No specific resources listed (initial mockup reference)
+- **Funds Mobilized:** National CCET PAPs Figures 2017 - GAA FY2025 (mix of Actual, NEP, GAA)
+- **GHG Levels:** NICCDIES data (1994, 2000, 2010, 2015, 2020)
+- **Investment by Sector & GHG Baseline:** Existing mockup references
+- **Climate Impact Drivers:** NICCDIES, static for now (no proper data guidelines yet)
+
+## IMPLEMENTATION PRIORITY ASSESSMENT
+
+### HIGH PRIORITY (Core Functionality Changes):
+1. ✅ Header color change (pink/magenta)
+2. ✅ Complete filter bar redesign with NAP/NDCIP toggle
+3. ✅ KPI cards metric changes and styling
+4. ✅ Fund Source redesign (card-based layout)
+5. ✅ GHG VS 2020 Baseline chart (replaces vulnerability)
+6. ✅ Climate Impact Drivers map (replaces vulnerability index)
+
+### MEDIUM PRIORITY (Enhancements):
+7. ✅ Left sidebar filters implementation
+8. ✅ Sector selection buttons functionality
+9. ✅ Amount vs Projects toggle
+10. ✅ Data callouts and insights boxes
+11. ✅ GHG Levels breakdown table
+
+### LOW PRIORITY (Polish):
+12. ✅ Settings and notification icons
+13. ✅ Refined chart styling
+14. ✅ Tooltip improvements
+15. ✅ Checkbox for showing/hiding CIDs on map
+
+## TECHNICAL CONSIDERATIONS
+
+### New Components Needed:
+- Multi-toggle pill button group (NAP/NDCIP, Amount/Projects, etc.)
+- Sector selection button grid
+- Left sidebar filter panel (collapsible)
+- Card-based fund source visualization
+- Stacked bar chart for GHG baseline comparison
+- Bubble overlay map with multiple legend types
+- Insights text boxes for charts
+
+### State Management:
+- NAP vs NDCIP selection (affects sectors, fund sources)
+- Amount vs Projects toggle (affects violet card)
+- Ongoing vs Completed filter
+- Multi-select sector buttons
+- Year checkboxes
+- Sidebar filter states
+- Show/hide CIDs checkbox
+
+### Data Layer Updates:
+- Support for NAP 8 sectors vs NDCIP 5 sectors
+- Fund source breakdown (Government, Grant, Loan, Private)
+- GHG baseline data by sector
+- Climate Impact Drivers data structure
+- Income class mapping
+- Regional investment data
+
+## ESTIMATED EFFORT
+
+**Total Complexity:** HIGH
+**Estimated Development Time:** 3-5 days for full implementation
+
+**Breakdown:**
+- Day 1: Header, filter bar, KPI cards redesign
+- Day 2: Chart updates (Funds, GHG breakdown, Investment by Sector)
+- Day 3: Fund Source cards, GHG Baseline chart
+- Day 4: Climate Impact Drivers map, sidebar filters
+- Day 5: Polish, testing, data integration, responsive design
+
+## RECOMMENDED APPROACH
+
+**Phase 1: Structure & Layout (Day 1)**
+1. Update header color and icons
+2. Implement new filter bar with toggles
+3. Update KPI cards metrics and styling
+4. Add left sidebar structure
+
+**Phase 2: Chart Modifications (Day 2-3)**
+5. Update existing charts (Funds Mobilized, GHG Levels)
+6. Redesign Fund Source as card layout
+7. Replace vulnerability chart with GHG Baseline
+8. Update Investment by Sector
+
+**Phase 3: New Features (Day 4)**
+9. Implement Climate Impact Drivers map
+10. Add sidebar filter functionality
+11. Wire up NAP/NDCIP data switching
+12. Implement Amount/Projects toggle
+
+**Phase 4: Polish & Testing (Day 5)**
+13. Add insights boxes and data callouts
+14. Implement show/hide CIDs functionality
+15. Test all interactions and data flows
+16. Responsive design verification
+17. Build and deploy
+
+## BREAKING CHANGES
+
+**Components to Remove:**
+- ❌ InvestmentsByVulnerabilityChart.tsx
+- ❌ InvestmentsByIncomeClassChart.tsx (replaced by map legend)
+- ❌ Old simple FilterBar.tsx (complete redesign)
+
+**Components to Heavily Modify:**
+- 🔄 Header.tsx (color, icons)
+- 🔄 KPICard.tsx (remove trends, update styling)
+- 🔄 FundSourceChart.tsx (pie → card layout)
+- 🔄 PhilippinesChoropleth.tsx (vulnerability → CIDs)
+- 🔄 page.tsx (complete layout restructure)
+
+**New Components to Create:**
+- 🆕 FilterBar.v3.1.tsx (multi-level filter system)
+- 🆕 SectorSelector.tsx (button grid)
+- 🆕 SidebarFilters.tsx (collapsible filter panel)
+- 🆕 FundSourceCards.tsx (card-based layout)
+- 🆕 GHGBaselineChart.tsx (new chart type)
+- 🆕 ClimateImpactDriversMap.tsx (bubble overlay map)
+- 🆕 TogglePillGroup.tsx (reusable toggle component)
+- 🆕 InsightsBox.tsx (text insight panels)
+
+## NEXT STEPS
+
+1. User approval of implementation approach
+2. Begin Phase 1 (Structure & Layout)
+3. Incremental builds after each phase
+4. User verification at each milestone
+5. Final build and deployment
+
+**Status:** READY FOR IMPLEMENTATION - Awaiting user approval to proceed
+

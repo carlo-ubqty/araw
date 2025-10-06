@@ -1,0 +1,211 @@
+================================================================================
+QUICK DEPLOYMENT - FIGMA MOCKUP PDF DISPLAY
+ARAW Climate Finance Dashboard - DoF October 7, 2025 Meeting
+================================================================================
+
+PURPOSE:
+Setup environment and display Figma v3.1 mockup as PDF while development is ongoing.
+This will be replaced with the full application once development is complete.
+
+NOTE: See FIGMA_PDF_DEPLOYMENT.txt for detailed PDF-specific instructions.
+
+================================================================================
+OPTION A: SIMPLE NGINX DEPLOYMENT (RECOMMENDED - 15 minutes)
+================================================================================
+
+Step 1: Copy Landing Page to Server
+-----------------------------------
+scp public/landing.html [user]@[dof-server]:/tmp/
+
+Step 2: Install Nginx (if not already installed)
+------------------------------------------------
+sudo dnf install -y nginx
+
+Step 3: Configure Nginx for Landing Page
+-----------------------------------------
+sudo nano /etc/nginx/conf.d/araw-landing.conf
+
+Add this configuration:
+
+server {
+    listen 80;
+    server_name _;
+    
+    root /var/www/araw-landing;
+    index landing.html;
+    
+    location / {
+        try_files $uri $uri/ /landing.html;
+    }
+    
+    # Security headers
+    add_header X-Frame-Options "SAMEORIGIN" always;
+    add_header X-Content-Type-Options "nosniff" always;
+}
+
+Step 4: Create Directory and Copy File
+---------------------------------------
+sudo mkdir -p /var/www/araw-landing
+sudo cp /tmp/landing.html /var/www/araw-landing/
+sudo chown -R nginx:nginx /var/www/araw-landing
+sudo chmod -R 755 /var/www/araw-landing
+
+Step 5: Test and Start Nginx
+-----------------------------
+sudo nginx -t
+sudo systemctl start nginx
+sudo systemctl enable nginx
+
+Step 6: Configure Firewall
+---------------------------
+sudo firewall-cmd --permanent --add-service=http
+sudo firewall-cmd --reload
+
+Step 7: Verify
+--------------
+Open browser: http://[server-ip]
+You should see the ARAW landing page
+
+DONE! Total time: ~15 minutes
+
+================================================================================
+OPTION B: PYTHON HTTP SERVER (TESTING - 5 minutes)
+================================================================================
+
+For quick testing without Nginx:
+
+Step 1: Navigate to public directory
+cd /path/to/araw/public
+
+Step 2: Start Python HTTP server
+python3 -m http.server 80
+
+Step 3: Access
+http://[server-ip]
+
+Note: Not recommended for production, only for quick testing.
+
+================================================================================
+OPTION C: NODEJS SERVE (ALTERNATIVE - 10 minutes)
+================================================================================
+
+Step 1: Install serve globally
+sudo npm install -g serve
+
+Step 2: Create systemd service
+sudo nano /etc/systemd/system/araw-landing.service
+
+Add:
+[Unit]
+Description=ARAW Landing Page
+After=network.target
+
+[Service]
+Type=simple
+User=araw
+WorkingDirectory=/var/www/araw-landing
+ExecStart=/usr/bin/serve -s . -l 3000
+Restart=always
+
+[Install]
+WantedBy=multi-user.target
+
+Step 3: Copy landing page
+sudo mkdir -p /var/www/araw-landing
+sudo cp public/landing.html /var/www/araw-landing/index.html
+
+Step 4: Start service
+sudo systemctl daemon-reload
+sudo systemctl start araw-landing
+sudo systemctl enable araw-landing
+
+Step 5: Configure Nginx reverse proxy (optional)
+See DEPLOYMENT_GUIDE_DOF.txt Section 4.2
+
+================================================================================
+REPLACING WITH FULL APPLICATION LATER
+================================================================================
+
+When v3.1 development is complete:
+
+Option A users (Nginx):
+1. Stop nginx: sudo systemctl stop nginx
+2. Follow full DEPLOYMENT_GUIDE_DOF.txt
+3. Update nginx config to proxy to :3000
+4. Restart nginx: sudo systemctl restart nginx
+
+Option C users (nodejs serve):
+1. Stop landing service: sudo systemctl stop araw-landing
+2. Follow full DEPLOYMENT_GUIDE_DOF.txt
+3. Remove landing service: sudo systemctl disable araw-landing
+
+================================================================================
+FILES NEEDED FOR TOMORROW
+================================================================================
+
+TO BRING:
+[ ] public/landing.html (the static page)
+[ ] DEPLOYMENT_GUIDE_DOF.txt (full guide for reference)
+[ ] THIS FILE (QUICK_DEPLOY_LANDING.txt)
+[ ] USB drive with all files
+
+OPTIONAL (for future deployment):
+[ ] Full source code ZIP
+[ ] Git repository URL
+
+================================================================================
+MEETING TALKING POINTS
+================================================================================
+
+1. "We're setting up the environment today with a placeholder page"
+2. "Version 3.1 is in active development with new features"
+3. "Full application will be deployed once development is complete"
+4. "Today we're validating the server environment and infrastructure"
+5. "This ensures smooth deployment when the app is ready"
+
+NEW FEATURES IN v3.1 (to discuss):
+- NAP vs NDCIP data toggle (8 sectors vs 5 sectors)
+- Enhanced filter system with sidebar
+- Climate Impact Drivers mapping
+- GHG baseline tracking by sector
+- Improved fund source visualization
+- Advanced analytics and insights
+
+TIMELINE:
+- Environment setup: Today (Oct 7)
+- v3.1 Development: 3-5 days
+- Full deployment: October 2025 (after v3.1 completion)
+
+================================================================================
+TROUBLESHOOTING
+================================================================================
+
+ISSUE: Cannot access landing page
+SOLUTION:
+1. Check firewall: sudo firewall-cmd --list-all
+2. Check nginx status: sudo systemctl status nginx
+3. Check SELinux: sudo setsebool -P httpd_can_network_connect 1
+
+ISSUE: Permission denied
+SOLUTION:
+sudo chown -R nginx:nginx /var/www/araw-landing
+sudo chmod -R 755 /var/www/araw-landing
+
+ISSUE: Port 80 already in use
+SOLUTION:
+1. Check what's using port 80: sudo lsof -i :80
+2. Either stop that service or use different port in nginx config
+
+================================================================================
+QUICK REFERENCE
+================================================================================
+
+Start Nginx: sudo systemctl start nginx
+Stop Nginx: sudo systemctl stop nginx
+Restart Nginx: sudo systemctl restart nginx
+Check Status: sudo systemctl status nginx
+Test Config: sudo nginx -t
+View Logs: sudo tail -f /var/log/nginx/error.log
+
+================================================================================
+

@@ -1,0 +1,262 @@
+================================================================================
+DEPLOYMENT - FIGMA MOCKUP AS PDF
+ARAW Climate Finance Dashboard - DoF October 7, 2025 Meeting
+================================================================================
+
+APPROACH: Display Figma v3.1 mockup as PDF on DoF server
+This shows them the EXACT design they'll be getting.
+
+================================================================================
+STEP 1: EXPORT FIGMA TO PDF (Do this tonight)
+================================================================================
+
+1. Open Figma design:
+   https://www.figma.com/design/kAmHRhqaUBVqpGxJ1VEqf7/2025_DoF_Climate_Finance_Dashboard?node-id=192-2968&p=f
+
+2. Export as PDF:
+   - Select all frames/pages you want to show
+   - File → Export → PDF
+   - Save as: araw-dashboard-v3.1-mockup.pdf
+   
+3. Copy to project:
+   - Save PDF to: /Users/boyetmolina/Data/Code/UBQTY/araw/araw/public/
+   - Or bring on USB drive tomorrow
+
+================================================================================
+STEP 2A: NGINX PDF VIEWER (15 minutes setup)
+================================================================================
+
+Option A: Direct PDF serving with simple viewer
+
+1. Copy PDF to server:
+   scp public/araw-dashboard-v3.1-mockup.pdf [user]@[server]:/tmp/
+
+2. Install Nginx:
+   sudo dnf install -y nginx
+
+3. Create web directory:
+   sudo mkdir -p /var/www/araw-preview
+   sudo cp /tmp/araw-dashboard-v3.1-mockup.pdf /var/www/araw-preview/
+   
+4. Create simple HTML viewer:
+   sudo nano /var/www/araw-preview/index.html
+
+Paste this:
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>ARAW Climate Finance Dashboard - Preview</title>
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        body { 
+            font-family: system-ui, -apple-system, sans-serif;
+            background: #1a202c;
+            color: white;
+        }
+        .header {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            padding: 20px;
+            text-align: center;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.3);
+        }
+        h1 { font-size: 24px; margin-bottom: 5px; }
+        .subtitle { 
+            font-size: 14px; 
+            opacity: 0.9;
+            margin-bottom: 10px;
+        }
+        .status {
+            display: inline-block;
+            background: rgba(255,255,255,0.2);
+            padding: 6px 20px;
+            border-radius: 20px;
+            font-size: 12px;
+            font-weight: 600;
+        }
+        .container {
+            max-width: 1400px;
+            margin: 0 auto;
+            padding: 20px;
+        }
+        .pdf-viewer {
+            background: white;
+            border-radius: 8px;
+            overflow: hidden;
+            box-shadow: 0 10px 40px rgba(0,0,0,0.3);
+        }
+        embed {
+            width: 100%;
+            height: calc(100vh - 160px);
+            border: none;
+        }
+        .footer {
+            text-align: center;
+            padding: 20px;
+            font-size: 13px;
+            opacity: 0.7;
+        }
+    </style>
+</head>
+<body>
+    <div class="header">
+        <h1>🌏 ARAW Climate Finance Dashboard</h1>
+        <div class="subtitle">Department of Finance - Republic of the Philippines</div>
+        <span class="status">Version 3.1 - Design Preview</span>
+    </div>
+    
+    <div class="container">
+        <div class="pdf-viewer">
+            <embed src="araw-dashboard-v3.1-mockup.pdf" 
+                   type="application/pdf" 
+                   width="100%" 
+                   height="100%">
+        </div>
+    </div>
+    
+    <div class="footer">
+        October 2025 Deployment | Project Manager: Jhonnel | For: Asst. Secretary Angie
+    </div>
+</body>
+</html>
+
+5. Set permissions:
+   sudo chown -R nginx:nginx /var/www/araw-preview
+   sudo chmod -R 755 /var/www/araw-preview
+
+6. Configure Nginx:
+   sudo nano /etc/nginx/conf.d/araw-preview.conf
+
+Add:
+server {
+    listen 80;
+    server_name _;
+    
+    root /var/www/araw-preview;
+    index index.html;
+    
+    location / {
+        try_files $uri $uri/ /index.html;
+    }
+    
+    location ~* \.(pdf)$ {
+        add_header Content-Type application/pdf;
+        add_header Content-Disposition inline;
+    }
+}
+
+7. Start Nginx:
+   sudo nginx -t
+   sudo systemctl start nginx
+   sudo systemctl enable nginx
+   
+8. Configure firewall:
+   sudo firewall-cmd --permanent --add-service=http
+   sudo firewall-cmd --reload
+
+9. Access:
+   http://[server-ip]
+
+DONE! Shows Figma mockup in browser with PDF viewer.
+
+================================================================================
+STEP 2B: SIMPLE STATIC FILE SERVING (10 minutes)
+================================================================================
+
+Even simpler - just serve the PDF directly:
+
+1. Copy PDF to server (as above)
+2. Setup Nginx (as above)
+3. Skip the HTML wrapper
+4. Configure Nginx to serve PDF at root:
+
+server {
+    listen 80;
+    server_name _;
+    
+    root /var/www/araw-preview;
+    
+    location / {
+        try_files $uri /araw-dashboard-v3.1-mockup.pdf;
+        add_header Content-Type application/pdf;
+    }
+}
+
+Access: http://[server-ip]
+Opens PDF directly in browser.
+
+================================================================================
+ADVANTAGES OF THIS APPROACH
+================================================================================
+
+✅ Shows ACTUAL design (not a placeholder)
+✅ Professional - this is what they're getting
+✅ Easy to discuss features during meeting
+✅ Can zoom in/out and review details
+✅ No "fake" or generic content
+✅ Quick to deploy (10-15 minutes)
+✅ Easy to replace with real app later
+
+================================================================================
+MEETING TALKING POINTS
+================================================================================
+
+1. "This is the exact design for Version 3.1"
+2. "Shows all planned features and layout"
+3. "Currently in active development"
+4. "Today we're setting up the infrastructure"
+5. "Full working application coming next week"
+
+Point out features in PDF:
+- NAP vs NDCIP data toggle
+- Enhanced filtering system
+- Climate Impact Drivers mapping
+- GHG baseline tracking
+- 5 KPI cards with real metrics
+- Interactive charts and Philippine map
+
+================================================================================
+REPLACING WITH FULL APP LATER
+================================================================================
+
+When v3.1 is ready:
+
+1. Follow full DEPLOYMENT_GUIDE_DOF.txt
+2. Deploy actual Next.js application
+3. Update Nginx config to proxy to :3000
+4. Remove PDF preview directory
+
+The infrastructure setup today (Nginx, firewall, etc.) 
+will be reused for the full application.
+
+================================================================================
+FILES TO BRING TOMORROW
+================================================================================
+
+REQUIRED:
+[ ] araw-dashboard-v3.1-mockup.pdf (export from Figma tonight)
+[ ] DEPLOYMENT_GUIDE_DOF.txt (full deployment guide)
+[ ] This file (FIGMA_PDF_DEPLOYMENT.txt)
+[ ] USB drive with all files
+
+OPTIONAL:
+[ ] Screenshots of specific features to discuss
+[ ] figma_v3.1_analysis_oct2025.txt (feature details)
+
+================================================================================
+BACKUP PLAN
+================================================================================
+
+If PDF viewer doesn't work in their browser:
+- Have PDF on USB drive
+- Can open directly on their machine
+- Or use laptop to present
+
+If server setup takes longer:
+- Demo from your laptop
+- Open PDF locally
+- Show them the design and discuss features
+
+================================================================================
+

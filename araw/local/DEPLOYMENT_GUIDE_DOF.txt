@@ -1,0 +1,724 @@
+================================================================================
+ARAW PHILIPPINE CLIMATE FINANCE DASHBOARD
+DEPLOYMENT GUIDE FOR DEPARTMENT OF FINANCE
+RHEL 8/9 + MySQL 8.0+ DEPLOYMENT
+================================================================================
+
+Document Version: 2.0
+Target Deployment: October 2025 (New Version)
+Deployment Platform: Red Hat Enterprise Linux (RHEL) 8 or 9 with MySQL 8.0+
+Prepared for: Asst. Secretary Angie, Department of Finance
+Contact: Jhonnel (Project Manager)
+
+NOTE: This guide is specifically designed for RHEL + MySQL deployment only.
+
+================================================================================
+TABLE OF CONTENTS
+================================================================================
+
+1. EXECUTIVE SUMMARY
+2. SYSTEM REQUIREMENTS (RHEL + MySQL)
+3. PRE-DEPLOYMENT CHECKLIST
+4. DEPLOYMENT ARCHITECTURE
+5. STEP-BY-STEP DEPLOYMENT INSTRUCTIONS (RHEL + MySQL)
+6. POST-DEPLOYMENT VERIFICATION
+7. TROUBLESHOOTING GUIDE (RHEL + MySQL)
+8. MAINTENANCE & UPDATES
+9. SECURITY CONSIDERATIONS
+10. SUPPORT & CONTACTS
+
+================================================================================
+1. EXECUTIVE SUMMARY
+================================================================================
+
+The ARAW Climate Finance Dashboard is a Next.js 15.5.3 web application designed
+to visualize and analyze climate finance data across 165+ data sources from 20+
+government agencies in the Philippines.
+
+KEY FEATURES:
+- Real-time climate finance data visualization
+- Multi-agency data integration (BOI, BSP, BTr, CCC, NEDA, PSA, etc.)
+- Interactive Philippine regional mapping
+- Export capabilities (CSV, XLSX, PDF, JSON)
+- Role-based access control
+- Government-compliant security standards
+
+TECHNOLOGY STACK:
+- Frontend: Next.js 15.5.3 + React 19.1.0
+- UI Framework: HeroUI 2.8.4 + Tailwind CSS 4
+- Charts: Recharts 3.2.0
+- Maps: Leaflet 1.9.4 + React-Leaflet 5.0.0
+- Operating System: Red Hat Enterprise Linux (RHEL) 8+
+- Database: MySQL 8.0+
+- Web Server: Nginx (reverse proxy)
+- Authentication: NextAuth 4.24.11
+
+BUILD SIZE: ~128kB (optimized)
+PERFORMANCE: <2s initial load, <200ms interaction response
+
+================================================================================
+2. SYSTEM REQUIREMENTS (RHEL + MySQL)
+================================================================================
+
+MINIMUM REQUIREMENTS:
+-------------------
+Server/Hardware:
+- CPU: 2 cores (4 cores recommended)
+- RAM: 4GB minimum (8GB recommended)
+- Storage: 10GB available disk space
+- Network: 10 Mbps internet connection
+
+Operating System:
+- Red Hat Enterprise Linux (RHEL) 8 or 9
+
+Software Prerequisites:
+- Node.js v20.0.0 or higher (LTS version recommended)
+- npm v10.0.0 or higher (comes with Node.js)
+- Git v2.30 or higher (for version control)
+- Web Browser: Chrome 100+, Firefox 100+, Edge 100+, Safari 15+
+
+RECOMMENDED FOR PRODUCTION:
+-------------------------
+- CPU: 4+ cores
+- RAM: 16GB+
+- Storage: 50GB SSD
+- Network: 100 Mbps dedicated connection
+- Load Balancer (for high traffic)
+- MySQL 8.0+ database server
+- SSL/TLS certificate (for HTTPS)
+- Nginx reverse proxy
+
+================================================================================
+3. PRE-DEPLOYMENT CHECKLIST
+================================================================================
+
+[ ] RHEL 8+ server provisioned and accessible
+[ ] Server meets minimum requirements
+[ ] Node.js 20+ installed (verify: node --version)
+[ ] npm 10+ installed (verify: npm --version)
+[ ] Git installed (verify: git --version)
+[ ] MySQL 8.0+ server installed and running
+[ ] MySQL root password set and documented
+[ ] Network access to GitHub repository
+[ ] Firewall rules configured (allow port 3000 or custom port)
+[ ] SSL certificate obtained (if deploying with HTTPS)
+[ ] Backup and rollback plan prepared
+[ ] IT team notified of deployment schedule
+[ ] User access credentials prepared
+[ ] Data sources connection information available
+
+NETWORK REQUIREMENTS:
+[ ] Outbound HTTPS access (port 443) for data sources
+[ ] Inbound access on deployment port (default: 3000)
+[ ] Access to government agency APIs (if applicable)
+
+PERSONNEL REQUIRED:
+[ ] System Administrator (for server access)
+[ ] Network Administrator (for firewall/proxy configuration)
+[ ] DBA (if using database)
+[ ] Application Support Personnel (post-deployment)
+
+================================================================================
+4. DEPLOYMENT ARCHITECTURE
+================================================================================
+
+RHEL STANDALONE SERVER DEPLOYMENT
+----------------------------------
+On-premise deployment for complete data sovereignty and government compliance.
+
+Server Specifications:
+- Operating System: Red Hat Enterprise Linux (RHEL) 8 or 9
+- Database: MySQL 8.0+
+- Web Server: Nginx (reverse proxy)
+- Process Manager: PM2
+- Security: SELinux + firewalld + SSL/TLS
+
+Key Benefits:
+- Complete data sovereignty
+- No dependency on external cloud services
+- Full customization capability
+- Meets government security requirements
+- RHEL enterprise support and compliance
+- Government audit compliance
+
+Requirements:
+- In-house infrastructure
+- RHEL subscription
+- IT team for maintenance
+- Regular security updates
+
+Estimated Deployment Time: 3-5 hours
+
+================================================================================
+5. STEP-BY-STEP DEPLOYMENT INSTRUCTIONS (RHEL + MySQL)
+================================================================================
+
+PHASE 1: RHEL SERVER PREPARATION
+---------------------------------
+
+Step 1.1: Install Node.js on RHEL
+----------------------------------
+RHEL 8/9:
+1. Enable EPEL repository:
+   sudo dnf install -y epel-release
+
+2. Install Node.js 20 LTS from NodeSource:
+   curl -fsSL https://rpm.nodesource.com/setup_20.x | sudo bash -
+   sudo dnf install -y nodejs
+
+3. Verify installation:
+   node --version    # Should show v20.x.x
+   npm --version     # Should show v10.x.x
+
+4. Install build tools (required for some npm packages):
+   sudo dnf groupinstall -y "Development Tools"
+
+Step 1.2: Install Git on RHEL
+-----------------------------
+RHEL 8/9:
+sudo dnf install -y git
+
+Verify installation:
+git --version
+
+Step 1.3: Install and Configure MySQL 8.0
+-----------------------------------------
+RHEL 8/9:
+
+1. Add MySQL repository:
+   sudo dnf install -y https://dev.mysql.com/get/mysql80-community-release-el8-1.noarch.rpm
+
+2. Install MySQL Server:
+   sudo dnf install -y mysql-server
+
+3. Start MySQL service:
+   sudo systemctl start mysqld
+   sudo systemctl enable mysqld
+
+4. Secure MySQL installation:
+   sudo mysql_secure_installation
+   
+   Follow prompts:
+   - Set root password (SAVE THIS PASSWORD!)
+   - Remove anonymous users: Y
+   - Disallow root login remotely: Y
+   - Remove test database: Y
+   - Reload privilege tables: Y
+
+5. Create database for ARAW:
+   sudo mysql -u root -p
+   
+   In MySQL prompt:
+   CREATE DATABASE araw_climate_finance CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci;
+   CREATE USER 'araw_user'@'localhost' IDENTIFIED BY '[STRONG_PASSWORD]';
+   GRANT ALL PRIVILEGES ON araw_climate_finance.* TO 'araw_user'@'localhost';
+   FLUSH PRIVILEGES;
+   EXIT;
+
+6. Verify MySQL is running:
+   sudo systemctl status mysqld
+
+Step 1.4: Create Application Directory
+--------------------------------------
+RHEL:
+sudo mkdir -p /var/www/araw-dashboard
+sudo chown -R $USER:$USER /var/www/araw-dashboard
+cd /var/www/araw-dashboard
+
+
+PHASE 2: APPLICATION DEPLOYMENT
+-------------------------------
+
+Step 2.1: Obtain Source Code
+----------------------------
+Method A: From Git Repository (Recommended)
+git clone https://github.com/[ORGANIZATION]/climate-finance-dashboard.git
+cd climate-finance-dashboard/araw
+git checkout main
+
+Method B: From Zip File
+1. Extract provided ZIP file to application directory
+2. Navigate to 'araw' folder
+
+Step 2.2: Install Dependencies
+------------------------------
+This step downloads all required packages (~200MB)
+
+Run:
+npm install
+
+Expected time: 5-10 minutes (depending on internet speed)
+
+You should see output indicating successful package installation.
+
+Step 2.3: Configuration
+----------------------
+Create environment configuration file:
+
+RHEL:
+cp .env.example .env.local
+
+Edit .env.local with required settings:
+nano .env.local   # or use vi/vim
+
+# Application Settings
+NODE_ENV=production
+NEXT_PUBLIC_APP_URL=http://[YOUR_SERVER_IP]:3000
+
+# MySQL Database Configuration (REQUIRED FOR DOF)
+DATABASE_URL=mysql://araw_user:[PASSWORD]@localhost:3306/araw_climate_finance
+DB_HOST=localhost
+DB_PORT=3306
+DB_NAME=araw_climate_finance
+DB_USER=araw_user
+DB_PASSWORD=[STRONG_PASSWORD_FROM_STEP_1.3]
+
+# Authentication (Optional - for user login)
+NEXTAUTH_SECRET=[GENERATE_RANDOM_SECRET]
+NEXTAUTH_URL=http://[YOUR_SERVER_IP]:3000
+
+# Data Sources (Configure as needed)
+ENABLE_REAL_DATA_SOURCES=false
+
+Generate random secret for NEXTAUTH_SECRET:
+node -e "console.log(require('crypto').randomBytes(32).toString('hex'))"
+
+IMPORTANT: Replace [PASSWORD] and [STRONG_PASSWORD_FROM_STEP_1.3] with the
+MySQL password you created in Step 1.3. Keep this file secure!
+
+Note: For initial deployment, mock data is used. Real data source integration
+can be configured after successful deployment.
+
+Step 2.4: Build Application
+---------------------------
+This compiles the application for production use.
+
+Run:
+npm run build
+
+Expected time: 2-5 minutes
+
+Successful build will show:
+✓ Compiled successfully
+✓ Linting and checking validity of types
+✓ Creating an optimized production build
+✓ Route (app)                              Size
+  ○ /                                      [size details]
+
+If errors occur, see TROUBLESHOOTING GUIDE (Section 7).
+
+
+PHASE 3: DEPLOYMENT & STARTUP
+-----------------------------
+
+Step 3.1: Start Application
+--------------------------
+For testing/development:
+npm run dev
+
+For production:
+npm start
+
+The application will start on http://localhost:3000
+
+You should see:
+▲ Next.js [version]
+- Local:        http://localhost:3000
+- Ready in [time]
+
+Step 3.2: Verify Application Access
+----------------------------------
+1. Open web browser
+2. Navigate to: http://localhost:3000
+3. You should see the ARAW Dashboard homepage
+4. Verify these elements load:
+   - DOF logo and header
+   - KPI cards (5 cards with data)
+   - Philippine map
+   - Charts and visualizations
+
+Step 3.3: Configure as System Service (Production - RHEL)
+--------------------------------------------------------
+For persistent operation (survives server restarts):
+
+Install PM2 process manager:
+sudo npm install -g pm2
+
+Start application with PM2:
+cd /var/www/araw-dashboard/araw
+pm2 start npm --name "araw-dashboard" -- start
+pm2 save
+
+Configure PM2 to start on boot (RHEL systemd):
+pm2 startup systemd -u $USER --hp /home/$USER
+# Copy and run the command that PM2 outputs
+
+PM2 will now auto-start the application on server boot.
+
+Useful PM2 commands:
+pm2 status                    # Check application status
+pm2 logs araw-dashboard       # View application logs
+pm2 restart araw-dashboard    # Restart application
+pm2 stop araw-dashboard       # Stop application
+pm2 monit                     # Real-time monitoring
+
+
+PHASE 4: NETWORK CONFIGURATION
+------------------------------
+
+Step 4.1: Configure Firewall (RHEL firewalld)
+---------------------------------------------
+RHEL uses firewalld by default:
+
+1. Check firewall status:
+   sudo systemctl status firewalld
+
+2. Allow application port (3000):
+   sudo firewall-cmd --permanent --add-port=3000/tcp
+   
+3. Allow HTTP and HTTPS (for reverse proxy):
+   sudo firewall-cmd --permanent --add-service=http
+   sudo firewall-cmd --permanent --add-service=https
+
+4. Reload firewall:
+   sudo firewall-cmd --reload
+
+5. Verify rules:
+   sudo firewall-cmd --list-all
+
+Step 4.2: Install and Configure Nginx (RHEL)
+-------------------------------------------
+For production, use Nginx to:
+- Enable HTTPS (SSL/TLS)
+- Serve on standard port 80/443
+- Add security headers
+- Enable compression
+
+1. Install Nginx:
+   sudo dnf install -y nginx
+
+2. Create Nginx configuration:
+   sudo nano /etc/nginx/conf.d/araw-dashboard.conf
+
+3. Add this configuration:
+
+server {
+    listen 80;
+    server_name [your-domain-or-ip];
+
+    # Redirect to HTTPS (after SSL setup)
+    # return 301 https://$server_name$request_uri;
+
+    location / {
+        proxy_pass http://localhost:3000;
+        proxy_http_version 1.1;
+        proxy_set_header Upgrade $http_upgrade;
+        proxy_set_header Connection 'upgrade';
+        proxy_set_header Host $host;
+        proxy_cache_bypass $http_upgrade;
+        proxy_set_header X-Real-IP $remote_addr;
+        proxy_set_header X-Forwarded-For $proxy_add_x_forwarded_for;
+        proxy_set_header X-Forwarded-Proto $scheme;
+        
+        # Security headers
+        add_header X-Frame-Options "SAMEORIGIN" always;
+        add_header X-Content-Type-Options "nosniff" always;
+        add_header X-XSS-Protection "1; mode=block" always;
+    }
+}
+
+4. Test Nginx configuration:
+   sudo nginx -t
+
+5. Start and enable Nginx:
+   sudo systemctl start nginx
+   sudo systemctl enable nginx
+
+6. Set SELinux to allow Nginx network connections (RHEL specific):
+   sudo setsebool -P httpd_can_network_connect 1
+
+================================================================================
+6. POST-DEPLOYMENT VERIFICATION
+================================================================================
+
+FUNCTIONAL TESTS:
+----------------
+[ ] Homepage loads successfully
+[ ] KPI cards display data correctly
+[ ] Charts render properly (no blank/error states)
+[ ] Philippine map is interactive and responsive
+[ ] Filter controls work (sidebar filters)
+[ ] Page loads in under 3 seconds
+[ ] No console errors in browser developer tools
+
+PERFORMANCE TESTS:
+-----------------
+[ ] Initial page load: < 3 seconds
+[ ] Chart interactions: < 200ms response
+[ ] Simultaneous user access: Test with 10+ users
+
+SECURITY TESTS:
+--------------
+[ ] HTTPS enabled (if configured)
+[ ] Authentication required (if enabled)
+[ ] No sensitive data exposed in browser console
+[ ] API endpoints protected
+
+BROWSER COMPATIBILITY:
+---------------------
+Test on:
+[ ] Google Chrome (latest)
+[ ] Mozilla Firefox (latest)
+[ ] Microsoft Edge (latest)
+[ ] Safari (if Mac users)
+
+MONITORING SETUP:
+----------------
+[ ] Application logs accessible
+[ ] Error tracking configured
+[ ] Performance monitoring active
+[ ] Disk space monitoring
+[ ] Memory usage monitoring
+
+================================================================================
+7. TROUBLESHOOTING GUIDE (RHEL + MySQL)
+================================================================================
+
+ISSUE: npm install fails
+SOLUTION:
+1. Check internet connection
+2. Clear npm cache: npm cache clean --force
+3. Delete node_modules folder and package-lock.json
+4. Try again: npm install
+5. If firewall issue, configure proxy
+
+ISSUE: Build fails with TypeScript errors
+SOLUTION:
+1. Ensure Node.js version is 20+
+2. Delete node_modules and reinstall
+3. Run build again: npm run build
+
+ISSUE: Application won't start (EADDRINUSE error)
+SOLUTION:
+Port 3000 already in use.
+1. Find process using port: lsof -i :3000
+2. Kill process or change port
+
+ISSUE: MySQL connection errors
+SOLUTION:
+1. Verify MySQL is running: sudo systemctl status mysqld
+2. Check MySQL credentials in .env.local
+3. Test MySQL connection: mysql -u araw_user -p araw_climate_finance
+4. Check MySQL error logs: sudo tail -f /var/log/mysqld.log
+
+ISSUE: SELinux blocking Nginx (RHEL specific)
+SOLUTION:
+1. Check SELinux status: getenforce
+2. Allow Nginx network connections: sudo setsebool -P httpd_can_network_connect 1
+3. Check SELinux logs: sudo tail -f /var/log/audit/audit.log
+
+ISSUE: Firewalld blocking connections (RHEL)
+SOLUTION:
+1. Check firewall status: sudo firewall-cmd --list-all
+2. Add port if missing: sudo firewall-cmd --permanent --add-port=3000/tcp
+3. Reload firewall: sudo firewall-cmd --reload
+
+================================================================================
+8. MAINTENANCE & UPDATES
+================================================================================
+
+ROUTINE MAINTENANCE SCHEDULE:
+----------------------------
+
+DAILY:
+- Monitor application logs for errors
+- Check disk space utilization
+- Verify application is responding
+
+WEEKLY:
+- Review performance metrics
+- Check for security updates
+- Backup configuration files
+
+MONTHLY:
+- Update npm dependencies (security patches)
+- Review and optimize database (if using)
+- Test backup restoration procedure
+- Review user access logs
+
+QUARTERLY:
+- Major version updates (if available)
+- Performance optimization review
+- Security audit
+- User training refresh
+
+UPDATING THE APPLICATION:
+------------------------
+
+Step 1: Backup Current Version
+cd /var/www/araw-dashboard/araw
+cp -r . ../araw-backup-$(date +%Y%m%d)
+
+Step 2: Pull Latest Code
+git fetch origin
+git checkout [new-version-branch]
+git pull origin [new-version-branch]
+
+Step 3: Update Dependencies
+npm install
+
+Step 4: Rebuild Application
+npm run build
+
+Step 5: Restart Application
+pm2 restart araw-dashboard
+
+Step 6: Verify Update
+- Test all functionality
+- Check for errors in logs
+- Verify data integrity
+
+ROLLBACK PROCEDURE:
+------------------
+If update causes issues:
+
+1. Stop current application: pm2 stop araw-dashboard
+2. Restore backup: cp -r ../araw-backup-[date] .
+3. Restart application: pm2 restart araw-dashboard
+
+BACKUP STRATEGY:
+---------------
+
+WHAT TO BACKUP:
+1. Application code: /var/www/araw-dashboard/araw
+2. Configuration: .env.local file
+3. MySQL Database: Complete database dump
+4. PM2 configuration: pm2 save
+5. Nginx configuration: /etc/nginx/conf.d/araw-dashboard.conf
+
+================================================================================
+9. SECURITY CONSIDERATIONS
+================================================================================
+
+SECURITY BEST PRACTICES:
+-----------------------
+
+1. NETWORK SECURITY:
+   [ ] Use HTTPS (SSL/TLS) for all connections
+   [ ] Configure firewall to restrict access
+   [ ] Use VPN for remote administration
+   [ ] Disable unused ports and services
+   [ ] Implement rate limiting to prevent DDoS
+
+2. APPLICATION SECURITY:
+   [ ] Keep Node.js and npm updated
+   [ ] Regular dependency security audits: npm audit
+   [ ] Use environment variables for secrets (never commit to git)
+   [ ] Implement authentication and authorization
+   [ ] Enable CORS only for trusted domains
+
+3. DATA SECURITY:
+   [ ] Encrypt sensitive data at rest
+   [ ] Use encrypted connections for data sources
+   [ ] Regular database backups
+   [ ] Implement data access logging
+
+4. ACCESS CONTROL:
+   [ ] Implement role-based access control (RBAC)
+   [ ] Use strong passwords (minimum 12 characters)
+   [ ] Enable multi-factor authentication (MFA)
+   [ ] Regular user access reviews
+
+GOVERNMENT COMPLIANCE:
+--------------------
+For DOF deployment, ensure compliance with:
+- Data Privacy Act of 2012 (RA 10173)
+- Philippine Cybersecurity Standards
+- DICT Security Guidelines
+- COA audit requirements
+- FOI (Freedom of Information) regulations
+
+================================================================================
+10. SUPPORT & CONTACTS
+================================================================================
+
+TECHNICAL SUPPORT STRUCTURE:
+--------------------------
+
+LEVEL 1 - USER SUPPORT:
+Contact: DOF IT Helpdesk
+Response Time: 4 business hours
+Handles: User access, basic navigation, export issues
+
+LEVEL 2 - APPLICATION SUPPORT:
+Contact: Jhonnel (Project Manager)
+Response Time: 24 business hours
+Handles: Application errors, configuration, data issues
+
+LEVEL 3 - DEVELOPMENT TEAM:
+Contact: Development Team Lead
+Response Time: 48 business hours
+Handles: Code issues, feature requests, complex bugs
+
+EMERGENCY SUPPORT:
+For critical issues (application down, security breach):
+Available: 24/7
+Response Time: 1 hour
+
+================================================================================
+APPENDIX A: QUICK REFERENCE COMMANDS
+================================================================================
+
+RHEL SYSTEM MANAGEMENT:
+sudo systemctl start [service]     # Start service
+sudo systemctl stop [service]      # Stop service
+sudo systemctl restart [service]   # Restart service
+sudo systemctl status [service]    # Check service status
+sudo firewall-cmd --list-all       # Check firewall rules
+sudo dnf update                    # Update system packages
+
+MYSQL MANAGEMENT (RHEL):
+sudo systemctl start mysqld        # Start MySQL
+sudo systemctl status mysqld       # Check MySQL status
+mysql -u araw_user -p              # Connect to MySQL
+
+APPLICATION INSTALLATION:
+npm install                    # Install dependencies
+npm run build                  # Build for production
+npm start                      # Start production server
+
+PROCESS MANAGEMENT (PM2):
+pm2 start npm --name araw-dashboard -- start
+pm2 stop araw-dashboard
+pm2 restart araw-dashboard
+pm2 logs araw-dashboard
+pm2 status
+
+MAINTENANCE:
+npm audit                      # Check for vulnerabilities
+npm audit fix                  # Fix vulnerabilities
+
+GIT OPERATIONS:
+git status                     # Check current status
+git pull origin [branch]       # Pull latest changes
+git log --oneline -10          # View recent commits
+
+SYSTEM MONITORING:
+df -h                          # Check disk space
+free -m                        # Check memory
+top                            # Monitor processes
+
+================================================================================
+END OF DEPLOYMENT GUIDE
+================================================================================
+
+For questions or clarifications regarding this deployment guide, please contact:
+Project Manager: Jhonnel
+Department: UBQTY Development Team
+Target Stakeholder: Asst. Secretary Angie, Department of Finance
+
+This document is intended for authorized personnel only.
+Confidential - Department of Finance, Republic of the Philippines
+
+================================================================================
+
