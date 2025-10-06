@@ -84,16 +84,17 @@ Directory Setup:
 
 Source Code Deployment:
 -----------------------
-OPTION A: From USB/ZIP
-[ ] Copy source from USB: cp -r /path/to/usb/araw /var/www/araw-dashboard/
-[ ] Navigate to app: cd /var/www/araw-dashboard/araw
-[ ] Verify files: ls -la (should show package.json, src/, public/, etc.)
-
-OPTION B: From Git Repository
-[ ] Clone repository: git clone [REPO_URL] araw
+OPTION A: From Git Repository (RECOMMENDED)
+[ ] Clone from GitHub: git clone https://github.com/[YOUR_USERNAME]/araw.git araw
 [ ] Navigate to app: cd araw
 [ ] Checkout branch: git checkout main
-[ ] Verify clone: ls -la
+[ ] Verify clone: ls -la (should show package.json, src/, public/, etc.)
+[ ] Note: Repository will be transferred to DoF GitHub later
+
+OPTION B: From USB/ZIP (If no internet)
+[ ] Copy source from USB: cp -r /path/to/usb/araw /var/www/araw-dashboard/
+[ ] Navigate to app: cd /var/www/araw-dashboard/araw
+[ ] Verify files: ls -la
 
 Dependencies Installation:
 --------------------------

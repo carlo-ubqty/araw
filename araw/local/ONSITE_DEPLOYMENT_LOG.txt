@@ -70,10 +70,15 @@ Status: [ ] Complete [ ] Issues
 
 Activities:
 - Directory created: [ ] Done
-- Source code deployed: [ ] From USB [ ] From Git
+- Source code deployed: [ ] From Git [ ] From USB
+- Git repository URL: _______________________
+- Git branch: __________
 - Dependencies installed: [ ] Done (Time: _____ min)
 - Application built: [ ] Done (Time: _____ min)
 - Build warnings/errors: __________
+
+Note: Repository currently from personal/UBQTY GitHub
+Will be transferred to DoF GitHub later (similar to DEPDev process)
 
 npm install Output:
 Packages installed: __________

@@ -1,0 +1,263 @@
+ARAW Repository Transfer to DoF - Process Notes
+================================================
+
+Date: TBD (After initial deployment)
+Purpose: Transfer repository ownership to Department of Finance
+Pattern: Following space-web → DEPDev successful transfer
+
+================================================
+
+CURRENT STATE (October 7, 2025)
+================================
+
+Repository Location:
+--------------------
+Current GitHub: https://github.com/[YOUR_ACCOUNT]/araw
+Branch: main
+Deployment: DoF RHEL server at /var/www/araw-dashboard/araw
+
+Reason for Current Setup:
+--------------------------
+- Faster initial deployment (no DoF GitHub setup delay)
+- Continue development under UBQTY control during v3.1 work
+- Transfer after DoF confirms deployment and is ready
+
+TRANSFER PROCESS (When DoF is Ready)
+=====================================
+
+Step 1: DoF GitHub Setup
+-------------------------
+DoF needs to:
+[ ] Create DoF GitHub organization (if not exists)
+    Organization name: ________________
+[ ] Create admin accounts for DoF staff
+[ ] Confirm organization is ready for repository
+
+Step 2: Repository Transfer (GitHub)
+-------------------------------------
+UBQTY will:
+[ ] Navigate to repository settings
+[ ] Select "Transfer ownership"
+[ ] Enter DoF organization name
+[ ] Confirm transfer
+[ ] Verify transfer completed
+
+Estimated time: 5-10 minutes
+
+Step 3: Server Git Remote Update
+---------------------------------
+On DoF RHEL server:
+
+# Switch to deployment directory
+cd /var/www/araw-dashboard/araw
+
+# Check current remote
+git remote -v
+# Will show: origin  https://github.com/[YOUR_ACCOUNT]/araw.git
+
+# Update remote URL to DoF organization
+git remote set-url origin https://github.com/[DOF_ORG]/araw.git
+
+# Verify new remote
+git remote -v
+# Should now show: origin  https://github.com/[DOF_ORG]/araw.git
+
+# Test connection
+git fetch origin
+
+# No code changes needed - just updates where git pulls from
+
+Step 4: Documentation Update
+-----------------------------
+[ ] Update deployment guides with new repository URL
+[ ] Update DoF team training materials
+[ ] Document new GitHub access for DoF staff
+
+Step 5: Access and Permissions
+-------------------------------
+DoF should:
+[ ] Grant access to DoF developers/admins
+[ ] Set up branch protection rules (protect main branch)
+[ ] Configure required reviewers for pull requests
+[ ] Set up DoF-specific deployment keys if needed
+
+DEPLOYMENT IMPACT
+=================
+
+Impact on Deployed Application:
+--------------------------------
+✓ No downtime required
+✓ Application continues running during transfer
+✓ No code changes needed
+✓ Only git remote URL changes
+✓ Future updates use new repository location
+
+Future Update Process:
+----------------------
+After transfer, updates work exactly the same:
+
+cd /var/www/araw-dashboard/araw
+git pull origin main  # Now pulls from DoF GitHub
+npm install
+npm run build
+pm2 restart araw-dashboard
+
+BENEFITS OF THIS APPROACH
+==========================
+
+Why Deploy from UBQTY GitHub First:
+------------------------------------
+1. Faster initial deployment (no setup delays)
+2. UBQTY maintains control during active development
+3. Can push v3.1 updates quickly
+4. No dependency on DoF GitHub setup timeline
+5. Proven approach (worked well for space-web → DEPDev)
+
+Why Transfer to DoF Later:
+---------------------------
+1. DoF owns their code (government requirement)
+2. DoF controls future updates and changes
+3. DoF can grant access to their developers
+4. Maintains code sovereignty for government
+5. Follows best practices for government IT
+
+SPACE-WEB PRECEDENT
+===================
+
+Previous Successful Transfer:
+------------------------------
+Project: space-web
+Client: DEPDev (Department of Energy)
+Transfer Date: September 2025
+Status: SUCCESS
+
+Process Used:
+1. Deployed from UBQTY GitHub
+2. Confirmed deployment working
+3. DEPDev created their GitHub organization
+4. Transferred repository ownership
+5. Updated git remote on server
+6. Tested updates from new repository
+7. Documented new process for DEPDev team
+
+Outcome:
+- Zero downtime
+- Smooth transition
+- DEPDev team comfortable with process
+- Updates continue working normally
+
+TIMELINE ESTIMATE
+=================
+
+Current Deployment: October 7, 2025
+v3.1 Development: October 7-12, 2025 (3-5 days)
+v3.1 Deployment: October 12-15, 2025
+Repository Transfer: TBD (when DoF is ready)
+
+Recommended Transfer Timeline:
+-------------------------------
+Option A: After v3.1 deployment is stable (recommended)
+- Ensures everything is working
+- DoF sees final product before taking ownership
+- Estimated: October 15-20, 2025
+
+Option B: Immediate (if DoF GitHub already exists)
+- Can transfer after initial deployment
+- UBQTY maintains write access during v3.1 development
+- Estimated: October 10, 2025
+
+Option C: After DoF testing and acceptance
+- DoF fully tests and accepts the system
+- Transfer as part of final handover
+- Estimated: October 30, 2025
+
+PREPARATION CHECKLIST
+=====================
+
+Before Transfer:
+----------------
+[ ] Confirm DoF GitHub organization exists
+[ ] Confirm DoF admin accounts created
+[ ] Document all DoF GitHub usernames
+[ ] Test DoF GitHub access and permissions
+[ ] Backup repository locally (just in case)
+[ ] Document current repository state
+
+During Transfer:
+----------------
+[ ] Transfer repository on GitHub
+[ ] Update git remote on DoF server
+[ ] Test git pull from new location
+[ ] Verify all branches transferred
+[ ] Verify all tags transferred
+[ ] Verify repository settings copied
+
+After Transfer:
+---------------
+[ ] Test a code update from new repository
+[ ] Update all documentation with new URLs
+[ ] Train DoF team on GitHub access
+[ ] Confirm DoF can push/pull successfully
+[ ] Document new update process
+[ ] Archive old repository URL references
+
+TROUBLESHOOTING
+===============
+
+Issue: Transfer fails on GitHub
+Solution:
+- Verify DoF organization name is exact
+- Confirm UBQTY account has transfer permissions
+- Check if repository name already exists in DoF org
+- Contact GitHub support if needed
+
+Issue: Git remote update fails on server
+Solution:
+- Verify new repository URL is correct
+- Test repository accessibility: curl -I [NEW_URL]
+- Check SSH keys if using SSH instead of HTTPS
+- Verify network access to GitHub from server
+
+Issue: Git pull fails after transfer
+Solution:
+- Verify remote URL is correct: git remote -v
+- Test connectivity: git fetch origin
+- Check authentication (may need to configure credentials)
+- Verify DoF repository permissions
+
+CONTACTS
+========
+
+UBQTY Side:
+-----------
+Project Manager: Jhonnel
+Development Team: UBQTY
+GitHub Admin: ________________
+
+DoF Side:
+---------
+Project Manager: Asst. Secretary Angie
+IT Lead: ________________
+GitHub Admin: ________________
+
+NOTES
+=====
+
+Additional Considerations:
+--------------------------
+_____________________________________________________
+_____________________________________________________
+
+Special Requirements:
+---------------------
+_____________________________________________________
+_____________________________________________________
+
+================================================
+
+This document should be referenced when DoF is ready
+for repository transfer. Keep it updated with actual
+DoF GitHub information as it becomes available.
+
+================================================
+
