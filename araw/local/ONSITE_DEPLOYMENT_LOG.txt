@@ -1,0 +1,508 @@
+ARAW Climate Finance Dashboard - On-Site Deployment Log
+========================================================
+
+Deployment Date: October 7, 2025
+Location: Department of Finance, Republic of the Philippines
+Team: UBQTY Deployment Team
+Purpose: Deploy PDF mockup landing page and setup infrastructure
+
+========================================================
+
+PRE-DEPLOYMENT INFORMATION
+==========================
+
+Team Members:
+-------------
+UBQTY Lead: _______________________
+UBQTY Support: ____________________
+DoF Technical Lead: _______________
+DoF Project Manager: ______________
+DoF IT Support: ___________________
+
+Arrival Information:
+--------------------
+Arrival Time: __________
+Location: Department of Finance
+Meeting Room/Area: ________________
+Network Access: [ ] Obtained [ ] Pending
+
+Server Access:
+--------------
+Server IP: ____________________
+Hostname: _____________________
+OS Version: RHEL ______________
+SSH Access: [ ] Confirmed [ ] Issues
+
+========================================================
+
+DEPLOYMENT TIMELINE
+===================
+
+Phase 1: Infrastructure Setup
+------------------------------
+Start Time: __________
+End Time: __________
+Duration: __________ minutes
+Status: [ ] Complete [ ] Issues
+
+Activities:
+- System update: [ ] Done [ ] Skipped [ ] Failed
+- Git installed: [ ] Done
+- Node.js 20.x installed: [ ] Done
+- npm installed: [ ] Done
+- PM2 installed: [ ] Done
+- Firewall configured: [ ] Done
+
+Issues Encountered:
+_____________________________________________________
+_____________________________________________________
+
+Resolutions:
+_____________________________________________________
+_____________________________________________________
+
+Phase 2: Application Deployment
+--------------------------------
+Start Time: __________
+End Time: __________
+Duration: __________ minutes
+Status: [ ] Complete [ ] Issues
+
+Activities:
+- Directory created: [ ] Done
+- Source code deployed: [ ] From USB [ ] From Git
+- Dependencies installed: [ ] Done (Time: _____ min)
+- Application built: [ ] Done (Time: _____ min)
+- Build warnings/errors: __________
+
+npm install Output:
+Packages installed: __________
+Time taken: __________ minutes
+Vulnerabilities: __________
+
+npm build Output:
+Bundle size: __________ kB
+Compile time: __________ seconds
+Warnings: __________
+Errors: __________
+
+Issues Encountered:
+_____________________________________________________
+_____________________________________________________
+
+Resolutions:
+_____________________________________________________
+_____________________________________________________
+
+Phase 3: Configuration
+----------------------
+Start Time: __________
+End Time: __________
+Duration: __________ minutes
+Status: [ ] Complete [ ] Issues
+
+Activities:
+- Environment file created: [ ] Done
+- Configuration values set: [ ] Done
+- Values verified: [ ] Done
+
+Configuration Details:
+PORT: 3000
+NODE_ENV: production
+DEPLOYMENT_URL: _______________________
+
+Issues Encountered:
+_____________________________________________________
+
+Phase 4: Application Startup
+-----------------------------
+Start Time: __________
+End Time: __________
+Duration: __________ minutes
+Status: [ ] Complete [ ] Issues
+
+Activities:
+- PM2 start: [ ] Done
+- PM2 status check: [ ] Online [ ] Error
+- PM2 startup configured: [ ] Done
+- Logs reviewed: [ ] Clean [ ] Errors
+
+PM2 Status:
+Process Name: araw-dashboard
+Status: __________
+Restarts: __________
+Memory Usage: __________ MB
+CPU Usage: __________%
+
+Issues Encountered:
+_____________________________________________________
+_____________________________________________________
+
+Resolutions:
+_____________________________________________________
+_____________________________________________________
+
+Phase 5: Nginx Configuration (Optional)
+----------------------------------------
+Started: [ ] Yes [ ] Skipped
+Start Time: __________
+End Time: __________
+Duration: __________ minutes
+Status: [ ] Complete [ ] Issues [ ] Skipped
+
+Activities:
+- Nginx config created: [ ] Done [ ] Skipped
+- Config tested: [ ] Done [ ] Skipped
+- SELinux configured: [ ] Done [ ] Skipped
+- Nginx started: [ ] Done [ ] Skipped
+
+Nginx Status: __________
+Deployment Port: [ ] 3000 [ ] 80 [ ] 443
+
+========================================================
+
+VERIFICATION AND TESTING
+========================
+
+Testing Start Time: __________
+Testing End Time: __________
+
+System Health Checks:
+---------------------
+PM2 Status: [ ] Online [ ] Issues
+Application Logs: [ ] Clean [ ] Errors
+Firewall: [ ] Configured [ ] Issues
+Network Access: [ ] Working [ ] Issues
+
+Network Tests:
+--------------
+Localhost (curl): [ ] Pass [ ] Fail
+  Response time: __________ ms
+
+External Access: [ ] Pass [ ] Fail
+  URL tested: _______________________
+  Response time: __________ seconds
+
+Browser Testing:
+----------------
+Test Browser: [ ] Chrome [ ] Firefox [ ] Edge [ ] Safari
+Test URL: _______________________
+
+Visual Tests:
+[ ] Page loads: __________
+[ ] Gradient background displays correctly
+[ ] Header with DoF logo visible
+[ ] "Version 3.1 - Design Preview" badge shows
+[ ] PDF mockup displays
+[ ] PDF is scrollable
+[ ] "System Under Development" message visible
+[ ] 4 stat cards display:
+    [ ] 165+ Data Sources
+    [ ] 20+ Agencies  
+    [ ] Next.js 15
+    [ ] Oct 2025
+[ ] Footer with project info visible
+[ ] No broken elements
+
+Technical Tests:
+[ ] No JavaScript errors in console
+[ ] Page responsive
+[ ] No 404 errors
+[ ] No network errors
+[ ] PDF renders correctly
+
+Performance:
+Initial load time: __________ seconds
+PDF render time: __________ seconds
+Overall responsiveness: [ ] Good [ ] Acceptable [ ] Slow
+
+Issues Found:
+_____________________________________________________
+_____________________________________________________
+
+Fixes Applied:
+_____________________________________________________
+_____________________________________________________
+
+========================================================
+
+KNOWLEDGE TRANSFER SESSION
+===========================
+
+Session Start Time: __________
+Session End Time: __________
+Duration: __________ minutes
+
+DoF Team Members Trained:
+--------------------------
+1. Name: _________________ Role: _________________
+2. Name: _________________ Role: _________________
+3. Name: _________________ Role: _________________
+
+Topics Covered:
+---------------
+[ ] PM2 basic commands demonstrated
+[ ] How to check application status
+[ ] How to view logs
+[ ] How to restart application
+[ ] Auto-restart behavior explained
+[ ] Auto-start on boot explained
+[ ] Deployment URL documented
+[ ] Emergency contacts provided
+[ ] v3.1 update timeline communicated
+[ ] Update process explained
+
+Questions from DoF Team:
+------------------------
+Q1: _____________________________________________________
+A1: _____________________________________________________
+
+Q2: _____________________________________________________
+A2: _____________________________________________________
+
+Q3: _____________________________________________________
+A3: _____________________________________________________
+
+DoF Team Feedback:
+------------------
+Understanding Level: [ ] Clear [ ] Needs Clarification [ ] Follow-up Needed
+
+Comments:
+_____________________________________________________
+_____________________________________________________
+
+========================================================
+
+DEPLOYMENT COMPLETION
+=====================
+
+Total Deployment Time: __________ minutes (__________ hours)
+
+Deployment Summary:
+-------------------
+Status: [ ] SUCCESS [ ] PARTIAL SUCCESS [ ] FAILED
+
+Components Deployed:
+[ ] Node.js environment
+[ ] ARAW application with PDF mockup
+[ ] PM2 process manager
+[ ] Firewall configuration
+[ ] Nginx (if applicable)
+[ ] Auto-startup configuration
+
+What's Working:
+_____________________________________________________
+_____________________________________________________
+_____________________________________________________
+
+Outstanding Issues:
+_____________________________________________________
+_____________________________________________________
+_____________________________________________________
+
+Workarounds Applied:
+_____________________________________________________
+_____________________________________________________
+
+Final Configuration:
+--------------------
+Deployment URL: _______________________
+Server IP: _______________________
+Deployment Directory: /var/www/araw-dashboard/araw
+PM2 Process Name: araw-dashboard
+Application Status: __________
+Auto-start: [ ] Configured [ ] Not Configured
+
+Critical Information for DoF:
+------------------------------
+Access URL: _______________________
+Check Status: pm2 status
+View Logs: pm2 logs araw-dashboard
+Restart: pm2 restart araw-dashboard
+
+Emergency Contact:
+Project Manager: Jhonnel
+Email: _______________________
+Phone: _______________________
+
+========================================================
+
+POST-DEPLOYMENT NOTES
+=====================
+
+What Went Well:
+---------------
+_____________________________________________________
+_____________________________________________________
+_____________________________________________________
+
+Challenges Faced:
+-----------------
+_____________________________________________________
+_____________________________________________________
+_____________________________________________________
+
+Lessons Learned:
+----------------
+_____________________________________________________
+_____________________________________________________
+_____________________________________________________
+
+Recommendations for v3.1 Deployment:
+-------------------------------------
+_____________________________________________________
+_____________________________________________________
+_____________________________________________________
+
+========================================================
+
+FOLLOW-UP ACTIONS
+=================
+
+Immediate (within 24 hours):
+----------------------------
+[ ] Send deployment summary email to DoF team
+[ ] Document any passwords/credentials securely
+[ ] Share emergency contact information
+[ ] Confirm DoF team can access application
+[ ] Monitor logs for any issues
+
+Short-term (within 1 week):
+---------------------------
+[ ] Check in with DoF team on application status
+[ ] Address any questions or concerns
+[ ] Continue v3.1 development
+[ ] Prepare for v3.1 deployment
+
+v3.1 Deployment Schedule:
+-------------------------
+Development completion: __________ (estimate: Oct 10-12)
+Testing completion: __________
+v3.1 deployment date: __________
+Deployment method: [ ] On-site [ ] Remote
+
+========================================================
+
+SIGN-OFFS
+=========
+
+Technical Verification:
+-----------------------
+Infrastructure Setup: _______________ (Initials) _______________ (Time)
+Application Deployment: _______________ (Initials) _______________ (Time)
+Testing Completion: _______________ (Initials) _______________ (Time)
+
+DoF Acceptance:
+---------------
+Technical Acceptance: _______________  _______________
+                      (Name)           (Signature)
+
+Project Acceptance: _______________  _______________
+                    (Name)           (Signature)
+
+UBQTY Sign-off:
+---------------
+Deployment Lead: _______________  _______________
+                 (Name)           (Signature)
+
+Date: _______________
+Time: _______________
+
+========================================================
+
+HANDOVER DOCUMENTATION
+======================
+
+Documents Provided to DoF:
+--------------------------
+[ ] ONSITE_DEPLOYMENT_GUIDE.txt
+[ ] ONSITE_DEPLOYMENT_CHECKLIST.txt
+[ ] This deployment log (completed)
+[ ] DEPLOYMENT_GUIDE_DOF.txt (full reference)
+[ ] Emergency contact information
+[ ] Basic troubleshooting guide
+
+Access Information Provided:
+----------------------------
+[ ] Application URL
+[ ] PM2 commands reference
+[ ] Emergency procedures
+[ ] Update timeline
+[ ] Contact information
+
+Training Materials:
+-------------------
+[ ] PM2 command cheat sheet
+[ ] Basic troubleshooting steps
+[ ] How to check application health
+[ ] When to contact support
+
+Next Steps Communicated:
+------------------------
+[ ] v3.1 development timeline (3-5 days)
+[ ] Update notification process
+[ ] v3.1 deployment approach
+[ ] No action required from DoF until update ready
+
+========================================================
+
+ADDITIONAL NOTES
+================
+
+Server Environment Details:
+---------------------------
+_____________________________________________________
+_____________________________________________________
+
+Network Configuration:
+----------------------
+_____________________________________________________
+_____________________________________________________
+
+Security Considerations:
+------------------------
+_____________________________________________________
+_____________________________________________________
+
+Special Requirements or Requests:
+----------------------------------
+_____________________________________________________
+_____________________________________________________
+
+Miscellaneous Notes:
+--------------------
+_____________________________________________________
+_____________________________________________________
+_____________________________________________________
+
+========================================================
+
+DEPLOYMENT COMPLETION STATEMENT
+================================
+
+I, _________________ (name), confirm that the ARAW Climate Finance
+Dashboard PDF mockup landing page has been successfully deployed
+to the Department of Finance server on _________________ (date).
+
+The application is accessible at _________________ (URL) and is
+functioning as intended. Infrastructure is ready for v3.1 deployment.
+
+Deployment Lead Signature: _________________
+Date: _________________
+Time: _________________
+
+DoF Representative Signature: _________________
+Date: _________________
+Time: _________________
+
+========================================================
+
+END OF DEPLOYMENT LOG
+
+This log should be completed during deployment and provided to
+DoF team as part of handover documentation.
+
+A copy should be retained by UBQTY for project records.
+
+========================================================
+

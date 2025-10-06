@@ -1,0 +1,479 @@
+ARAW Climate Finance Dashboard - On-Site Deployment Day Guide
+==============================================================
+
+Document Version: 1.0
+Date: October 7, 2025
+For: UBQTY Deployment Team (On-Site at Department of Finance)
+Purpose: Field-ready deployment execution guide
+
+==============================================================
+
+OVERVIEW
+========
+
+This is the streamlined deployment guide for on-site execution at DoF.
+This guide focuses on deploying the PDF mockup landing page while setting
+up complete infrastructure for future v3.1 deployment.
+
+FOCUS: Quick deployment (30-60 minutes) with professional presentation
+
+PRE-ARRIVAL PREPARATION
+=======================
+
+Required Items Checklist:
+--------------------------
+[ ] Laptop with admin access
+[ ] USB drive with deployment files:
+    - Source code (git repo or ZIP)
+    - public/mockup.pdf (v3.1 Figma design)
+    - This guide and checklists
+    - DEPLOYMENT_GUIDE_DOF.txt (full reference)
+[ ] GitHub repository access (if needed)
+[ ] This deployment guide printed or on tablet
+[ ] Emergency contact: Jhonnel (PM), UBQTY Team
+
+Network and Access Requirements:
+---------------------------------
+[ ] Stable internet for npm package downloads
+[ ] SSH access to DoF RHEL server
+[ ] sudo privileges on target server
+[ ] DoF IT team contact for firewall/network issues
+
+CRITICAL CONFIGURATION VALUES TO CONFIRM ON-SITE
+=================================================
+
+Server Information:
+-------------------
+Server IP Address: ___________________________
+Server Hostname: ______________________________
+OS Version: RHEL ___ (confirm 8 or 9)
+
+Domain Configuration (if applicable):
+--------------------------------------
+Production Domain: ___________________________ 
+(e.g., araw.dof.gov.ph or internal IP address)
+
+MySQL Database (for future):
+-----------------------------
+Database Name: araw_climate_finance
+Database User: araw_user
+Database Password: ________________________ (generate on-site)
+
+RAPID DEPLOYMENT SEQUENCE
+==========================
+
+Phase 1: Infrastructure Setup (15-20 minutes)
+----------------------------------------------
+
+1.1 System Prerequisites:
+-------------------------
+# Quick system update
+sudo dnf update -y
+
+# Install core dependencies in one command
+sudo dnf install -y git nginx
+
+# Install Node.js 20.x from NodeSource
+curl -fsSL https://rpm.nodesource.com/setup_20.x | sudo bash -
+sudo dnf install -y nodejs
+
+# Install build tools (required for some npm packages)
+sudo dnf groupinstall -y "Development Tools"
+
+# Install PM2 globally
+sudo npm install -g pm2
+
+# Verify installations
+node --version && npm --version && pm2 --version
+
+1.2 Security Configuration:
+---------------------------
+# Basic firewall setup (RHEL uses firewalld)
+sudo systemctl status firewalld  # Check if running
+sudo firewall-cmd --permanent --add-service=http
+sudo firewall-cmd --permanent --add-service=https
+sudo firewall-cmd --permanent --add-port=3000/tcp
+sudo firewall-cmd --reload
+sudo firewall-cmd --list-all  # Verify
+
+Phase 2: Application Deployment (10-15 minutes)
+------------------------------------------------
+
+2.1 Create Application Directory:
+----------------------------------
+# Create deployment directory
+sudo mkdir -p /var/www/araw-dashboard
+sudo chown -R $USER:$USER /var/www/araw-dashboard
+cd /var/www/araw-dashboard
+
+2.2 Deploy Source Code:
+------------------------
+Option A: From USB/ZIP (RECOMMENDED for speed)
+# Copy from USB
+cp -r /path/to/usb/araw /var/www/araw-dashboard/
+cd /var/www/araw-dashboard/araw
+
+Option B: From Git Repository
+# Clone repository
+git clone [REPO_URL] araw
+cd araw
+git checkout main  # or specific branch
+
+2.3 Install Dependencies and Build:
+------------------------------------
+# Install all packages (this takes 5-10 minutes)
+npm install
+
+# Build application
+npm run build
+
+# Verify build success
+ls -la .next/  # Should show compiled files
+
+Phase 3: Configuration (5 minutes)
+-----------------------------------
+
+3.1 Environment Setup:
+----------------------
+# Create production environment file (minimal for PDF landing)
+cat > .env.local << 'EOF'
+NODE_ENV=production
+PORT=3000
+NEXT_PUBLIC_APP_URL=http://[SERVER_IP]:3000
+EOF
+
+# Replace [SERVER_IP] with actual server IP
+nano .env.local
+
+Phase 4: Application Startup (5 minutes)
+-----------------------------------------
+
+4.1 Start with PM2:
+-------------------
+# Start application
+pm2 start npm --name "araw-dashboard" -- start
+
+# Save PM2 configuration
+pm2 save
+
+# Set up PM2 startup (RHEL systemd)
+pm2 startup systemd -u $USER --hp $HOME
+# Copy and run the command that PM2 outputs
+
+# Check status
+pm2 status
+pm2 logs araw-dashboard --lines 20
+
+4.2 Quick Health Check:
+-----------------------
+# Test localhost
+curl http://localhost:3000
+
+# Should return HTML with ARAW dashboard
+
+Phase 5: Nginx Configuration (OPTIONAL - 10 minutes)
+-----------------------------------------------------
+
+NOTE: Only if DoF wants to use port 80/443 instead of 3000
+
+5.1 Nginx Setup:
+----------------
+# Create Nginx configuration
+sudo nano /etc/nginx/conf.d/araw-dashboard.conf
+
+# Add this configuration:
+server {
+    listen 80;
+    server_name [SERVER_IP or DOMAIN];
+
+    location / {
+        proxy_pass http://localhost:3000;
+        proxy_http_version 1.1;
+        proxy_set_header Upgrade $http_upgrade;
+        proxy_set_header Connection 'upgrade';
+        proxy_set_header Host $host;
+        proxy_cache_bypass $http_upgrade;
+        proxy_set_header X-Real-IP $remote_addr;
+        proxy_set_header X-Forwarded-For $proxy_add_x_forwarded_for;
+        proxy_set_header X-Forwarded-Proto $scheme;
+        
+        # Security headers
+        add_header X-Frame-Options "SAMEORIGIN" always;
+        add_header X-Content-Type-Options "nosniff" always;
+        add_header X-XSS-Protection "1; mode=block" always;
+    }
+}
+
+# Save and test
+sudo nginx -t
+
+# Set SELinux to allow Nginx connections (RHEL specific)
+sudo setsebool -P httpd_can_network_connect 1
+
+# Start and enable Nginx
+sudo systemctl start nginx
+sudo systemctl enable nginx
+
+QUICK VERIFICATION SEQUENCE
+============================
+
+Critical Health Checks (3 minutes):
+------------------------------------
+# 1. Application status
+pm2 status
+# Should show "online"
+
+# 2. Application logs
+pm2 logs araw-dashboard --lines 50
+# Check for errors
+
+# 3. Local response
+curl http://localhost:3000
+# Should return HTML
+
+# 4. External access (from laptop browser)
+# Navigate to: http://[SERVER_IP]:3000
+# Or http://[SERVER_IP] if using Nginx
+
+Browser Testing Checklist:
+---------------------------
+[ ] Navigate to deployment URL
+[ ] PDF mockup loads and displays
+[ ] "Version 3.1 - Design Preview" badge visible
+[ ] 4 stat cards display correctly
+[ ] No JavaScript errors in browser console (F12)
+[ ] Page loads in < 5 seconds
+
+WHAT THEY'LL SEE
+=================
+
+Landing Page Features:
+----------------------
+✓ Purple/pink gradient background
+✓ ARAW Climate Finance Dashboard header
+✓ Department of Finance branding
+✓ "Version 3.1 - Design Preview" status
+✓ Embedded PDF mockup (scrollable, zoomable)
+✓ "System Under Development" message
+✓ 4 info cards (165+ sources, 20+ agencies, Next.js 15, Oct 2025)
+✓ Professional footer with project info
+
+TROUBLESHOOTING QUICK FIXES
+============================
+
+Application Won't Start:
+-------------------------
+# Check logs
+pm2 logs araw-dashboard
+
+# Check if port is in use
+sudo lsof -i :3000
+
+# Kill conflicting process if needed
+sudo kill -9 [PID]
+
+# Restart application
+pm2 restart araw-dashboard
+
+npm install Fails:
+------------------
+# Clear cache
+npm cache clean --force
+
+# Try with different registry
+npm install --registry=https://registry.npmjs.org/
+
+# If behind proxy, configure npm
+npm config set proxy http://[proxy]:[port]
+npm config set https-proxy http://[proxy]:[port]
+
+Build Fails:
+------------
+# Check Node.js version
+node --version
+# Should be v20.x.x
+
+# Delete and reinstall
+rm -rf node_modules package-lock.json
+npm install
+npm run build
+
+Cannot Access from Browser:
+----------------------------
+# Check firewall
+sudo firewall-cmd --list-all
+
+# Check if app is listening on correct interface
+sudo netstat -tulpn | grep :3000
+
+# Should show 0.0.0.0:3000 not 127.0.0.1:3000
+
+# If showing 127.0.0.1, update next.config.ts:
+nano next.config.ts
+# Add: server: { host: '0.0.0.0' }
+
+SELinux Blocking (RHEL):
+------------------------
+# Check SELinux status
+getenforce
+
+# If Enforcing and causing issues:
+sudo setsebool -P httpd_can_network_connect 1
+
+# Check SELinux logs
+sudo tail -f /var/log/audit/audit.log
+
+PDF Not Loading:
+----------------
+# Verify PDF exists
+ls -la public/mockup.pdf
+
+# Check file permissions
+chmod 644 public/mockup.pdf
+
+# Check browser console for errors
+
+FUTURE v3.1 DEPLOYMENT
+======================
+
+When v3.1 Development is Complete:
+-----------------------------------
+This infrastructure is ready for immediate v3.1 deployment.
+Just need to:
+
+1. Update code:
+   cd /var/www/araw-dashboard/araw
+   git pull origin main  # or deploy new code
+   
+2. Install new dependencies:
+   npm install
+   
+3. Build:
+   npm run build
+   
+4. Restart:
+   pm2 restart araw-dashboard
+
+Total time: 5-10 minutes for full v3.1 deployment!
+
+POST-DEPLOYMENT QUICK SETUP
+============================
+
+Basic Monitoring Setup (5 minutes):
+------------------------------------
+# Show DoF team how to check status
+pm2 status
+
+# Show how to view logs
+pm2 logs araw-dashboard
+
+# Show how to restart if needed
+pm2 restart araw-dashboard
+
+# Show system resource usage
+pm2 monit
+
+HANDOVER TO DOF TEAM
+=====================
+
+Key Information to Document:
+-----------------------------
+[ ] Server IP: ____________________
+[ ] Deployment directory: /var/www/araw-dashboard/araw
+[ ] Application access: http://[IP]:3000
+[ ] PM2 process name: araw-dashboard
+[ ] Contact for updates: Jhonnel (PM)
+
+Critical Commands for DoF Team:
+--------------------------------
+# Check application status
+pm2 status
+
+# View logs
+pm2 logs araw-dashboard
+
+# Restart application (if needed)
+pm2 restart araw-dashboard
+
+# Stop application (for maintenance)
+pm2 stop araw-dashboard
+
+# Start application (after maintenance)
+pm2 start araw-dashboard
+
+Training Points for DoF Staff:
+-------------------------------
+1. Current deployment shows Version 3.1 design mockup
+2. Full interactive application will be deployed after development (3-5 days)
+3. Infrastructure is ready for immediate app deployment
+4. Application runs under PM2 (auto-restarts on crashes)
+5. PM2 configured to start on system boot
+6. For issues, check logs first: pm2 logs araw-dashboard
+7. Emergency contact: Jhonnel (Project Manager)
+
+==============================================================
+
+DEPLOYMENT TIMELINE ESTIMATE
+=============================
+
+Total Time: 30-60 minutes (depending on internet speed)
+
+Phase 1: Infrastructure (15-20 min)
+Phase 2: Application (10-15 min)
+Phase 3: Configuration (5 min)
+Phase 4: Startup (5 min)
+Phase 5: Nginx (10 min - optional)
+Verification: (3-5 min)
+Training: (10 min)
+
+Buffer Time: 15 minutes for troubleshooting
+
+==============================================================
+
+CRITICAL SUCCESS FACTORS
+=========================
+
+1. Internet connectivity for npm install
+2. Correct Node.js version (20.x)
+3. Firewall configured for port 3000 (or 80/443 if using Nginx)
+4. PM2 startup configured for auto-start
+5. PDF mockup file present in public/ directory
+6. Basic functionality testing completion
+
+==============================================================
+
+DEPLOYMENT COMPLETION SIGN-OFF
+===============================
+
+Date: _______________
+Time: _______________
+Deployed by: _______________
+DoF Contact: _______________
+Server IP: _______________
+Application URL: _______________
+
+Technical Verification:
+[ ] Application responds to HTTP
+[ ] PDF mockup displays correctly
+[ ] PM2 status shows "online"
+[ ] PM2 startup configured
+[ ] No critical errors in logs
+
+Business Verification:
+[ ] DoF team can access the application
+[ ] Landing page displays correctly
+[ ] DoF team understands basic operations
+[ ] Update timeline communicated (3-5 days)
+[ ] Emergency contacts documented
+
+UBQTY Sign-off: _______________
+DoF Sign-off: _______________
+
+==============================================================
+
+IMPORTANT: This is a temporary PDF mockup deployment.
+Full v3.1 application will replace this in 3-5 days.
+Infrastructure is ready for immediate v3.1 deployment.
+
+Keep this document secure and provide copy to DoF IT team.
+

@@ -1,0 +1,444 @@
+ARAW Climate Finance Dashboard - On-Site Deployment Day Checklist
+==================================================================
+
+Document Version: 1.0
+Date: October 7, 2025
+For: UBQTY Deployment Team (On-Site at Department of Finance)
+Purpose: Field execution checklist for deployment day
+
+==================================================================
+
+PRE-DEPLOYMENT VERIFICATION
+============================
+
+Arrival and Setup (5 minutes):
+-------------------------------
+[ ] Arrive at DoF site with laptop and documentation
+[ ] Establish stable internet connection
+[ ] Verify access to DoF RHEL server
+[ ] Confirm sudo privileges work
+[ ] Test SSH connectivity to target server
+
+Required Files and Access:
+--------------------------
+[ ] Source code available (USB or git repo)
+[ ] PDF mockup file: public/mockup.pdf
+[ ] ONSITE_DEPLOYMENT_GUIDE.txt available
+[ ] DEPLOYMENT_GUIDE_DOF.txt (reference)
+[ ] Emergency contact information (Jhonnel, UBQTY)
+
+Critical Information Confirmation:
+-----------------------------------
+Server IP Address: ______________________
+Server Hostname: ______________________
+OS Version: RHEL _____ (confirm 8 or 9)
+Deployment URL: http://[IP]:3000
+
+[ ] Server IP confirmed with DoF IT team
+[ ] Network access tested
+[ ] Firewall rules discussion scheduled
+
+PHASE 1: INFRASTRUCTURE SETUP (15-20 minutes)
+==============================================
+
+System Updates:
+---------------
+[ ] Execute: sudo dnf update -y
+[ ] Verify system update completed successfully
+[ ] Note any update issues or required reboots
+
+Core Dependencies Installation:
+-------------------------------
+[ ] Install Git: sudo dnf install -y git
+[ ] Install Nginx: sudo dnf install -y nginx
+[ ] Add Node.js 20.x repository: curl -fsSL https://rpm.nodesource.com/setup_20.x | sudo bash -
+[ ] Install Node.js: sudo dnf install -y nodejs
+[ ] Install build tools: sudo dnf groupinstall -y "Development Tools"
+[ ] Install PM2 globally: sudo npm install -g pm2
+
+Installation Verification:
+--------------------------
+[ ] Node.js version check: node --version (should show v20.x.x)
+[ ] npm version check: npm --version (should show v10.x.x)
+[ ] PM2 version check: pm2 --version
+[ ] Git version check: git --version
+
+Security Configuration (RHEL firewalld):
+----------------------------------------
+[ ] Check firewall status: sudo systemctl status firewalld
+[ ] Allow HTTP: sudo firewall-cmd --permanent --add-service=http
+[ ] Allow HTTPS: sudo firewall-cmd --permanent --add-service=https
+[ ] Allow port 3000: sudo firewall-cmd --permanent --add-port=3000/tcp
+[ ] Reload firewall: sudo firewall-cmd --reload
+[ ] Verify firewall rules: sudo firewall-cmd --list-all
+
+PHASE 2: APPLICATION DEPLOYMENT (10-15 minutes)
+================================================
+
+Directory Setup:
+----------------
+[ ] Create directory: sudo mkdir -p /var/www/araw-dashboard
+[ ] Set ownership: sudo chown -R $USER:$USER /var/www/araw-dashboard
+[ ] Navigate to directory: cd /var/www/araw-dashboard
+[ ] Verify directory: pwd (should show /var/www/araw-dashboard)
+
+Source Code Deployment:
+-----------------------
+OPTION A: From USB/ZIP
+[ ] Copy source from USB: cp -r /path/to/usb/araw /var/www/araw-dashboard/
+[ ] Navigate to app: cd /var/www/araw-dashboard/araw
+[ ] Verify files: ls -la (should show package.json, src/, public/, etc.)
+
+OPTION B: From Git Repository
+[ ] Clone repository: git clone [REPO_URL] araw
+[ ] Navigate to app: cd araw
+[ ] Checkout branch: git checkout main
+[ ] Verify clone: ls -la
+
+Dependencies Installation:
+--------------------------
+[ ] Install packages: npm install
+    Time estimate: 5-10 minutes
+    Watch for: Errors, warnings about missing dependencies
+[ ] Verify installation: ls -la node_modules/ (should have many folders)
+[ ] Check for vulnerabilities: npm audit (note any critical issues)
+
+Build Application:
+------------------
+[ ] Build for production: npm run build
+    Time estimate: 2-3 minutes
+    Watch for: TypeScript errors, build failures
+[ ] Verify build success: ls -la .next/
+[ ] Check build output (should show bundle sizes)
+
+Record Build Information:
+-------------------------
+Bundle Size: _______ kB
+Build Time: _______ seconds
+Warnings: _______ (note if significant)
+Errors: _______ (should be 0)
+
+PHASE 3: CONFIGURATION (5 minutes)
+===================================
+
+Environment Setup:
+------------------
+[ ] Create environment file: nano .env.local
+[ ] Set NODE_ENV=production
+[ ] Set PORT=3000
+[ ] Set NEXT_PUBLIC_APP_URL=http://[SERVER_IP]:3000
+[ ] Replace [SERVER_IP] with actual IP
+[ ] Save and exit
+
+Environment Verification:
+-------------------------
+[ ] Check file exists: ls -la .env.local
+[ ] Verify content: cat .env.local
+[ ] Confirm SERVER_IP is correct
+
+PHASE 4: APPLICATION STARTUP (5 minutes)
+=========================================
+
+PM2 Startup:
+------------
+[ ] Start application: pm2 start npm --name "araw-dashboard" -- start
+[ ] Check initial status: pm2 status (should show "online")
+[ ] Save PM2 config: pm2 save
+[ ] Set up startup: pm2 startup systemd -u $USER --hp $HOME
+[ ] Run the command PM2 outputs (copy and execute as sudo)
+[ ] Verify startup saved: pm2 save
+
+Application Health Check:
+-------------------------
+[ ] Test localhost: curl http://localhost:3000
+[ ] Check PM2 status: pm2 status (should show "online", not "errored")
+[ ] View logs: pm2 logs araw-dashboard --lines 20
+[ ] Check for errors in logs (note any critical errors)
+
+PM2 Process Information:
+------------------------
+Process Name: araw-dashboard
+Status: _______ (should be "online")
+Uptime: _______
+Restarts: _______ (should be 0 or low)
+Memory: _______ MB
+
+PHASE 5: NGINX CONFIGURATION (OPTIONAL - 10 minutes)
+=====================================================
+
+NOTE: Skip if DoF is okay with port 3000 access
+
+Nginx Setup:
+------------
+[ ] Create config: sudo nano /etc/nginx/conf.d/araw-dashboard.conf
+[ ] Add server block with proxy_pass
+[ ] Set server_name to [SERVER_IP] or domain
+[ ] Add security headers
+[ ] Save configuration
+
+Nginx Activation:
+-----------------
+[ ] Test config: sudo nginx -t (should show "test is successful")
+[ ] Set SELinux permission: sudo setsebool -P httpd_can_network_connect 1
+[ ] Start Nginx: sudo systemctl start nginx
+[ ] Enable on boot: sudo systemctl enable nginx
+[ ] Check status: sudo systemctl status nginx (should be "active (running)")
+
+VERIFICATION AND TESTING (5-10 minutes)
+========================================
+
+System Health Checks:
+---------------------
+[ ] PM2 status: pm2 status (should show "online")
+[ ] Application logs: pm2 logs araw-dashboard (check for errors)
+[ ] Nginx status: sudo systemctl status nginx (if using Nginx)
+[ ] Firewall rules: sudo firewall-cmd --list-all
+
+Network Connectivity Tests:
+---------------------------
+[ ] Localhost test: curl http://localhost:3000 (should return HTML)
+[ ] Network test from laptop: http://[SERVER_IP]:3000
+[ ] Or if using Nginx: http://[SERVER_IP]
+[ ] Response time: _______ seconds (should be < 5)
+
+Browser Testing:
+----------------
+[ ] Open browser and navigate to deployment URL
+[ ] Landing page loads correctly
+[ ] Purple/pink gradient background displays
+[ ] ARAW Climate Finance Dashboard header shows
+[ ] "Version 3.1 - Design Preview" badge visible
+[ ] PDF mockup displays and is scrollable
+[ ] "System Under Development" message visible
+[ ] 4 stat cards display correctly:
+    [ ] 165+ Data Sources
+    [ ] 20+ Agencies
+    [ ] Next.js 15 Technology
+    [ ] Oct 2025 Timeline
+[ ] Footer shows project information
+[ ] No JavaScript errors in browser console (F12 > Console)
+
+Performance Checks:
+-------------------
+[ ] Initial page load: _______ seconds (should be < 5)
+[ ] PDF renders: _______ seconds
+[ ] Page is responsive (no freezing)
+[ ] Memory usage reasonable: pm2 monit
+
+Visual Quality Checks:
+----------------------
+[ ] Page layout looks professional
+[ ] Colors match design (purple/pink gradient)
+[ ] PDF is readable and zoomable
+[ ] Text is clear and properly aligned
+[ ] Spacing and padding look correct
+
+POST-DEPLOYMENT SETUP (5 minutes)
+==================================
+
+Basic Monitoring Demonstration:
+-------------------------------
+[ ] Show DoF team: pm2 status
+[ ] Show DoF team: pm2 logs araw-dashboard
+[ ] Show DoF team: pm2 restart araw-dashboard
+[ ] Show DoF team: pm2 monit
+[ ] Explain PM2 auto-restart on crash
+
+Documentation:
+--------------
+[ ] Document actual deployment URL
+[ ] Document PM2 process name
+[ ] Note any issues encountered
+[ ] Record actual deployment time
+
+KNOWLEDGE TRANSFER TO DOF TEAM (10-15 minutes)
+===============================================
+
+Critical Information Transfer:
+-------------------------------
+Deployment URL: _______________________
+Application Directory: /var/www/araw-dashboard/araw
+PM2 Process Name: araw-dashboard
+Server IP: _______________________
+
+Training Session:
+-----------------
+[ ] Show how to check status: pm2 status
+[ ] Show how to view logs: pm2 logs araw-dashboard
+[ ] Show how to restart: pm2 restart araw-dashboard
+[ ] Show how to monitor: pm2 monit
+[ ] Explain auto-restart behavior
+[ ] Explain PM2 starts on boot
+
+Key Points to Emphasize:
+------------------------
+[ ] This is a design preview (Version 3.1 mockup)
+[ ] Full interactive application coming in 3-5 days
+[ ] Infrastructure is ready for immediate v3.1 deployment
+[ ] Update process will be quick (5-10 minutes)
+[ ] Application auto-restarts if crashes
+[ ] Starts automatically on server reboot
+
+Future v3.1 Deployment Process:
+--------------------------------
+[ ] Explain update will be simple:
+    1. Stop application
+    2. Update code
+    3. Build
+    4. Restart
+[ ] Total time: 5-10 minutes
+[ ] No infrastructure changes needed
+[ ] Same deployment directory and process
+
+DEPLOYMENT COMPLETION CHECKLIST
+================================
+
+Technical Sign-off:
+-------------------
+[ ] Node.js and dependencies installed
+[ ] Application built successfully
+[ ] PM2 configured and running
+[ ] Firewall configured
+[ ] Application accessible from network
+[ ] PM2 startup configured (auto-start on boot)
+
+Functional Sign-off:
+--------------------
+[ ] Website loads correctly
+[ ] PDF mockup displays correctly
+[ ] All visual elements present
+[ ] No critical errors in logs
+[ ] Performance is acceptable
+[ ] DoF team can access the application
+
+Documentation Sign-off:
+-----------------------
+[ ] Deployment details documented
+[ ] Configuration recorded
+[ ] Basic commands demonstrated
+[ ] Emergency procedures explained
+[ ] Contact information provided
+
+Training Sign-off:
+------------------
+[ ] DoF team understands this is preview
+[ ] Basic PM2 commands demonstrated
+[ ] Update timeline communicated
+[ ] Emergency contacts provided
+[ ] DoF team comfortable with access
+
+FINAL VERIFICATION
+==================
+
+Success Criteria:
+-----------------
+[ ] Website accessible at http://[SERVER_IP]:3000 (or port 80)
+[ ] PDF mockup loads and displays correctly
+[ ] Page looks professional and complete
+[ ] No JavaScript errors
+[ ] PM2 shows "online" status
+[ ] Application starts on system boot
+[ ] DoF team can access and view the page
+[ ] DoF team understands next steps
+
+Issue Notes:
+------------
+Issues Encountered: _________________________________
+_________________________________________________
+_________________________________________________
+
+Resolutions Applied: ________________________________
+_________________________________________________
+_________________________________________________
+
+DEPLOYMENT COMPLETION RECORD
+=============================
+
+Deployment Details:
+-------------------
+Date: _______________ Time Started: _______________ Time Completed: _______________
+Total Duration: _______________ minutes
+Deployed by: _______________________________
+DoF Contact: ________________________________
+DoF IT Contact: _____________________________
+
+Server Information:
+-------------------
+Server IP: _________________________________
+Operating System: RHEL _____
+Node.js Version: ___________________________
+Deployment Directory: /var/www/araw-dashboard/araw
+Deployment URL: http://[IP]:3000 or http://[IP]
+
+Application Information:
+------------------------
+Application: ARAW Climate Finance Dashboard
+Version: Preview (PDF Mockup - v3.1 Design)
+PM2 Process: araw-dashboard
+Bundle Size: _______ kB
+Status: _______ (online/stopped)
+
+Technical Verification:
+-----------------------
+Infrastructure: _____________ (Initials/Time)
+Application: _____________ (Initials/Time)
+Configuration: _____________ (Initials/Time)
+Testing: _____________ (Initials/Time)
+Training: _____________ (Initials/Time)
+
+Final Sign-off:
+---------------
+UBQTY Deployment Lead: _____________________
+DoF Technical Lead: ________________________
+DoF Project Contact: _______________________
+
+Deployment Status: [ ] SUCCESS [ ] SUCCESS WITH ISSUES [ ] FAILED
+
+Notes for Follow-up:
+____________________________________________________
+____________________________________________________
+____________________________________________________
+
+Next Steps:
+-----------
+[ ] v3.1 development continues (3-5 days)
+[ ] Full application deployment scheduled
+[ ] DoF team to be notified when ready
+[ ] Follow same deployment process for v3.1
+
+IMPORTANT REMINDERS FOR DOF TEAM
+=================================
+
+Daily Operations:
+-----------------
+1. Application URL: http://[SERVER_IP]:3000
+2. Check status: pm2 status
+3. View logs: pm2 logs araw-dashboard
+4. Restart if needed: pm2 restart araw-dashboard
+5. Application auto-restarts on crashes
+6. Application auto-starts on server reboot
+
+Emergency Contact:
+------------------
+Project Manager: Jhonnel
+Development Team: UBQTY
+For issues: Contact Jhonnel first
+
+What's Next:
+------------
+- Current: PDF mockup preview (v3.1 design)
+- Timeline: 3-5 days for full v3.1 development
+- Update: Quick deployment (5-10 minutes)
+- Result: Full interactive climate finance dashboard
+
+==================================================================
+
+END OF DEPLOYMENT CHECKLIST
+
+Complete this checklist in sequence. Check off each item as you
+proceed. Keep this document for DoF team records.
+
+Print this checklist for easier use during on-site deployment.
+
+==================================================================
+
