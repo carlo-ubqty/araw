@@ -109,13 +109,16 @@ cd /var/www/araw-dashboard
 2.2 Deploy Source Code:
 ------------------------
 Option A: From Git Repository (RECOMMENDED)
-# Clone from your GitHub account
-git clone https://github.com/[YOUR_GITHUB_USERNAME]/araw.git araw
+# Clone from GitHub
+git clone https://github.com/carlo-ubqty/araw.git araw
 cd araw
 git checkout main
 
 # Note: Repository will be transferred to DoF GitHub later
 # Similar to space-web → DEPDev transfer process
+
+# Alternative SSH method (if HTTPS has issues):
+# git clone git@github.com:carlo-ubqty/araw.git araw
 
 Option B: From USB/ZIP (If no internet)
 # Copy from USB

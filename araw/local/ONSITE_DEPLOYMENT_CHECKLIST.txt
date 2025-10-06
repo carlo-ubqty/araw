@@ -85,7 +85,8 @@ Directory Setup:
 Source Code Deployment:
 -----------------------
 OPTION A: From Git Repository (RECOMMENDED)
-[ ] Clone from GitHub: git clone https://github.com/[YOUR_USERNAME]/araw.git araw
+[ ] Clone from GitHub: git clone https://github.com/carlo-ubqty/araw.git araw
+    Alternative SSH: git clone git@github.com:carlo-ubqty/araw.git araw
 [ ] Navigate to app: cd araw
 [ ] Checkout branch: git checkout main
 [ ] Verify clone: ls -la (should show package.json, src/, public/, etc.)
