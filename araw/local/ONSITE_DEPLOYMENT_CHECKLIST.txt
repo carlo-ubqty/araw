@@ -75,27 +75,36 @@ Security Configuration (RHEL firewalld):
 PHASE 2: APPLICATION DEPLOYMENT (10-15 minutes)
 ================================================
 
-Directory Setup:
-----------------
-[ ] Create directory: sudo mkdir -p /var/www/araw-dashboard
-[ ] Set ownership: sudo chown -R $USER:$USER /var/www/araw-dashboard
+Application User Setup:
+-----------------------
+[ ] Create araw system user: sudo adduser araw --system --group --home /var/www/araw-dashboard --shell /bin/bash
+[ ] Add to www-data group: sudo usermod -aG www-data araw
+[ ] Set up limited sudo: echo "araw ALL=(ALL) NOPASSWD: /bin/systemctl restart nginx, /bin/systemctl reload nginx" | sudo tee /etc/sudoers.d/araw
+[ ] Set directory ownership: sudo chown araw:araw /var/www/araw-dashboard
+[ ] Set directory permissions: sudo chmod 755 /var/www/araw-dashboard
+
+Switch to Application User:
+----------------------------
+[ ] Switch to araw user: sudo su - araw
+[ ] Verify user: whoami (should output: araw)
 [ ] Navigate to directory: cd /var/www/araw-dashboard
 [ ] Verify directory: pwd (should show /var/www/araw-dashboard)
 
 Source Code Deployment:
 -----------------------
+[ ] Ensure you are araw user: whoami (should show: araw)
+
 OPTION A: From Git Repository (RECOMMENDED)
-[ ] Clone from GitHub: git clone https://github.com/carlo-ubqty/araw.git araw
-    Alternative SSH: git clone git@github.com:carlo-ubqty/araw.git araw
-[ ] Navigate to app: cd araw
+[ ] Clone from GitHub: git clone https://github.com/carlo-ubqty/araw.git .
+    Alternative SSH: git clone git@github.com:carlo-ubqty/araw.git .
+    Note: Clone into current directory (dot at end)
 [ ] Checkout branch: git checkout main
 [ ] Verify clone: ls -la (should show package.json, src/, public/, etc.)
 [ ] Note: Repository will be transferred to DoF GitHub later
 
 OPTION B: From USB/ZIP (If no internet)
-[ ] Copy source from USB: cp -r /path/to/usb/araw /var/www/araw-dashboard/
-[ ] Navigate to app: cd /var/www/araw-dashboard/araw
-[ ] Verify files: ls -la
+[ ] Copy source from USB: cp -r /path/to/usb/araw/* /var/www/araw-dashboard/
+[ ] Verify files: ls -la (should show package.json, src/, public/, etc.)
 
 Dependencies Installation:
 --------------------------

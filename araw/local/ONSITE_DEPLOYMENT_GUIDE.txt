@@ -99,19 +99,38 @@ sudo firewall-cmd --list-all  # Verify
 Phase 2: Application Deployment (10-15 minutes)
 ------------------------------------------------
 
-2.1 Create Application Directory:
-----------------------------------
-# Create deployment directory
-sudo mkdir -p /var/www/araw-dashboard
-sudo chown -R $USER:$USER /var/www/araw-dashboard
+2.1 Create Application User:
+-----------------------------
+# Create dedicated system user for the application
+sudo adduser araw --system --group --home /var/www/araw-dashboard --shell /bin/bash
+
+# Add to www-data group (for Nginx)
+sudo usermod -aG www-data araw
+
+# Set up limited sudo access for Nginx restarts
+echo "araw ALL=(ALL) NOPASSWD: /bin/systemctl restart nginx, /bin/systemctl reload nginx" | sudo tee /etc/sudoers.d/araw
+
+# Set directory ownership
+sudo chown araw:araw /var/www/araw-dashboard
+sudo chmod 755 /var/www/araw-dashboard
+
+2.2 Switch to Application User:
+--------------------------------
+# IMPORTANT: All deployment steps should be done as araw user
+sudo su - araw
 cd /var/www/araw-dashboard
 
-2.2 Deploy Source Code:
+# Verify user
+whoami  # Should output: araw
+
+2.3 Deploy Source Code:
 ------------------------
+# Ensure you are the araw user
+whoami  # Should show: araw
+
 Option A: From Git Repository (RECOMMENDED)
 # Clone from GitHub
-git clone https://github.com/carlo-ubqty/araw.git araw
-cd araw
+git clone https://github.com/carlo-ubqty/araw.git .
 git checkout main
 
 # Note: Repository will be transferred to DoF GitHub later
@@ -121,11 +140,10 @@ git checkout main
 # git clone git@github.com:carlo-ubqty/araw.git araw
 
 Option B: From USB/ZIP (If no internet)
-# Copy from USB
-cp -r /path/to/usb/araw /var/www/araw-dashboard/
-cd /var/www/araw-dashboard/araw
+# Copy from USB (as araw user)
+cp -r /path/to/usb/araw/* /var/www/araw-dashboard/
 
-2.3 Install Dependencies and Build:
+2.4 Install Dependencies and Build:
 ------------------------------------
 # Install all packages (this takes 5-10 minutes)
 npm install
@@ -156,6 +174,10 @@ Phase 4: Application Startup (5 minutes)
 
 4.1 Start with PM2:
 -------------------
+# Ensure you are the araw user
+sudo su - araw
+cd /var/www/araw-dashboard
+
 # Start application
 pm2 start npm --name "araw-dashboard" -- start
 
@@ -347,8 +369,9 @@ When v3.1 Development is Complete:
 This infrastructure is ready for immediate v3.1 deployment.
 Just need to:
 
-1. Update code:
-   cd /var/www/araw-dashboard/araw
+1. Switch to araw user and update code:
+   sudo su - araw
+   cd /var/www/araw-dashboard
    git pull origin main  # pulls from your current GitHub
    
 2. Install new dependencies:
@@ -370,8 +393,9 @@ Similar to space-web → DEPDev transfer process:
 When DoF is ready:
 1. DoF creates their GitHub organization/account
 2. Transfer repository ownership to DoF
-3. Update git remote on server:
-   cd /var/www/araw-dashboard/araw
+3. Update git remote on server (as araw user):
+   sudo su - araw
+   cd /var/www/araw-dashboard
    git remote set-url origin https://github.com/DoF-ORG/araw.git
 4. Verify: git remote -v
 5. Future updates pull from DoF repository
@@ -408,6 +432,9 @@ Key Information to Document:
 
 Critical Commands for DoF Team:
 --------------------------------
+# IMPORTANT: Always switch to araw user first
+sudo su - araw
+
 # Check application status
 pm2 status
 
@@ -425,13 +452,16 @@ pm2 start araw-dashboard
 
 Training Points for DoF Staff:
 -------------------------------
-1. Current deployment shows Version 3.1 design mockup
-2. Full interactive application will be deployed after development (3-5 days)
-3. Infrastructure is ready for immediate app deployment
-4. Application runs under PM2 (auto-restarts on crashes)
-5. PM2 configured to start on system boot
-6. For issues, check logs first: pm2 logs araw-dashboard
-7. Emergency contact: Jhonnel (Project Manager)
+1. NEVER manage application as root or regular user
+2. ALWAYS switch to araw user first: sudo su - araw
+3. Current deployment shows Version 3.1 design mockup
+4. Full interactive application will be deployed after development (3-5 days)
+5. Infrastructure is ready for immediate app deployment
+6. Application runs under PM2 (auto-restarts on crashes)
+7. PM2 configured to start on system boot
+8. Application files located at: /var/www/araw-dashboard
+9. For issues, check logs first: pm2 logs araw-dashboard
+10. Emergency contact: Jhonnel (Project Manager)
 
 ==============================================================
 
