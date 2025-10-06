@@ -742,3 +742,15 @@ Full v3.1 application will be deployed after development is complete.
 ✅ No rushed development - do v3.1 properly
 ✅ Easy replacement: just swap page.tsx file later
 
+**Onsite Deployment Documents Created:**
+✅ `local/ONSITE_DEPLOYMENT_GUIDE.txt` - Field-ready deployment guide
+✅ `local/ONSITE_DEPLOYMENT_CHECKLIST.txt` - Checkbox execution list
+✅ `local/ONSITE_DEPLOYMENT_LOG.txt` - Deployment record template
+
+These documents mirror the successful space-web deployment format:
+- Step-by-step practical execution
+- Checkbox format for easy tracking
+- Space for documenting actual deployment
+- Tailored for RHEL + PDF mockup approach
+- 30-60 minute deployment timeline
+
