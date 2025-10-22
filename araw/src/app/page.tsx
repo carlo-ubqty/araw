@@ -14,12 +14,14 @@
  * ✅ ARAW-311: Header Component
  * ✅ ARAW-312: Subheader Component
  * ✅ ARAW-313: Side Panel (Filter Dropdowns)
- * 🚧 ARAW-314: Key Metric Cards (Next)
+ * ✅ ARAW-314: Key Metric Cards (5 KPI cards with gradients)
+ * 🚧 ARAW-315: Funds & Emissions Charts (Next)
  */
 
 import HeaderV3 from '@/components/layout/HeaderV3';
 import SubheaderV3 from '@/components/layout/SubheaderV3';
 import SidePanelV3 from '@/components/layout/SidePanelV3';
+import KPICardsRowV3 from '@/components/dashboard/KPICardsRowV3';
 
 export default function DashboardV3() {
   return (
@@ -39,7 +41,11 @@ export default function DashboardV3() {
           
           {/* Main Content */}
           <main className="flex-1">
-            <div className="p-6">
+            <div className="p-5">
+              {/* KPI Cards Row - ARAW-314 ✅ */}
+              <KPICardsRowV3 className="mb-6" />
+              
+              {/* Development Progress Indicator */}
           <div className="bg-white rounded-lg shadow-sm p-8">
             <h2 className="text-3xl font-bold text-gray-900 mb-4">
               V3.0 Dashboard Implementation
@@ -49,7 +55,7 @@ export default function DashboardV3() {
             </p>
             <div className="mt-6 p-4 bg-green-50 border border-green-200 rounded">
               <p className="text-sm text-green-800">
-                <strong>Current Status:</strong> Foundation, header, subheader, and side panel complete. Ready for KPI cards implementation.
+                <strong>Current Status:</strong> Foundation, header, subheader, side panel, and KPI cards complete. Ready for charts implementation.
               </p>
             </div>
             
@@ -61,16 +67,17 @@ export default function DashboardV3() {
                   <li>✅ ARAW-311: Header Component (HeaderV3.tsx + tests)</li>
                   <li>✅ ARAW-312: Subheader Component (SubheaderV3.tsx)</li>
                   <li>✅ ARAW-313: Side Panel (SidePanelV3.tsx with collapsible filters)</li>
+                  <li>✅ ARAW-314: Key Metric Cards (KPICardV3 + KPICardsRowV3)</li>
                 </ul>
               </div>
               
               <div className="border-l-4 border-purple-500 pl-4">
                 <h3 className="font-semibold text-gray-800">🚧 Next Up</h3>
                 <ul className="text-sm text-gray-600 mt-2 space-y-1">
-                  <li>🚧 ARAW-314: Key Metric Cards (5 KPI cards with gradients)</li>
-                  <li>⏳ ARAW-315: Funds & Emissions Charts</li>
-                  <li>⏳ ARAW-316: Climate Investment Charts</li>
+                  <li>🚧 ARAW-315: Funds & Emissions Charts (2 charts with legends)</li>
+                  <li>⏳ ARAW-316: Climate Investment Charts (3 charts)</li>
                   <li>⏳ ARAW-317: Regional Investments & Map</li>
+                  <li>⏳ ARAW-318: Footer Component</li>
                 </ul>
               </div>
               
@@ -79,12 +86,12 @@ export default function DashboardV3() {
                 <div className="mt-2">
                   <div className="flex items-center gap-2">
                     <div className="flex-1 bg-gray-200 rounded-full h-4">
-                      <div className="bg-green-600 h-4 rounded-full" style={{ width: '33%' }}></div>
+                      <div className="bg-green-600 h-4 rounded-full" style={{ width: '42%' }}></div>
                     </div>
-                    <span className="text-sm font-medium text-gray-700">33%</span>
+                    <span className="text-sm font-medium text-gray-700">42%</span>
                   </div>
                   <p className="text-xs text-gray-500 mt-1">
-                    4 of 12 stories completed
+                    5 of 12 stories completed
                   </p>
                 </div>
               </div>
