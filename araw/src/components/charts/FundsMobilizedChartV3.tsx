@@ -22,6 +22,7 @@ export interface FundsMobilizedChartV3Props {
   title?: string;
   subtitle?: string;
   noteText?: string;
+  showContainer?: boolean;
   className?: string;
 }
 
@@ -30,16 +31,17 @@ export default function FundsMobilizedChartV3({
   title = 'FUNDS MOBILIZED FOR CLIMATE ACTION',
   subtitle = 'Trending up by 5.2% this year 📈',
   noteText = '2025 (GAA): Both funds are GAA allocations for 2025 and do not represent actual disbursements',
+  showContainer = true,
   className = ''
 }: FundsMobilizedChartV3Props) {
-  return (
-    <div className={`bg-white rounded-lg border border-gray-200 p-6 ${className}`}>
+  const chartContent = (
+    <>
       {/* Title and Subtitle */}
       <div className="mb-4">
-        <h3 className="font-semibold text-gray-900" style={{ fontSize: '20px' }}>
+        <h3 className="font-semibold text-gray-900" style={{ fontSize: '14px' }}>
           {title}
         </h3>
-        <p className="text-gray-600 mt-1" style={{ fontSize: '13px' }}>
+        <p className="text-gray-600 mt-1" style={{ fontSize: '11px' }}>
           {subtitle}
         </p>
       </div>
@@ -111,6 +113,16 @@ export default function FundsMobilizedChartV3({
           </p>
         </div>
       )}
+    </>
+  );
+
+  if (!showContainer) {
+    return chartContent;
+  }
+
+  return (
+    <div className={`bg-white rounded-lg border border-gray-200 p-6 ${className}`}>
+      {chartContent}
     </div>
   );
 }

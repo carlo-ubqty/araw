@@ -1,0 +1,163 @@
+ARAW V3.0 - Data Integration Plan
+==================================
+Date: October 22, 2025
+
+DATA SOURCES:
+-------------
+Source: 2 Excel files on SharePoint
+- Multiple sheets per file
+- Structure: TBD (awaiting user input)
+
+INTEGRATION STRATEGY:
+---------------------
+
+PHASE 1: DATA ASSESSMENT
+-------------------------
+[ ] Get Excel file structure
+    - List all sheets
+    - Map columns to dashboard requirements
+    - Identify data types and relationships
+    
+[ ] Document data mapping:
+    Sheet Name → Database Table → API Endpoint → Dashboard Component
+
+PHASE 2: DATABASE SCHEMA DESIGN
+--------------------------------
+[ ] Design PostgreSQL schema based on Excel structure
+    
+Expected Tables (based on current mockups):
+1. projects
+   - id, name, amount, sector, region, fund_source, fund_type, status, year
+   
+2. ghg_emissions
+   - id, year, total_ghg, co2, ch4, n2o, hfc, is_projection
+   
+3. ghg_targets
+   - id, year, target_value, conditional, unconditional, sector
+   
+4. fund_sources
+   - id, source_type, amount, percentage, year
+   
+5. sectors
+   - id, name, code, description
+   
+6. regions
+   - id, name, code, coordinates_lat, coordinates_lon
+   
+7. investments_by_sector
+   - id, sector_id, year, gov_budget, grant, loan, private
+   
+8. investments_by_region
+   - id, region_id, year, amount, rank
+
+PHASE 3: ETL (Extract, Transform, Load)
+----------------------------------------
+[ ] Create import script
+    - Read Excel files (using exceljs or xlsx npm package)
+    - Transform data to match schema
+    - Validate data
+    - Insert into PostgreSQL
+    
+[ ] Create data validation rules
+    - Check for missing values
+    - Validate date ranges
+    - Ensure referential integrity
+
+PHASE 4: API LAYER UPDATES
+---------------------------
+[ ] Update src/services/dashboardServiceV3.ts
+    - Replace mock data with database queries
+    - Use PostgreSQL client (pg or Prisma)
+    - Implement proper error handling
+    
+[ ] Create database connection utilities
+    - src/lib/database.ts
+    - Connection pooling
+    - Query helpers
+
+PHASE 5: SHAREPOINT SYNC (Future)
+----------------------------------
+Options:
+1. Manual Export/Import
+   - User downloads Excel → runs import script
+   - Simple, no SharePoint API needed
+   
+2. Scheduled Script
+   - Cron job runs daily/weekly
+   - Fetches from SharePoint → imports to DB
+   - Requires SharePoint API access
+   
+3. Real-time Webhook
+   - SharePoint triggers webhook on update
+   - Auto-sync to database
+   - Most complex, requires SharePoint Premium
+
+TECHNOLOGY STACK:
+-----------------
+- Database: MySQL 8.0+ (RHEL deployment)
+- ORM Option 1: Raw SQL with 'mysql2' package (lightweight, recommended)
+- ORM Option 2: Prisma (type-safe, easier migrations)
+- Excel Parser: 'exceljs' or 'xlsx' npm package
+- SharePoint API: '@microsoft/microsoft-graph-client' (if needed)
+
+DEPLOYMENT ENVIRONMENTS:
+------------------------
+1. UAT (User Acceptance Testing):
+   - Location: On-premises at Department of Finance (DoF)
+   - OS: Red Hat Enterprise Linux (RHEL) 8/9
+   - Database: MySQL 8.0+
+   - Web Server: Nginx (reverse proxy)
+   - Process Manager: PM2
+
+2. Production:
+   - Location: AWS Cloud
+   - Compute: EC2 instance
+   - Database: RDS (MySQL)
+   - Web Server: Nginx (reverse proxy)
+   - Process Manager: PM2
+
+NEXT STEPS:
+-----------
+1. User provides Excel file structure or sample files
+2. Create database schema SQL file
+3. Build import script
+4. Update dashboardServiceV3 with real queries
+5. Test with actual data
+6. Deploy to staging for QA
+
+QUESTIONS FOR USER:
+-------------------
+1. Can you share the Excel files or describe their structure?
+   - What sheets exist?
+   - What columns in each sheet?
+   - Sample data?
+
+2. Data update frequency?
+   - How often does the data change?
+   - Do you need daily/weekly/monthly updates?
+
+3. SharePoint access?
+   - Do you have API access?
+   - Or will you export files manually?
+
+4. Database preference?
+   - Using MySQL 8.0+ (confirmed per deployment guide)
+   - UAT: On-prem RHEL + MySQL
+   - Prod: AWS EC2 + RDS (MySQL)
+
+ESTIMATED TIMELINE:
+-------------------
+- Data mapping: 1-2 hours
+- Database schema: 2-3 hours
+- Import script: 3-4 hours
+- API updates: 2-3 hours
+- Testing: 2-3 hours
+---
+Total: 1-2 days of development
+
+DEPENDENCIES:
+-------------
+- Access to Excel files or their structure
+- PostgreSQL connection details
+- SharePoint access (if auto-sync needed)
+

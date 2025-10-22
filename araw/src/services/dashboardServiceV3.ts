@@ -169,5 +169,79 @@ export class DashboardServiceV3 {
       ]
     };
   }
+
+  /**
+   * Fetch GHG by sector data
+   * TODO: Replace with actual API call
+   */
+  static async getGHGBySectorData(filters?: Partial<FilterState>) {
+    await new Promise(resolve => setTimeout(resolve, 100));
+    
+    // Mock data - 8 sectors with 3 components each
+    return [
+      { sector: 'Agriculture', actual: 12.5, conditional: 8.2, unconditional: 2.3 },
+      { sector: 'Water', actual: 1.2, conditional: 1.17, unconditional: 0.03 },
+      { sector: 'Forestry', actual: 15.8, conditional: 10.5, unconditional: 3.2 },
+      { sector: 'Health', actual: 0.5, conditional: 0.4, unconditional: 0.1 },
+      { sector: 'Coastal', actual: 3.2, conditional: 2.5, unconditional: 0.5 },
+      { sector: 'Settlements', actual: 8.5, conditional: 6.2, unconditional: 1.8 },
+      { sector: 'DRRM', actual: 2.1, conditional: 1.5, unconditional: 0.4 },
+      { sector: 'Energy', actual: 18.3, conditional: 12.8, unconditional: 4.2 },
+    ];
+  }
+
+  /**
+   * Fetch investments by region data (17 Philippine regions)
+   * TODO: Replace with actual API call
+   */
+  static async getInvestmentsByRegionData(filters?: Partial<FilterState>) {
+    await new Promise(resolve => setTimeout(resolve, 100));
+    
+    // Mock data - 17 regions sorted by amount
+    return [
+      { region: 'BARMM', regionCode: 'BARMM', amount: 85.5, rank: 1 },
+      { region: 'Region XIII', regionCode: 'Region XIII', amount: 78.2, rank: 2 },
+      { region: 'Region I', regionCode: 'Region I', amount: 72.8, rank: 3 },
+      { region: 'Region II', regionCode: 'Region II', amount: 68.4, rank: 4 },
+      { region: 'Region X', regionCode: 'Region X', amount: 65.1, rank: 5 },
+      { region: 'Region IX', regionCode: 'Region IX', amount: 61.7, rank: 6 },
+      { region: 'NCR', regionCode: 'NCR', amount: 58.3, rank: 7 },
+      { region: 'Region VIII', regionCode: 'Region VIII', amount: 54.9, rank: 8 },
+      { region: 'Region III', regionCode: 'Region III', amount: 51.5, rank: 9 },
+      { region: 'Region XI', regionCode: 'Region XI', amount: 48.2, rank: 10 },
+      { region: 'Region XII', regionCode: 'Region XII', amount: 44.8, rank: 11 },
+      { region: 'Region IV-A', regionCode: 'Region IV-A', amount: 41.4, rank: 12 },
+      { region: 'Region IV-B', regionCode: 'Region IV-B', amount: 38.1, rank: 13 },
+      { region: 'Region VI', regionCode: 'Region VI', amount: 34.7, rank: 14 },
+      { region: 'Region V', regionCode: 'Region V', amount: 31.3, rank: 15 },
+      { region: 'Region VII', regionCode: 'Region VII', amount: 27.9, rank: 16 },
+      { region: 'CAR', regionCode: 'CAR', amount: 24.5, rank: 17 },
+    ];
+  }
+
+  /**
+   * Fetch map location data with income classes
+   * TODO: Replace with actual API call
+   */
+  static async getMapLocationData(filters?: Partial<FilterState>) {
+    await new Promise(resolve => setTimeout(resolve, 100));
+    
+    // Mock data - Sample locations with coordinates
+    return {
+      locations: [
+        { locationId: '1', locationName: 'Manila', regionName: 'NCR', latitude: 14.5995, longitude: 120.9842, investmentAmount: 1200, incomeClass: 5 as const },
+        { locationId: '2', locationName: 'Davao City', regionName: 'Region XI', latitude: 7.1907, longitude: 125.4553, investmentAmount: 850, incomeClass: 4 as const },
+        { locationId: '3', locationName: 'Cebu City', regionName: 'Region VII', latitude: 10.3157, longitude: 123.8854, investmentAmount: 720, incomeClass: 4 as const },
+        { locationId: '4', locationName: 'Zamboanga', regionName: 'Region IX', latitude: 6.9214, longitude: 122.0790, investmentAmount: 450, incomeClass: 3 as const },
+        { locationId: '5', locationName: 'Cagayan de Oro', regionName: 'Region X', latitude: 8.4542, longitude: 124.6319, investmentAmount: 380, incomeClass: 3 as const },
+        { locationId: '6', locationName: 'Iloilo City', regionName: 'Region VI', latitude: 10.7202, longitude: 122.5621, investmentAmount: 340, incomeClass: 3 as const },
+        { locationId: '7', locationName: 'Baguio City', regionName: 'CAR', latitude: 16.4023, longitude: 120.5960, investmentAmount: 290, incomeClass: 2 as const },
+        { locationId: '8', locationName: 'Laoag City', regionName: 'Region I', latitude: 18.1987, longitude: 120.5937, investmentAmount: 250, incomeClass: 2 as const },
+        { locationId: '9', locationName: 'Tacloban', regionName: 'Region VIII', latitude: 11.2428, longitude: 125.0039, investmentAmount: 210, incomeClass: 1 as const },
+        { locationId: '10', locationName: 'Cotabato City', regionName: 'BARMM', latitude: 7.2231, longitude: 124.2452, investmentAmount: 180, incomeClass: 1 as const },
+      ],
+      totalInvestment: '₱15.2 B'
+    };
+  }
 }
 

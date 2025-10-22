@@ -31,6 +31,7 @@ export interface GHGLevelsChartV3Props {
   targetData?: GHGTargetData;
   title?: string;
   subtitle?: string;
+  showContainer?: boolean;
   className?: string;
 }
 
@@ -39,16 +40,17 @@ export default function GHGLevelsChartV3({
   targetData,
   title = 'GHG LEVELS',
   subtitle = 'Includes CO₂, CH₄, N₂O, and HFCs (values in Gg, summed across gases)',
+  showContainer = true,
   className = ''
 }: GHGLevelsChartV3Props) {
-  return (
-    <div className={`bg-white rounded-lg border border-gray-200 p-6 ${className}`}>
+  const chartContent = (
+    <>
       {/* Title and Subtitle */}
       <div className="mb-4">
-        <h3 className="font-semibold text-gray-900" style={{ fontSize: '20px' }}>
+        <h3 className="font-semibold text-gray-900" style={{ fontSize: '14px' }}>
           {title}
         </h3>
-        <p className="text-gray-600 mt-1" style={{ fontSize: '13px' }}>
+        <p className="text-gray-600 mt-1" style={{ fontSize: '11px' }}>
           {subtitle}
         </p>
       </div>
@@ -126,6 +128,16 @@ export default function GHGLevelsChartV3({
           </div>
         )}
       </div>
+    </>
+  );
+
+  if (!showContainer) {
+    return chartContent;
+  }
+
+  return (
+    <div className={`bg-white rounded-lg border border-gray-200 p-6 ${className}`}>
+      {chartContent}
     </div>
   );
 }
