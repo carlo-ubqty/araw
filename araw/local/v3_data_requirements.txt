@@ -1,51 +1,684 @@
 ARAW V3.0 Dashboard - Data Requirements
 ========================================
 Date: 2025-10-22
-Status: PLANNING PHASE
+Status: EXTRACTED FROM MOCKUPS & ANNOTATIONS
 
-DATA COLLECTION STRATEGY:
-=========================
-As each section is catalogued, identify:
-1. What data is displayed in that section
-2. Data format needed (structure, types)
-3. Source of data (user-provided, API, database)
-4. Sample data needed for implementation
-5. Real data integration requirements
+DATA SOURCES IDENTIFIED:
+========================
 
-DATA INVENTORY:
-===============
-[To be filled as mockups are catalogued]
+Primary Sources:
+1. National CCET PAPs Figures 2017 - GAA FY2025
+2. NICCDIES (data from 1994, 2000, 2010 and 2020)
+3. Climate Budget Brief - GAA v.21
+4. Green Climate Fund
+5. Tracking Climate Adaptation Finance in the Philippines
+6. Climate Finance documents
+7. NAP 2023-2050
+8. CCC (Climate Change Commission) documents
 
-SECTION: [Section Name]
------------------------
-Data Type: [KPI/Chart/Table/Map/etc.]
+Note: **No specific dataset available in DOF Data Request spreadsheet**
+- These details compiled from online sources and AI
+- They still need validation
+
+===============================================================================
+
+SECTION-BY-SECTION DATA REQUIREMENTS:
+=====================================
+
+01. HEADER DATA
+---------------
+Data Type: Static/Dynamic
 Fields Required:
-- Field 1: [name, type, format]
-- Field 2: [name, type, format]
+- dashboard_title: string ("Climate Finance Dashboard")
+- current_datetime: timestamp (real-time)
+- dof_logo: image asset path
 
 Sample Data Structure:
-```
-[JSON/TypeScript interface to be added]
+```typescript
+interface HeaderData {
+  title: string;
+  logoPath: string;
+  currentTime: Date;
+  notificationCount?: number;
+}
 ```
 
 Data Source:
-- [ ] User-provided files
-- [ ] Mock data for development
-- [ ] API endpoint (specify)
-- [ ] Database query (specify)
+- [x] Static configuration
+- [x] Client-side clock
+- [x] Logo asset (existing)
 
-Data Retrieval Notes:
-- 
 
+02. SUBHEADER (Filter Controls) DATA
+-------------------------------------
+Data Type: Configuration + State
+Fields Required:
+- data_view_options: ["NAP", "NDCIP"]
+- nap_sectors: array of 8 sectors
+- ndcip_sectors: array of 5 sectors
+- toggle_states: {amount_vs_projects, ongoing_vs_completed}
+
+NAP Sectors (8):
+1. Agriculture, Fisheries, and Food Security
+2. Water Resources
+3. Health
+4. Ecosystems and Biodiversity
+5. Cultural Heritage, Population Displacement, and Migration
+6. Land Use and Human Settlements
+7. Livelihoods and Industries
+8. Energy, Transport, and Communications
+
+NDCIP Sectors (5):
+1. Agriculture
+2. Waste
+3. Industry
+4. Transport
+5. Energy
+
+Sample Data Structure:
+```typescript
+interface SubheaderData {
+  dataView: 'NAP' | 'NDCIP';
+  availableSectors: string[];
+  selectedSectors: string[];
+  displayMode: 'amount' | 'projects';
+  projectStatus: 'ongoing' | 'completed';
+}
+```
+
+Data Source:
+- [x] Static configuration (sector lists)
+- [ ] User-provided: Filter state management
+
+
+03. SIDE PANEL (Filters) DATA
+------------------------------
+Data Type: Filter Options + State
+Fields Required:
+- available_years: array [2025, 2024, 2023, 2022, 2021]
+- fund_sources: array
+- fund_types: ["Public", "Private", "Mixed"]
+- funders: array of organizations
+- implementing_agencies: array of government departments
+- climate_impact_drivers: array
+- income_classes: array [1, 2, 3, 4, 5]
+
+Fund Sources:
+- Government Budget
+- People's Survival Fund (PSF)
+- National Budget Allocations
+- LGU Adaptation Budgets
+- Loans
+- Grants (GCF, Adaptation Fund, GEF, bilateral donors)
+- Private (CSR, PPPs, insurance, community projects)
+
+Funders List:
+- Asian Development Bank
+- United Nations Development Programme (UNDP)
+- World Bank
+- (Additional funders to be provided)
+
+Implementing Agencies:
+- Department of Agriculture
+- Department of Energy
+- Department of Human Settlements and Urban Development
+- Department of Tourism
+- (Additional agencies per NAP/NDCIP sectors)
+
+Climate Impact Drivers:
+- Increased Temperature & Drought
+- Sea level rise and extreme sea levels
+- Extreme Precipitation
+- Extreme wind and tropical cyclones
+
+Sample Data Structure:
+```typescript
+interface FilterOptions {
+  years: number[];
+  fundSources: string[];
+  fundTypes: ('Public' | 'Private' | 'Mixed')[];
+  funders: Funder[];
+  implementingAgencies: Agency[];
+  climateImpactDrivers: string[];
+  incomeClasses: number[];
+}
+
+interface FilterState {
+  selectedYears: number[];
+  selectedFundSources: string[];
+  selectedFundTypes: string[];
+  selectedFunders: string[];
+  selectedAgencies: string[];
+  selectedCIDs: string[];
+  selectedIncomeClasses: number[];
+}
+```
+
+Data Source:
+- [x] Static configuration (most lists)
+- [ ] User-provided: Dynamic organization/agency lists
+- [x] Static: CID and income class categories
+
+
+04. KEY METRIC CARDS DATA
+--------------------------
+Data Type: Aggregated KPIs
+Fields Required:
+
+Card A - Total Investment:
+- total_investment: number (PHP)
+- currency: string ("PHP")
+- display_format: string ("1.16 B")
+
+Card B - GHG Reduction Actual:
+- ghg_reduction_percentage: number (56)
+- baseline_year: number (2020)
+- display_suffix: string ("vs 2020 baseline")
+
+Card C - Adaptation Investment:
+- adaptation_investment: number (PHP)
+- display_format: string ("1.12 B")
+
+Card D - Mitigation Investment OR Total Projects:
+- mitigation_investment: number (PHP) OR
+- total_projects: number
+- toggle_mode: 'amount' | 'projects'
+
+Card E - Total Projects:
+- total_projects: number
+- display_format: string ("579 Projects")
+
+Sample Data Structure:
+```typescript
+interface KeyMetrics {
+  totalInvestment: {
+    value: number;
+    displayValue: string;
+    currency: 'PHP';
+  };
+  ghgReduction: {
+    percentage: number;
+    baselineYear: number;
+  };
+  adaptationInvestment: {
+    value: number;
+    displayValue: string;
+  };
+  mitigationInvestment: {
+    value: number;
+    displayValue: string;
+  };
+  totalProjects: {
+    count: number;
+    displayValue: string;
+  };
+}
+```
+
+Data Source:
+- [ ] User-provided: Aggregated from CCET PAPs data
+- [ ] User-provided: Calculated from project database
+- Filters affect these values dynamically
+
+
+05. FUNDS MOBILIZED CHART DATA
+-------------------------------
+Data Type: Time series
+Fields Required:
+- year: number (2020-2025)
+- adaptation_amount: number (PHP)
+- mitigation_amount: number (PHP)
+- is_gaa_allocation: boolean
+- is_actual_disbursement: boolean
+
+2025 Example Data:
+- Adaptation: ₱123,498,351,000
+- Mitigation: ₱12,612,534,000,000
+- Notes: "Both funds are GAA allocations for 2025 and do not represent actual disbursements"
+
+Sample Data Structure:
+```typescript
+interface FundsMobilizedData {
+  year: number;
+  adaptation: number;
+  mitigation: number;
+  dataType: 'GAA' | 'Actual' | 'NEP';
+  notes?: string;
+}
+
+type FundsMobilizedSeries = FundsMobilizedData[];
+```
+
+Data Source:
+- [ ] User-provided: National CCET PAPs Figures 2017 - GAA FY2025
+- [ ] User-provided: Mix of Actual, NEP, and GAA data
+- Classification viewable via tooltip
+
+
+06. GHG LEVELS CHART DATA
+--------------------------
+Data Type: Time series + breakdown
+Fields Required:
+- year: number (1994-2020, with 2024 projection)
+- total_ghg: number (Gg - gigagrams)
+- co2: number (Gg)
+- ch4: number (Gg)
+- n2o: number (Gg)
+- hfc: number (Gg)
+- target_value: number (optional, for 2024)
+
+2024 Example Data:
+- GHG Total: -230.580 Gg
+- Breakdown:
+  • Carbon Dioxide (CO₂): 139.194 Gg
+  • Methane (CH₄): 70.155 Gg
+  • Nitrous Oxide (N₂O): 17.233 Gg
+  • Hydrofluorocarbon (HFC): 3.978 Gg
+
+Sample Data Structure:
+```typescript
+interface GHGLevelsData {
+  year: number;
+  totalGHG: number;
+  breakdown: {
+    co2: number;
+    ch4: number;
+    n2o: number;
+    hfc: number;
+  };
+  isProjection: boolean;
+  targetValue?: number;
+}
+
+type GHGLevelsSeries = GHGLevelsData[];
+```
+
+Data Source:
+- [ ] User-provided: NICCDIES data (1994, 2000, 2010, 2020)
+- Note: "Still pending validation, used only to create proper presentation"
+- Gases: CO₂, CH₄, N₂O, HFCs (summed across gases)
+
+
+07. INVESTMENT BY SECTOR CHART DATA
+------------------------------------
+Data Type: Categorical + Breakdown
+Fields Required:
+- sector: string (8 for NAP, 5 for NDCIP)
+- government_budget: number (PHP)
+- grant: number (PHP)
+- loan: number (PHP)
+- private: number (PHP)
+- total: number (PHP)
+
+Sectors (NAP - 8):
+1. Agriculture
+2. Water
+3. Forestry
+4. Health
+5. Coastal & Marine
+6. Human Settlements
+7. DRRM
+8. Energy
+
+Sectors (NDCIP - 5):
+1. Agriculture
+2. Waste
+3. Industry
+4. Transport
+5. Energy
+
+Sample Data Structure:
+```typescript
+interface InvestmentBySector {
+  sector: string;
+  governmentBudget: number;
+  grant: number;
+  loan: number;
+  private: number;
+  total: number;
+}
+
+type InvestmentBySectorData = InvestmentBySector[];
+```
+
+Data Source:
+- [ ] User-provided: Existing mockup data (no dataset available)
+- Note: Should display only relevant sectors based on NAP/NDCIP selection
+- Note: Private sector investments included where available
+
+
+08. FUND SOURCE DATA
+---------------------
+Data Type: Categorical breakdown
+Fields Required:
+- source_type: string ("Government Budget", "Grant", "Loan", "Private")
+- amount: number (PHP)
+- percentage: number (%)
+- insights: string (description text)
+
+Example Data:
+- Government Budget: ₱980 M (40%)
+  Insight: "Largest funding source, contributing nearly half of total climate funds."
+- Grant: ₱310 M (32%)
+- Loan: ₱175 M (18%)
+- Private: ₱95 M (10%)
+- Total: ₱1,560 M (100%)
+
+Sample Data Structure:
+```typescript
+interface FundSourceData {
+  sourceType: 'Government Budget' | 'Grant' | 'Loan' | 'Private';
+  amount: number;
+  percentage: number;
+  insights: string;
+  details?: {
+    subCategories?: string[];
+    majorContributors?: string[];
+  };
+}
+
+type FundSourceBreakdown = FundSourceData[];
+```
+
+Data Source:
+- [ ] User-provided: Aggregate from fund source data
+- Note: 72% external (Grant + Loan + Private = 60%?? - verify calculation)
+
+
+09. GHG VS 2020 BASELINE BY SECTOR DATA
+----------------------------------------
+Data Type: Categorical + Multi-series
+Fields Required:
+- sector: string (8 sectors)
+- actual: number (GT CO₂e)
+- conditional_target: number (GT CO₂e)
+- unconditional_target: number (GT CO₂e)
+- baseline_2020: number (GT CO₂e)
+
+Example Data (Water sector):
+- Actual: 1.2 GT CO₂e
+- Conditional: 1.17 GT CO₂e
+- Unconditional: 0.03 GT CO₂e
+
+Progress Metric:
+- Overall: "40% of 2030 reduction target achieved"
+
+Sample Data Structure:
+```typescript
+interface GHGBaselineBySector {
+  sector: string;
+  actual: number;
+  conditionalTarget: number;
+  unconditionalTarget: number;
+  baseline2020: number;
+}
+
+interface GHGBaselineData {
+  sectors: GHGBaselineBySector[];
+  overallProgress: {
+    percentageAchieved: number;
+    targetYear: number;
+    note: string;
+  };
+}
+```
+
+Data Source:
+- [ ] User-provided: No specific dataset available
+- Reference: Initial mockup (referred to in annotations)
+
+
+10. INVESTMENTS BY REGION DATA
+-------------------------------
+Data Type: Categorical (17 regions)
+Fields Required:
+- region_code: string
+- region_name: string
+- investment_amount: number (PHP)
+- rank: number
+
+Philippine Regions (17):
+1. BARMM (Bangsamoro Autonomous Region in Muslim Mindanao)
+2. Region XIII (Caraga)
+3. Region I (Ilocos Region)
+4. Region II (Cagayan Valley)
+5. Region X (Northern Mindanao)
+6. Region IX (Zamboanga Peninsula)
+7. NCR (National Capital Region)
+8. Region VIII (Eastern Visayas)
+9. Region III (Central Luzon)
+10. Region XI (Davao Region)
+11. Region XII (SOCCSKSARGEN)
+12. Region IV-A (CALABARZON)
+13. Region IV-B (MIMAROPA)
+14. Region VI (Western Visayas)
+15. Region V (Bicol Region)
+16. Region VII (Central Visayas)
+17. CAR (Cordillera Administrative Region)
+
+Sample Data Structure:
+```typescript
+interface InvestmentByRegion {
+  regionCode: string;
+  regionName: string;
+  investmentAmount: number;
+  rank: number;
+}
+
+type InvestmentsByRegionData = InvestmentByRegion[];
+```
+
+Data Source:
+- [ ] User-provided: Existing mockup reference
+- Note: "Nationwide" to be used instead of project-specific locations
+
+
+11. CLIMATE IMPACT DRIVERS MAP DATA
+------------------------------------
+Data Type: Geospatial + Categorical
+Fields Required:
+- region_or_province: string
+- coordinates: {lat: number, lon: number}
+- investment_amount: number (PHP)
+- income_class: number (1-5)
+- climate_impact_drivers: string[] (checked factors)
+- fund_breakdown: {
+    pib_plus: number,
+    p600m_plus: number,
+    p300m: number
+  }
+
+Total PH Mainland: ₱15.2 B
+
+Climate Impact Drivers:
+- Increased Temperature & Drought
+- Sea level rise and extreme sea levels
+- Extreme Precipitation
+- Extreme wind and tropical cyclones
+
+Income Classes:
+- Class 5: ₱1B+
+- Class 4: ₱600 M+
+- Class 3: ₱300 M+
+- Class 2: ₱300 M+
+- Class 1: <₱300 M
+
+Sample Data Structure:
+```typescript
+interface MapLocationData {
+  locationId: string;
+  locationName: string;
+  coordinates: {
+    latitude: number;
+    longitude: number;
+  };
+  investmentAmount: number;
+  incomeClass: 1 | 2 | 3 | 4 | 5;
+  climateImpactDrivers: string[];
+  fundBreakdown: {
+    governmentBudget: number;
+    grant: number;
+    loan: number;
+    private: number;
+  };
+}
+
+interface ChoroplethMapData {
+  locations: MapLocationData[];
+  totalMainlandInvestment: number;
+  geoJsonPath: string;
+}
+```
+
+Data Source:
+- [ ] User-provided: Regional allocations with CID classifications
+- [ ] GeoJSON: Philippines ADM1 boundaries (existing in project)
+- Source Reference: NICCDIES Climate Impact Drivers data
+- Source Reference: MUC-DIS per project location, indicate nationwide
+- Note: Can be static for now (per Oct 3, 2025 meeting)
+- Note: CIDs visibility can be toggled via checkbox
+- Note: Replaced "Vulnerability Index" with "NAP Climate Impact Drivers"
+
+
+===============================================================================
+
+DATA INTEGRATION NOTES:
+=======================
+
+From Annotations Document:
+
+NAP vs NDCIP Data Differences:
+- NAP: 8 sectors
+- NDCIP: 5 sectors  
+- Some sector intersection, particularly energy sector
+- Fund sourcing and sectors vary between views
+
+Amount vs Projects Toggle:
+- Selecting "Amount" radio button: Shows total project amount
+- Selecting "Projects": Shows total project count
+- Changes the violet card (Card D) display
+- Note: "Still slightly confusing, color coding in initial mockup refers to total investment, but to my understanding, these buttons should affect only the violet card"
+
+Ongoing vs Completed Toggle:
+- "Ongoing": Shows total number of ongoing projects
+- "Completed": Shows completed projects
+- Updates "X Ongoing Projects" label accordingly
+
+Sector Selection:
+- Should display only relevant sectors depending on NAP or NDCIP selection
+- As mentioned in NAP/NDCIP Data section
+
+Key Metrics Calculation:
+- Cards update based on filters: year, NAP vs NDCIP, amount vs projects, ongoing vs completed
+- Referenced as "reference or initial mockup"
+
+Financing Trends:
+- Funds mobilized: Sourced from National CCET PAPs Figures 2017 - GAA FY2025
+- Mix of Actual, NEP, and GAA data
+- Dashboard uses only Actual and GAA
+- Classification can be viewed via tooltip
+
+- GHG Levels: No specific dataset in Data Request Spreadsheet
+- Gathered numerical data from NICCDIES with dates 1994, 2000, 2010 and 2020
+- Still pending validation
+- Used only to create proper presentation
+
+Climate Investment Overview:
+- No supporting dataset available
+- Refers to existing mockup
+- For "Investment by Sector" and "GHG Baseline": only sectors included under NAP or NDCIP are displayed
+
+Regional Investments:
+- No supporting dataset for graphs
+- Refers to existing mockup
+- For "Investment by Region": refers to existing mockup
+
+Choropleth Map:
+- Mentioned to replace "Vulnerability Index" with "NAP Climate Impact Drivers"
+- Source: NICCDIES Climate Impact Drivers
+- Per user understanding: CIDs can be visible or hidden (checkbox)
+- MUC-DIS: Per project location, indicate nationwide instead
+- Per Oct 3, 2025 meeting: Can make static for now, no data available, no proper guidelines
+
+Filters Alignment:
+- Filters aligned with each section based on function
+- Key Metrics & Financing Trends: Year and Project Status filters
+- Funding section: Fund Source, Fund Type, Funder, Implementing Agency
+  (Note: Lists for Funder and Implementing Agency not yet available)
+- Regional & Heatmap: CIDs and Income Class
+
+
+===============================================================================
 
 MASTER DATA SCHEMA:
 ===================
-[To be defined after all sections catalogued]
 
-Will include:
-- All data entities
-- Relationships
-- Data flow diagram
-- API endpoints needed
-- Database tables (if applicable)
+Core Entities:
+1. Projects
+2. Investments/Funding
+3. Sectors (NAP/NDCIP)
+4. Regions/Locations
+5. Organizations (Funders/Implementing Agencies)
+6. GHG Data
+7. Climate Impact Drivers
+8. Income Classifications
 
+Relationships:
+- Projects → Investments (one-to-many)
+- Projects → Sectors (many-to-many)
+- Projects → Regions (many-to-many)
+- Investments → Fund Sources (many-to-one)
+- Investments → Funders (many-to-one)
+- Projects → Organizations (many-to-many, implementers)
+- Regions → Climate Impact Drivers (many-to-many)
+- Regions → Income Class (many-to-one)
+
+API Endpoints Needed (Future):
+- GET /api/v3/metrics/key-metrics?filters={}
+- GET /api/v3/financing/funds-mobilized?filters={}
+- GET /api/v3/emissions/ghg-levels?filters={}
+- GET /api/v3/investments/by-sector?filters={}
+- GET /api/v3/investments/by-region?filters={}
+- GET /api/v3/investments/fund-source?filters={}
+- GET /api/v3/emissions/ghg-by-sector?filters={}
+- GET /api/v3/map/choropleth-data?filters={}
+- GET /api/v3/filters/options (sectors, funders, agencies, etc.)
+
+===============================================================================
+
+DATA COLLECTION PRIORITY:
+=========================
+
+PHASE 1 - MVP (Static/Mock Data):
+1. ✅ Design system specs (COMPLETE)
+2. ✅ Component specifications (COMPLETE)
+3. [ ] Sample data for all visualizations (mock realistic data)
+4. [ ] Static sector lists (NAP/NDCIP)
+5. [ ] Static region list (17 regions)
+6. [ ] Philippines GeoJSON (already have)
+
+PHASE 2 - Real Data Integration:
+1. [ ] CCET PAPs data (funding mobilized 2017-2025)
+2. [ ] Project database (for key metrics)
+3. [ ] Investment by sector data
+4. [ ] Regional allocation data
+5. [ ] Fund source breakdown data
+
+PHASE 3 - Advanced Data:
+1. [ ] NICCDIES GHG historical data (validated)
+2. [ ] GHG targets and projections
+3. [ ] Climate Impact Drivers classifications
+4. [ ] Income class data by region
+5. [ ] Funder and implementing agency complete lists
+
+===============================================================================
+
+IMMEDIATE ACTION ITEMS:
+=======================
+1. Create TypeScript interfaces for all data structures
+2. Create mock data generators for development
+3. Identify which data user can provide immediately
+4. Plan data ingestion strategy (Excel, CSV, API, manual entry)
+5. Set up data validation schemas
+
+DATA REQUIREMENTS DOCUMENTATION COMPLETE ✅
