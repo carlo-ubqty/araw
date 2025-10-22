@@ -14,10 +14,11 @@ Board Name: ARAW V3.0 Dashboard
 Columns:
 1. To Do
 2. In Progress
-3. Code Review
-4. Ready for QA
-5. In QA (Lei Testing)
-6. Done
+3. Ready for QA
+4. In QA (Lei Testing)
+5. Ready for UAT
+6. In UAT (User Acceptance Testing)
+7. Done
 
 Issue Types:
 - Epic (highest level - groups of related stories)
@@ -1050,22 +1051,36 @@ WORKFLOW STATES:
 ================
 1. To Do
 2. In Progress (Developer working)
-3. Code Review (Optional peer review)
-4. Ready for QA (Deployed to QA environment)
-5. In QA (Lei testing)
-6. Done (Approved by Lei)
+3. Ready for QA (Deployed to QA environment)
+4. In QA (Lei testing)
+5. Ready for UAT (QA approved, ready for user testing)
+6. In UAT (User acceptance testing by stakeholders)
+7. Done (Approved by users, ready for production)
 
 
-QA SIGN-OFF PROCESS:
-====================
+QA & UAT SIGN-OFF PROCESS:
+===========================
 For each Story:
+
+QA Phase (Lei):
 1. Developer completes all sub-tasks
 2. Developer moves Story to "Ready for QA"
-3. Lei tests using QA checklist (from PM/QA summary doc)
-4. Lei either:
-   a) Approves → Move to "Done"
+3. Deploy to QA environment (araw-v3-qa.ncience.com)
+4. Lei tests using QA checklist (from PM/QA summary doc)
+5. Lei either:
+   a) Approves → Move to "Ready for UAT"
    b) Reports bugs → Create Bug tickets, move back to "In Progress"
-5. Once approved, proceed to next Story
+
+UAT Phase (Stakeholders):
+6. Jhonnel/stakeholders review in UAT environment
+7. Story moved to "In UAT" for user acceptance testing
+8. Users test functionality, usability, data accuracy
+9. Users either:
+   a) Approve → Move to "Done"
+   b) Request changes → Create tickets, move back to "In Progress"
+10. Once in "Done", proceed to next Story
+
+Note: UAT can be done per story or batched for multiple stories
 
 
 ===============================================================================
