@@ -1,0 +1,51 @@
+ARAW V3.0 Dashboard - Data Requirements
+========================================
+Date: 2025-10-22
+Status: PLANNING PHASE
+
+DATA COLLECTION STRATEGY:
+=========================
+As each section is catalogued, identify:
+1. What data is displayed in that section
+2. Data format needed (structure, types)
+3. Source of data (user-provided, API, database)
+4. Sample data needed for implementation
+5. Real data integration requirements
+
+DATA INVENTORY:
+===============
+[To be filled as mockups are catalogued]
+
+SECTION: [Section Name]
+-----------------------
+Data Type: [KPI/Chart/Table/Map/etc.]
+Fields Required:
+- Field 1: [name, type, format]
+- Field 2: [name, type, format]
+
+Sample Data Structure:
+```
+[JSON/TypeScript interface to be added]
+```
+
+Data Source:
+- [ ] User-provided files
+- [ ] Mock data for development
+- [ ] API endpoint (specify)
+- [ ] Database query (specify)
+
+Data Retrieval Notes:
+- 
+
+
+MASTER DATA SCHEMA:
+===================
+[To be defined after all sections catalogued]
+
+Will include:
+- All data entities
+- Relationships
+- Data flow diagram
+- API endpoints needed
+- Database tables (if applicable)
+

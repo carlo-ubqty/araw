@@ -1,0 +1,71 @@
+ARAW V3.0 - Screenshot Submission Guide
+========================================
+Date: 2025-10-22
+
+HOW TO SHARE FIGMA SCREENSHOTS:
+================================
+
+STEP 1: Overall Layout
+-----------------------
+Share 1-2 screenshots showing:
+- Full page view (bird's eye view)
+- Overall layout structure
+- Major sections and their arrangement
+
+Agent will:
+- Identify all major sections
+- Create initial section list
+- Ask clarifying questions
+
+STEP 2: Design System Basics
+-----------------------------
+Share screenshots of:
+- Container spacing specifications
+- Color palette/swatches
+- Typography scales
+- Grid system (if shown in Figma)
+
+Agent will:
+- Document spacing standards
+- Extract color codes
+- Note typography rules
+- Create design system reference
+
+STEP 3: Section-by-Section Details
+-----------------------------------
+For EACH section, share:
+- Close-up screenshot of the section
+- Any spacing/sizing annotations
+- Any color/style specifications
+- Any interaction notes
+
+Agent will:
+- Document section specifications
+- Add to mockup catalogue
+- Identify data requirements
+- Note implementation details
+
+STEP 4: Special Components
+---------------------------
+For complex components (charts, maps, filters), share:
+- Detailed component screenshots
+- Multiple states if applicable (hover, active, etc.)
+- Any specific requirements or notes
+
+Agent will:
+- Document component specifications
+- Plan component implementation
+- Identify technical challenges
+
+CURRENT STATUS: Ready for Step 1
+=================================
+
+Please share: Overall layout screenshots from Figma
+
+What to share first:
+1. Full page/bird's eye view of the dashboard
+2. Any "Container Spacing" or layout specification screens
+3. Any "Element & Component Breakdown" overview screens
+
+Agent will then guide you through the remaining steps systematically.
+

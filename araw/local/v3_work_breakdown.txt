@@ -1,0 +1,61 @@
+ARAW V3.0 Dashboard - Work Breakdown Structure (JIRA-Style)
+============================================================
+Date: 2025-10-22
+Status: PLANNING PHASE
+
+EPICS STRUCTURE:
+================
+[To be created after mockup cataloguing is complete]
+
+Format for each Epic:
+---------------------
+EPIC [ID]: [Epic Name]
+Priority: [High/Medium/Low]
+Description: [What this epic covers]
+Dependencies: [Other epics that must be done first]
+Estimated Effort: [To be determined]
+Tickets: [List of tickets under this epic]
+
+---
+
+TICKETS STRUCTURE:
+==================
+[To be created after mockup cataloguing is complete]
+
+Format for each Ticket:
+-----------------------
+TICKET [EPIC-ID]-[Number]: [Ticket Title]
+Type: [Component/Feature/Bug/Technical]
+Epic: [Parent Epic ID]
+Priority: [High/Medium/Low]
+Description: [What needs to be done]
+Acceptance Criteria:
+- [ ] Criterion 1
+- [ ] Criterion 2
+Data Requirements:
+- [What data is needed]
+Technical Notes:
+- [Implementation details]
+Dependencies: [Other tickets]
+Status: [To Do/In Progress/Done]
+Branch: [Git branch for this work]
+Commit: [Git commit reference when done]
+
+---
+
+EXAMPLE STRUCTURE (will be replaced with actual epics):
+=======================================================
+
+EPIC-01: Layout & Foundation
+EPIC-02: Header & Navigation
+EPIC-03: Filters & Sidebar
+EPIC-04: KPI Cards Section
+EPIC-05: Charts & Visualizations
+EPIC-06: Data Tables & Lists
+EPIC-07: Footer & Utilities
+EPIC-08: Responsive Design
+EPIC-09: Data Integration
+EPIC-10: Testing & Deployment
+
+[Actual structure will be created after mockup analysis]
+

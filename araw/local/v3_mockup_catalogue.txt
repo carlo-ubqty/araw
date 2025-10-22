@@ -1,0 +1,61 @@
+ARAW V3.0 Dashboard - Mockup Catalogue & Specifications
+========================================================
+Date: 2025-10-22
+Source: Figma designs from Janika
+Status: CATALOGUING IN PROGRESS
+
+INSTRUCTIONS FOR CATALOGUING:
+==============================
+For each screenshot provided, document:
+1. Section Name/ID
+2. Location on page (header, sidebar, main content, etc.)
+3. Visual elements (components, layout, spacing)
+4. Colors (hex codes if visible)
+5. Typography (font sizes, weights)
+6. Spacing (margins, padding, gaps)
+7. Data requirements (what data is shown)
+8. Interactions (buttons, filters, etc.)
+
+MOCKUP SECTIONS CATALOGUE:
+==========================
+
+[To be filled as user provides Figma screenshots]
+
+SECTION 1: [Name]
+-----------------
+Screenshot: [Reference]
+Location: 
+Components:
+- 
+Colors:
+- 
+Typography:
+- 
+Spacing:
+- 
+Data Requirements:
+- 
+Interactions:
+- 
+Notes:
+
+
+SECTION 2: [Name]
+-----------------
+[Will be filled in step by step]
+
+
+OVERALL DESIGN SYSTEM NOTES:
+=============================
+Container Spacing Standards:
+- [To be extracted from screenshots]
+
+Color Palette:
+- [To be extracted from screenshots]
+
+Typography System:
+- [To be extracted from screenshots]
+
+Grid System:
+- [To be extracted from screenshots]
+
