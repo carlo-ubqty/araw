@@ -15,7 +15,7 @@
  * ✅ ARAW-311: Header Component
  * ✅ ARAW-312: Subheader Component
  * ✅ ARAW-313: Side Panel (Filter Dropdowns)
- * ✅ ARAW-314: Key Metric Cards (5 KPI cards with gradients)
+ * ✅ ARAW-314: Key Metric Cards (5 KPI cards) - WITH SERVICE LAYER
  * ✅ ARAW-315: Funds & Emissions Charts (2 charts) - WITH SERVICE LAYER
  * 🚧 ARAW-316: Climate Investment Charts (Next)
  */
@@ -27,12 +27,13 @@ import SidePanelV3 from '@/components/layout/SidePanelV3';
 import KPICardsRowV3 from '@/components/dashboard/KPICardsRowV3';
 import FundsMobilizedChartV3 from '@/components/charts/FundsMobilizedChartV3';
 import GHGLevelsChartV3 from '@/components/charts/GHGLevelsChartV3';
-import { DashboardServiceV3 } from '@/services/dashboardServiceV3';
+import { DashboardServiceV3, type KPIData } from '@/services/dashboardServiceV3';
 import type { FundsData } from '@/components/charts/FundsMobilizedChartV3';
 import type { GHGHistoricalData, GHGTargetData } from '@/components/charts/GHGLevelsChartV3';
 
 export default function DashboardV3() {
-  // State for chart data
+  // State for KPI and chart data
+  const [kpiData, setKpiData] = useState<KPIData | null>(null);
   const [fundsData, setFundsData] = useState<FundsData[]>([]);
   const [ghgHistoricalData, setGhgHistoricalData] = useState<GHGHistoricalData[]>([]);
   const [ghgTargetData, setGhgTargetData] = useState<GHGTargetData | undefined>();
@@ -44,13 +45,17 @@ export default function DashboardV3() {
       try {
         setIsLoading(true);
         
-        // Fetch all data in parallel from service layer
-        const [funds, ghgData] = await Promise.all([
+        // Fetch all data in parallel from service layer (MVC pattern)
+        const [kpis, funds, ghgData] = await Promise.all([
+          DashboardServiceV3.getKPIMetrics(),
           DashboardServiceV3.getFundsMobilizedData(),
           DashboardServiceV3.getGHGLevelsData()
         ]);
         
-        // Set funds data (already in correct format)
+        // Set KPI data
+        setKpiData(kpis);
+        
+        // Set funds data
         setFundsData(funds);
         
         // Set GHG data (already separated by service layer)
@@ -84,8 +89,37 @@ export default function DashboardV3() {
           {/* Main Content */}
           <main className="flex-1">
             <div className="p-5">
-              {/* KPI Cards Row - ARAW-314 ✅ */}
-              <KPICardsRowV3 className="mb-6" />
+              {/* KPI Cards Row - ARAW-314 ✅ - WITH SERVICE LAYER */}
+              {isLoading ? (
+                <div className="grid grid-cols-5 gap-3 mb-6">
+                  {[1, 2, 3, 4, 5].map((i) => (
+                    <div 
+                      key={i}
+                      className="bg-gray-200 rounded-lg animate-pulse"
+                      style={{ minHeight: '130px' }}
+                    >
+                      <div className="p-4 flex flex-col h-full justify-between">
+                        <div className="h-4 bg-gray-300 rounded w-3/4 mb-2"></div>
+                        <div className="h-8 bg-gray-300 rounded w-1/2"></div>
+                      </div>
+                    </div>
+                  ))}
+                </div>
+              ) : kpiData ? (
+                <KPICardsRowV3 
+                  totalInvestment={kpiData.totalInvestment}
+                  ghgReduction={kpiData.ghgReduction}
+                  ghgReductionSubtitle={kpiData.ghgReductionSubtitle}
+                  adaptationInvestment={kpiData.adaptationInvestment}
+                  mitigationInvestment={kpiData.mitigationInvestment}
+                  totalProjects={kpiData.totalProjects}
+                  className="mb-6"
+                />
+              ) : (
+                <div className="bg-red-50 border border-red-200 rounded-lg p-4 mb-6">
+                  <p className="text-red-800 text-sm">Failed to load KPI data. Please refresh the page.</p>
+                </div>
+              )}
               
               {/* Funds & Emissions Charts - ARAW-315 ✅ - WITH SERVICE LAYER */}
               {isLoading ? (
@@ -112,14 +146,14 @@ export default function DashboardV3() {
             <h2 className="text-3xl font-bold text-gray-900 mb-4">
               V3.0 Dashboard Implementation
             </h2>
-            <p className="text-lg text-gray-600 mb-2">
-              Building section by section...
-            </p>
-            <div className="mt-6 p-4 bg-green-50 border border-green-200 rounded">
-              <p className="text-sm text-green-800">
-                <strong>Current Status:</strong> Foundation, header, subheader, side panel, KPI cards, and Funds/GHG charts complete. Ready for additional charts.
-              </p>
-            </div>
+                    <p className="text-lg text-gray-600 mb-2">
+                      Building section by section with MVC architecture...
+                    </p>
+                    <div className="mt-6 p-4 bg-green-50 border border-green-200 rounded">
+                      <p className="text-sm text-green-800">
+                        <strong>Current Status:</strong> Foundation, header, subheader, side panel, KPI cards (with service layer), and Funds/GHG charts (with service layer) complete. MVC architecture fully implemented!
+                      </p>
+                    </div>
             
             <div className="mt-8 space-y-4">
               <div className="border-l-4 border-green-500 pl-4">
@@ -129,8 +163,8 @@ export default function DashboardV3() {
                   <li>✅ ARAW-311: Header Component (HeaderV3.tsx + tests)</li>
                   <li>✅ ARAW-312: Subheader Component (SubheaderV3.tsx)</li>
                   <li>✅ ARAW-313: Side Panel (SidePanelV3.tsx with collapsible filters)</li>
-                  <li>✅ ARAW-314: Key Metric Cards (KPICardV3 + KPICardsRowV3)</li>
-                  <li>✅ ARAW-315: Funds & GHG Charts (FundsMobilizedChartV3 + GHGLevelsChartV3)</li>
+                  <li>✅ ARAW-314: Key Metric Cards (KPICardV3 + KPICardsRowV3 + service layer + tests)</li>
+                  <li>✅ ARAW-315: Funds & GHG Charts (FundsMobilizedChartV3 + GHGLevelsChartV3 + service layer + tests)</li>
                 </ul>
               </div>
               
