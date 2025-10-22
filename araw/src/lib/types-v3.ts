@@ -312,14 +312,14 @@ export interface TypographyScale {
 // ============================================================================
 
 export const NAP_SECTORS = [
-  'Agriculture, Fisheries, and Food Security',
-  'Water Resources',
+  'Agriculture',
+  'Water',
+  'Forestry',
   'Health',
-  'Ecosystems and Biodiversity',
-  'Cultural Heritage, Population Displacement, and Migration',
-  'Land Use and Human Settlements',
-  'Livelihoods and Industries',
-  'Energy, Transport, and Communications'
+  'Coastal & Marine',
+  'Human Settlements',
+  'DRRM',
+  'Energy'
 ] as const;
 
 export const NDCIP_SECTORS = [

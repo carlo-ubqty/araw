@@ -45,12 +45,11 @@ export default function HeaderV3({
       className={`w-full ${className}`}
       style={{
         backgroundColor: HEADER.backgroundColor,
-        height: HEADER.height,
         color: HEADER.textColor
       }}
     >
-      {/* Container with max-width matching page content */}
-      <div className="max-w-7xl mx-auto px-6 h-full flex items-center justify-between">
+      {/* Container with fixed 1920px width, 20px horizontal padding */}
+      <div className="max-w-[1920px] mx-auto px-5 py-[30px] flex items-center justify-between">
         {/* Left: Philippines Icon + DOF Logo + Title */}
         <div className="flex items-center gap-3">
           {/* Philippines Flag/Emblem Icon */}
