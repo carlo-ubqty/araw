@@ -13,11 +13,13 @@
  * ✅ ARAW-310: Foundation & Setup (types, design system, utils, mock data)
  * ✅ ARAW-311: Header Component
  * ✅ ARAW-312: Subheader Component
- * 🚧 ARAW-313: Side Panel (Next)
+ * ✅ ARAW-313: Side Panel (Filter Dropdowns)
+ * 🚧 ARAW-314: Key Metric Cards (Next)
  */
 
 import HeaderV3 from '@/components/layout/HeaderV3';
 import SubheaderV3 from '@/components/layout/SubheaderV3';
+import SidePanelV3 from '@/components/layout/SidePanelV3';
 
 export default function DashboardV3() {
   return (
@@ -27,12 +29,8 @@ export default function DashboardV3() {
       
       {/* Main Layout: Sidebar (295px) + Content Area (1625px) = 1920px */}
       <div className="flex max-w-[1920px] mx-auto w-full" style={{ backgroundColor: '#D8EEE8' }}>
-        {/* Sidebar - 295px - ARAW-313 (placeholder) */}
-        <aside className="w-[295px] bg-white border-r border-gray-200">
-          <div className="p-5">
-            <p className="text-sm text-gray-500">Sidebar placeholder (295px)</p>
-          </div>
-        </aside>
+        {/* Sidebar - 295px - ARAW-313 ✅ */}
+        <SidePanelV3 />
         
         {/* Content Area - 1625px */}
         <div className="flex-1 flex flex-col">
@@ -51,7 +49,7 @@ export default function DashboardV3() {
             </p>
             <div className="mt-6 p-4 bg-green-50 border border-green-200 rounded">
               <p className="text-sm text-green-800">
-                <strong>Current Status:</strong> Foundation, header, and subheader complete. Ready for side panel implementation.
+                <strong>Current Status:</strong> Foundation, header, subheader, and side panel complete. Ready for KPI cards implementation.
               </p>
             </div>
             
@@ -59,23 +57,20 @@ export default function DashboardV3() {
               <div className="border-l-4 border-green-500 pl-4">
                 <h3 className="font-semibold text-gray-800">✅ Completed Components</h3>
                 <ul className="text-sm text-gray-600 mt-2 space-y-1">
-                  <li>✅ ARAW-310.1: TypeScript Interfaces (types-v3.ts)</li>
-                  <li>✅ ARAW-310.2: Design System (design-system-v3.ts)</li>
-                  <li>✅ ARAW-310.3: Mock Data (mock-data-v3.ts)</li>
-                  <li>✅ ARAW-310.4: Utilities (utils-v3.ts)</li>
-                  <li>✅ ARAW-311.1: Header Component (HeaderV3.tsx)</li>
-                  <li>✅ ARAW-311.2: Header Tests (HeaderV3.test.tsx)</li>
-                  <li>✅ ARAW-312.1: Subheader Component (SubheaderV3.tsx)</li>
+                  <li>✅ ARAW-310: Foundation & Setup (types, design system, utils, mock data)</li>
+                  <li>✅ ARAW-311: Header Component (HeaderV3.tsx + tests)</li>
+                  <li>✅ ARAW-312: Subheader Component (SubheaderV3.tsx)</li>
+                  <li>✅ ARAW-313: Side Panel (SidePanelV3.tsx with collapsible filters)</li>
                 </ul>
               </div>
               
               <div className="border-l-4 border-purple-500 pl-4">
                 <h3 className="font-semibold text-gray-800">🚧 Next Up</h3>
                 <ul className="text-sm text-gray-600 mt-2 space-y-1">
-                  <li>🚧 ARAW-313: Side Panel (Filter Dropdowns)</li>
-                  <li>⏳ ARAW-314: Key Metric Cards (5 KPIs)</li>
+                  <li>🚧 ARAW-314: Key Metric Cards (5 KPI cards with gradients)</li>
                   <li>⏳ ARAW-315: Funds & Emissions Charts</li>
                   <li>⏳ ARAW-316: Climate Investment Charts</li>
+                  <li>⏳ ARAW-317: Regional Investments & Map</li>
                 </ul>
               </div>
               
@@ -84,12 +79,12 @@ export default function DashboardV3() {
                 <div className="mt-2">
                   <div className="flex items-center gap-2">
                     <div className="flex-1 bg-gray-200 rounded-full h-4">
-                      <div className="bg-green-600 h-4 rounded-full" style={{ width: '25%' }}></div>
+                      <div className="bg-green-600 h-4 rounded-full" style={{ width: '33%' }}></div>
                     </div>
-                    <span className="text-sm font-medium text-gray-700">25%</span>
+                    <span className="text-sm font-medium text-gray-700">33%</span>
                   </div>
                   <p className="text-xs text-gray-500 mt-1">
-                    3 of 12 stories completed
+                    4 of 12 stories completed
                   </p>
                 </div>
               </div>
