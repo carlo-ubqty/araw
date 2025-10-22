@@ -117,5 +117,57 @@ export class DashboardServiceV3 {
     const change = ((current - previous) / previous) * 100;
     return `${change >= 0 ? '+' : ''}${change.toFixed(1)}%`;
   }
+
+  /**
+   * Fetch investment by sector data
+   * TODO: Replace with actual API call
+   */
+  static async getInvestmentBySectorData(filters?: Partial<FilterState>) {
+    await new Promise(resolve => setTimeout(resolve, 100));
+    
+    // Mock data - sectors vary based on NAP/NDCIP filter
+    const napSectors = [
+      { sector: 'Agriculture', govBudget: 120, grant: 80, loan: 40, private: 20 },
+      { sector: 'Water', govBudget: 100, grant: 60, loan: 30, private: 15 },
+      { sector: 'Forestry', govBudget: 90, grant: 50, loan: 25, private: 10 },
+      { sector: 'Health', govBudget: 80, grant: 40, loan: 20, private: 8 },
+      { sector: 'Coastal', govBudget: 70, grant: 35, loan: 15, private: 5 },
+      { sector: 'Settlements', govBudget: 60, grant: 30, loan: 12, private: 4 },
+      { sector: 'DRRM', govBudget: 50, grant: 25, loan: 10, private: 3 },
+      { sector: 'Energy', govBudget: 110, grant: 70, loan: 35, private: 18 },
+    ];
+
+    const ndcipSectors = [
+      { sector: 'Agriculture', govBudget: 130, grant: 85, loan: 45, private: 22 },
+      { sector: 'Waste', govBudget: 95, grant: 55, loan: 28, private: 12 },
+      { sector: 'Industry', govBudget: 115, grant: 75, loan: 38, private: 19 },
+      { sector: 'Transport', govBudget: 105, grant: 65, loan: 32, private: 16 },
+      { sector: 'Energy', govBudget: 125, grant: 80, loan: 40, private: 20 },
+    ];
+
+    return filters?.dataView === 'NDCIP' ? ndcipSectors : napSectors;
+  }
+
+  /**
+   * Fetch fund source breakdown data
+   * TODO: Replace with actual API call
+   */
+  static async getFundSourceBreakdownData(filters?: Partial<FilterState>) {
+    await new Promise(resolve => setTimeout(resolve, 100));
+    
+    return {
+      mainSource: {
+        label: 'GOVERNMENT BUDGET',
+        amount: '₱ 980 M',
+        percentage: '40%',
+        color: '#049688'
+      },
+      subSources: [
+        { label: 'GRANT', amount: '₱ 310 M', percentage: '32%', color: '#63CD00' },
+        { label: 'LOAN', amount: '₱ 175 M', percentage: '18%', color: '#00AE9A' },
+        { label: 'PRIVATE', amount: '₱ 95 M', percentage: '10%', color: '#A6C012' }
+      ]
+    };
+  }
 }
 

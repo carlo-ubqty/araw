@@ -17,7 +17,8 @@
  * ✅ ARAW-313: Side Panel (Filter Dropdowns)
  * ✅ ARAW-314: Key Metric Cards (5 KPI cards) - WITH SERVICE LAYER
  * ✅ ARAW-315: Funds & Emissions Charts (2 charts) - WITH SERVICE LAYER
- * 🚧 ARAW-316: Climate Investment Charts (Next)
+ * ✅ ARAW-316: Climate Investment Overview - WITH SERVICE LAYER
+ * 🚧 ARAW-317: GHG by Sector Chart (Next)
  */
 
 import { useState, useEffect } from 'react';
@@ -27,6 +28,8 @@ import SidePanelV3 from '@/components/layout/SidePanelV3';
 import KPICardsRowV3 from '@/components/dashboard/KPICardsRowV3';
 import FundsMobilizedChartV3 from '@/components/charts/FundsMobilizedChartV3';
 import GHGLevelsChartV3 from '@/components/charts/GHGLevelsChartV3';
+import InvestmentBySectorChartV3, { type SectorInvestmentData } from '@/components/charts/InvestmentBySectorChartV3';
+import FundSourceBreakdownV3, { type FundSourceItem } from '@/components/charts/FundSourceBreakdownV3';
 import { DashboardServiceV3, type KPIData } from '@/services/dashboardServiceV3';
 import type { FundsData } from '@/components/charts/FundsMobilizedChartV3';
 import type { GHGHistoricalData, GHGTargetData } from '@/components/charts/GHGLevelsChartV3';
@@ -37,6 +40,9 @@ export default function DashboardV3() {
   const [fundsData, setFundsData] = useState<FundsData[]>([]);
   const [ghgHistoricalData, setGhgHistoricalData] = useState<GHGHistoricalData[]>([]);
   const [ghgTargetData, setGhgTargetData] = useState<GHGTargetData | undefined>();
+  const [investmentBySectorData, setInvestmentBySectorData] = useState<SectorInvestmentData[]>([]);
+  const [fundSourceMain, setFundSourceMain] = useState<FundSourceItem | null>(null);
+  const [fundSourceSub, setFundSourceSub] = useState<FundSourceItem[]>([]);
   const [isLoading, setIsLoading] = useState(true);
 
   // Fetch data from service layer on component mount
@@ -46,10 +52,12 @@ export default function DashboardV3() {
         setIsLoading(true);
         
         // Fetch all data in parallel from service layer (MVC pattern)
-        const [kpis, funds, ghgData] = await Promise.all([
+        const [kpis, funds, ghgData, investmentData, fundSourceData] = await Promise.all([
           DashboardServiceV3.getKPIMetrics(),
           DashboardServiceV3.getFundsMobilizedData(),
-          DashboardServiceV3.getGHGLevelsData()
+          DashboardServiceV3.getGHGLevelsData(),
+          DashboardServiceV3.getInvestmentBySectorData(),
+          DashboardServiceV3.getFundSourceBreakdownData()
         ]);
         
         // Set KPI data
@@ -61,6 +69,11 @@ export default function DashboardV3() {
         // Set GHG data (already separated by service layer)
         setGhgHistoricalData(ghgData.historicalData);
         setGhgTargetData(ghgData.targetData);
+        
+        // Set investment data
+        setInvestmentBySectorData(investmentData);
+        setFundSourceMain(fundSourceData.mainSource);
+        setFundSourceSub(fundSourceData.subSources);
       } catch (error) {
         console.error('Error fetching dashboard data:', error);
       } finally {
@@ -141,6 +154,28 @@ export default function DashboardV3() {
                 </div>
               )}
               
+              {/* Climate Investment Overview - ARAW-316 ✅ - WITH SERVICE LAYER */}
+              {isLoading ? (
+                <div className="grid grid-cols-2 gap-4 mb-6">
+                  <div className="bg-white rounded-lg border border-gray-200 p-6 h-[450px] flex items-center justify-center">
+                    <p className="text-gray-500">Loading investment data...</p>
+                  </div>
+                  <div className="bg-white rounded-lg border border-gray-200 p-6 h-[450px] flex items-center justify-center">
+                    <p className="text-gray-500">Loading fund source data...</p>
+                  </div>
+                </div>
+              ) : (
+                <div className="grid grid-cols-2 gap-4 mb-6">
+                  <InvestmentBySectorChartV3 data={investmentBySectorData} />
+                  {fundSourceMain && (
+                    <FundSourceBreakdownV3 
+                      mainSource={fundSourceMain}
+                      subSources={fundSourceSub}
+                    />
+                  )}
+                </div>
+              )}
+              
               {/* Development Progress Indicator */}
           <div className="bg-white rounded-lg shadow-sm p-8">
             <h2 className="text-3xl font-bold text-gray-900 mb-4">
@@ -165,14 +200,14 @@ export default function DashboardV3() {
                   <li>✅ ARAW-313: Side Panel (SidePanelV3.tsx with collapsible filters)</li>
                   <li>✅ ARAW-314: Key Metric Cards (KPICardV3 + KPICardsRowV3 + service layer + tests)</li>
                   <li>✅ ARAW-315: Funds & GHG Charts (FundsMobilizedChartV3 + GHGLevelsChartV3 + service layer + tests)</li>
+                  <li>✅ ARAW-316: Climate Investment Overview (InvestmentBySectorChartV3 + FundSourceBreakdownV3 + service layer + tests)</li>
                 </ul>
               </div>
               
               <div className="border-l-4 border-purple-500 pl-4">
                 <h3 className="font-semibold text-gray-800">🚧 Next Up</h3>
                 <ul className="text-sm text-gray-600 mt-2 space-y-1">
-                  <li>🚧 ARAW-316: Climate Investment Charts (3 bar/pie charts)</li>
-                  <li>⏳ ARAW-317: GHG by Sector Chart</li>
+                  <li>🚧 ARAW-317: GHG by Sector Chart</li>
                   <li>⏳ ARAW-318: Regional Investments & Map</li>
                   <li>⏳ ARAW-319: Footer Component</li>
                 </ul>
@@ -183,12 +218,12 @@ export default function DashboardV3() {
                 <div className="mt-2">
                   <div className="flex items-center gap-2">
                     <div className="flex-1 bg-gray-200 rounded-full h-4">
-                      <div className="bg-green-600 h-4 rounded-full" style={{ width: '42%' }}></div>
+                      <div className="bg-green-600 h-4 rounded-full" style={{ width: '58%' }}></div>
                     </div>
-                    <span className="text-sm font-medium text-gray-700">42%</span>
+                    <span className="text-sm font-medium text-gray-700">58%</span>
                   </div>
                   <p className="text-xs text-gray-500 mt-1">
-                    5 of 12 stories completed
+                    7 of 12 stories completed
                   </p>
                 </div>
               </div>
