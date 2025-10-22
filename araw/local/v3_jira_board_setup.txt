@@ -1,0 +1,1074 @@
+ARAW V3.0 Dashboard - JIRA Board Setup Guide
+=============================================
+JIRA Account: carlo@ubqty.net
+Project: ARAW (Climate Finance Dashboard)
+Date: October 22, 2025
+
+JIRA BOARD CONFIGURATION:
+==========================
+
+Project Key: ARAW
+Project Type: Scrum
+Board Name: ARAW V3.0 Dashboard
+
+Columns:
+1. To Do
+2. In Progress
+3. Code Review
+4. Ready for QA
+5. In QA (Lei Testing)
+6. Done
+
+Issue Types:
+- Epic (highest level - groups of related stories)
+- Story (main deliverable sections)
+- Sub-task (smaller, QA-able chunks within a story)
+- Bug (for issues found during QA)
+
+
+EPIC STRUCTURE:
+===============
+
+EPIC: ARAW-300: V3.0 Dashboard Implementation
+Description: Complete redesign of ARAW Climate Finance Dashboard based on Figma mockups
+Timeline: 4-5 weeks
+Components: 9 major sections
+Status: In Progress
+
+
+STORIES & SUB-TASKS BREAKDOWN:
+===============================
+
+===============================================================================
+STORY 1: ARAW-301 - Header Component
+===============================================================================
+Story Points: 3
+Priority: High
+Description: Implement top teal header bar with logo, title, timestamp, and icons
+Acceptance Criteria:
+- Header spans full width with teal background
+- All components display correctly
+- Real-time clock updates
+- Responsive layout
+
+Sub-tasks:
+----------
+
+ARAW-301.1: Header Layout & Container
+Estimate: 2 hours
+Description: Create header component with teal background and three-section layout
+Acceptance Criteria:
+□ Header component created at src/components/v3/layout/Header.tsx
+□ Teal background color (#049688) applied
+□ Full-width layout
+□ Three sections: left (logo+title), center (empty), right (time+icons)
+□ Height: ~60-70px
+□ Proper padding and spacing
+□ Component is "use client" for interactivity
+
+ARAW-301.2: DOF Logo Integration
+Estimate: 1 hour
+Description: Add DOF logo with proper sizing and positioning
+Acceptance Criteria:
+□ Logo loads from /Department_of_Finance_(DOF).svg
+□ Logo size: ~32px height
+□ Positioned on left side
+□ Gap between logo and title
+□ Fallback handling if image fails
+□ Uses Next.js Image component for optimization
+
+ARAW-301.3: Real-time Clock Display
+Estimate: 2 hours
+Description: Implement real-time timestamp that updates every second
+Acceptance Criteria:
+□ Displays format: "MM/DD/YYYY HH:MM:SS AM/PM"
+□ Updates every second using useEffect
+□ Positioned on right side before icons
+□ Font: 16px regular Inter
+□ White text color
+□ Interval cleaned up on component unmount
+
+ARAW-301.4: Action Icons (Notifications & Settings)
+Estimate: 1 hour
+Description: Add notification bell and settings gear icons
+Acceptance Criteria:
+□ Notification bell icon using Lucide React
+□ Settings gear icon using Lucide React
+□ Both icons ~20px size
+□ White color with hover effects
+□ Clickable buttons (placeholder onClick handlers)
+□ Proper spacing between icons
+□ Uses HeroUI Button component with isIconOnly
+
+ARAW-301.5: Header Responsive Design
+Estimate: 1 hour
+Description: Ensure header works on mobile/tablet
+Acceptance Criteria:
+□ Title adjusts size on mobile (sm: smaller text)
+□ Icons remain visible on all sizes
+□ Timestamp may hide on very small screens (optional)
+□ Layout doesn't break on any screen size
+□ Tested on desktop, tablet, mobile
+
+
+===============================================================================
+STORY 2: ARAW-302 - Subheader & Filter Controls
+===============================================================================
+Story Points: 5
+Priority: High
+Description: Implement light teal subheader with NAP/NDCIP toggle, sector chips, action buttons
+Acceptance Criteria:
+- All filter controls functional
+- NAP/NDCIP toggle changes sector list
+- Buttons toggle correctly
+
+Sub-tasks:
+----------
+
+ARAW-302.1: Subheader Container & Layout
+Estimate: 2 hours
+Description: Create subheader component with two-section layout
+Acceptance Criteria:
+□ Component created at src/components/v3/layout/Subheader.tsx
+□ Background: #DDFFF6 with teal stroke
+□ Height: ~80-100px
+□ Two sections: left (filters), right (action buttons)
+□ Flexbox layout with space-between
+□ Proper padding
+
+ARAW-302.2: NAP/NDCIP Data Toggle
+Estimate: 3 hours
+Description: Implement radio button toggle for data view selection
+Acceptance Criteria:
+□ Label: "Adjust display by:"
+□ Two radio options: NAP DATA, NDCIP DATA
+□ Radio button styling (filled when active)
+□ State management (dataView: 'NAP' | 'NDCIP')
+□ Uses HeroUI Radio component
+□ onChange handler updates state
+□ Default: NAP selected
+
+ARAW-302.3: Sector Selection Chips
+Estimate: 4 hours
+Description: Implement multi-select sector chips that change based on NAP/NDCIP
+Acceptance Criteria:
+□ Label: "Select sectors:"
+□ Displays 8 sectors for NAP mode
+□ Displays 5 sectors for NDCIP mode
+□ Chips are multi-selectable
+□ Active state: filled background
+□ Inactive state: outlined
+□ Font: 13px regular
+□ Gap: 8px between chips
+□ Uses HeroUI Chip or Button components
+□ State tracks selected sectors array
+
+ARAW-302.4: Action Buttons (Amount/Projects/Status)
+Estimate: 3 hours
+Description: Implement four action toggle buttons
+Acceptance Criteria:
+□ Four buttons: AMOUNT, PROJECTS, ONGOING, COMPLETED
+□ COMPLETED button has blue gradient (#007CF8 to #6F37FF)
+□ Others have outlined or subtle fill
+□ Font: 16px medium
+□ Toggle behavior: AMOUNT vs PROJECTS (mutually exclusive)
+□ Toggle behavior: ONGOING vs COMPLETED (mutually exclusive)
+□ State management for both toggle pairs
+□ Positioned on right side
+
+ARAW-302.5: Subheader Responsive Design
+Estimate: 2 hours
+Description: Make subheader responsive for mobile/tablet
+Acceptance Criteria:
+□ Sections stack vertically on mobile
+□ Chips wrap to multiple lines if needed
+□ Buttons remain accessible on small screens
+□ Proper spacing maintained
+□ Tested on all screen sizes
+
+
+===============================================================================
+STORY 3: ARAW-303 - Side Panel Filters
+===============================================================================
+Story Points: 8
+Priority: High
+Description: Implement left sidebar with collapsible filter sections
+Acceptance Criteria:
+- All filter sections functional
+- Expand/collapse works smoothly
+- Multi-select checkboxes work
+
+Sub-tasks:
+----------
+
+ARAW-303.1: Side Panel Container
+Estimate: 2 hours
+Description: Create left sidebar container with fixed width
+Acceptance Criteria:
+□ Component created at src/components/v3/layout/SidePanel.tsx
+□ Background: #FAFAFA
+□ Width: ~250px
+□ Full height or sticky positioning
+□ Padding: 16px
+□ Scrollable if content exceeds viewport
+□ "Filters" header (16px semibold)
+
+ARAW-303.2: Year Filter Checkboxes
+Estimate: 2 hours
+Description: Implement year multi-select checkboxes
+Acceptance Criteria:
+□ "Year" label with collapse icon
+□ Checkboxes: 2025, 2024, 2023, 2022, 2021
+□ Multiple selection allowed
+□ Checkbox style: Square with checkmark
+□ Font: 16px regular
+□ State management (selectedYears array)
+□ Uses HeroUI Checkbox component
+
+ARAW-303.3: Collapsible Filter Group Component
+Estimate: 3 hours
+Description: Create reusable collapsible filter section component
+Acceptance Criteria:
+□ Generic component for all filter sections
+□ Expandable/collapsible with +/- icons
+□ Smooth animation (slide down/up)
+□ Header clickable to toggle
+□ Content area for filter options
+□ Can be used for all filter types
+□ Maintains expanded/collapsed state
+
+ARAW-303.4: Fund Source & Type Filters
+Estimate: 3 hours
+Description: Implement Fund Source and Fund Type filter sections
+Acceptance Criteria:
+□ "Fund Source" collapsible section
+□ "Fund Type" collapsible section with Public/Private/Mixed checkboxes
+□ Multi-select functionality
+□ Uses collapsible component from 303.3
+□ State management (selectedFundSources, selectedFundTypes)
+□ Proper spacing between sections
+
+ARAW-303.5: Funder & Implementing Agency Filters
+Estimate: 3 hours
+Description: Implement Funder and Implementing Agency filter sections
+Acceptance Criteria:
+□ "Funder" collapsible section
+□ Checkbox list: ADB, UNDP, World Bank, etc.
+□ "Implementing Agency" collapsible section
+□ Checkbox list: DA, DOE, DHSUD, DOT
+□ Multi-select functionality
+□ Scrollable if list is long
+□ State management
+
+ARAW-303.6: CID & Income Class Filters
+Estimate: 2 hours
+Description: Implement Climate Impact Drivers and Income Class filters
+Acceptance Criteria:
+□ "Climate Impact Drivers" collapsible section
+□ 4 CID checkboxes
+□ "Income Class" collapsible section
+□ 5 income class options
+□ Multi-select functionality
+□ State management
+
+ARAW-303.7: Side Panel Responsive Design
+Estimate: 2 hours
+Description: Make side panel work on mobile (drawer/modal)
+Acceptance Criteria:
+□ Desktop: Fixed left sidebar
+□ Mobile: Drawer/modal that can be toggled
+□ Hamburger menu button on mobile to open
+□ Close button on mobile drawer
+□ Smooth slide-in animation
+□ Tested on all screen sizes
+
+
+===============================================================================
+STORY 4: ARAW-304 - Key Metric Cards (KPIs)
+===============================================================================
+Story Points: 8
+Priority: High
+Description: Implement 5 gradient KPI cards in a row
+Acceptance Criteria:
+- All 5 cards display correctly
+- Gradients match design
+- Card D toggles based on filter
+
+Sub-tasks:
+----------
+
+ARAW-304.1: KPI Card Component (Reusable)
+Estimate: 3 hours
+Description: Create reusable KPI card component with gradient support
+Acceptance Criteria:
+□ Component created at src/components/v3/cards/KPICard.tsx
+□ Props: icon, label, value, subtitle, gradientColors
+□ Gradient background (configurable)
+□ Icon + label at top (16px medium)
+□ Large value display (48px bold)
+□ Optional subtitle (13px regular)
+□ White text on gradient
+□ Corner radius: 8px
+□ Padding: 16-20px
+□ Shadow: subtle
+□ Responsive sizing
+
+ARAW-304.2: KPI Cards Row Layout
+Estimate: 2 hours
+Description: Create container for 5 KPI cards in horizontal layout
+Acceptance Criteria:
+□ Component at src/components/v3/sections/KeyMetricsSection.tsx
+□ Horizontal grid layout (5 columns)
+□ Equal width cards (~19% each)
+□ Gap: 12px between cards
+□ Responsive: Adjusts to fewer columns on tablet/mobile
+□ Uses KPICard component for each card
+
+ARAW-304.3: Card A - Total Investment
+Estimate: 1 hour
+Description: Implement Total Investment card with green gradient
+Acceptance Criteria:
+□ Icon: Peso sign (Lucide)
+□ Label: "TOTAL INVESTMENT"
+□ Value: "₱ 1.16 B" (formatted from mock data)
+□ Gradient: #349260 to #83BB5B
+□ Uses KPICard component
+□ Data from mock data or context
+
+ARAW-304.4: Card B - GHG Reduction
+Estimate: 1 hour
+Description: Implement GHG Reduction Actual card with blue gradient
+Acceptance Criteria:
+□ Icon: Cloud (Lucide)
+□ Label: "GHG REDUCTION ACTUAL"
+□ Value: "56%"
+□ Subtitle: "vs 2020 baseline"
+□ Gradient: #29D2EC to #0099FF
+□ Uses KPICard component
+
+ARAW-304.5: Card C - Adaptation Investment
+Estimate: 1 hour
+Description: Implement Adaptation Investment card with orange gradient
+Acceptance Criteria:
+□ Icon: Shield (Lucide)
+□ Label: "ADAPTATION INVESTMENT"
+□ Value: "₱ 1.12 B"
+□ Gradient: #F16C19 to #F1DF3C
+□ Uses KPICard component
+
+ARAW-304.6: Card D - Mitigation/Projects Toggle
+Estimate: 3 hours
+Description: Implement toggleable card (Mitigation OR Total Projects)
+Acceptance Criteria:
+□ Displays Mitigation Investment when AMOUNT button selected
+□ Displays Total Projects count when PROJECTS button selected
+□ Mitigation: Orange gradient, amount value
+□ Projects: Indigo gradient (#007CF8 to #6F37FF), count value
+□ Smooth transition when toggling
+□ Reads toggle state from Subheader context/state
+□ Uses KPICard component with conditional props
+
+ARAW-304.7: Card E - Total Projects
+Estimate: 1 hour
+Description: Implement Total Projects card with indigo gradient
+Acceptance Criteria:
+□ Icon: Projects icon (Lucide)
+□ Label: "TOTAL PROJECTS"
+□ Value: "579 Projects"
+□ Gradient: #007CF8 to #6F37FF
+□ Uses KPICard component
+
+ARAW-304.8: KPI Cards Responsive Design
+Estimate: 2 hours
+Description: Optimize KPI cards for tablet/mobile
+Acceptance Criteria:
+□ Desktop: 5 cards in row
+□ Tablet: 3 cards in row, 2 on second row
+□ Mobile: 2 cards in row or stacked
+□ Cards maintain readability at all sizes
+□ Values scale appropriately
+□ Tested on all screen sizes
+
+
+===============================================================================
+STORY 5: ARAW-305 - Financing & Emissions Charts
+===============================================================================
+Story Points: 8
+Priority: Medium
+Description: Implement two side-by-side charts (Funds Mobilized & GHG Levels)
+Acceptance Criteria:
+- Both charts render correctly
+- Data displays accurately
+- Tooltips and legends work
+
+Sub-tasks:
+----------
+
+ARAW-305.1: Chart Card Container Component
+Estimate: 2 hours
+Description: Create reusable chart container/wrapper component
+Acceptance Criteria:
+□ Component at src/components/v3/cards/ChartCard.tsx
+□ White card with border
+□ Title (20px semibold)
+□ Subtitle/trend text (13px regular)
+□ Chart area slot
+□ Corner radius: 8px
+□ Padding: 20px
+□ Reusable for all charts
+
+ARAW-305.2: Funds Mobilized Area Chart
+Estimate: 5 hours
+Description: Implement stacked area chart for funding trends
+Acceptance Criteria:
+□ Component at src/components/v3/charts/FundsMobilizedChart.tsx
+□ Uses Recharts AreaChart, Area components
+□ X-axis: Years 2020-2025
+□ Y-axis: Amount (₱0 to ₱1.2 B)
+□ Two stacked areas: Adaptation (orange), Mitigation (yellow)
+□ Colors: Orange (#F16C19) 40% opacity, Yellow (#F1DF3C) 40% opacity
+□ Legend: Adaptation, Mitigation
+□ Annotation box for 2025 GAA data
+□ Tooltip shows breakdown on hover
+□ Uses mock data from mock-data-v3.ts
+
+ARAW-305.3: GHG Levels Line Chart
+Estimate: 5 hours
+Description: Implement line chart for GHG levels over time
+Acceptance Criteria:
+□ Component at src/components/v3/charts/GHGLevelsChart.tsx
+□ Uses Recharts LineChart, Line components
+□ X-axis: Years 1994-2020
+□ Y-axis: GHG levels (0 to 240 Gg)
+□ Blue line (#0099FF) with circle markers
+□ Target line/marker for 2024
+□ Data table on right showing gas breakdown (CO₂, CH₄, N₂O, HFC)
+□ Tooltip shows GHG value on hover
+□ Uses mock data
+
+ARAW-305.4: Charts Section Layout
+Estimate: 2 hours
+Description: Create two-column layout for both charts
+Acceptance Criteria:
+□ Component at src/components/v3/sections/FinancingEmissionsSection.tsx
+□ Section title: "Financing and Emissions Trends"
+□ Two charts side by side (equal width ~48% each)
+□ Gap: 16px
+□ Responsive: Stack vertically on mobile/tablet
+□ Uses ChartCard component for both charts
+
+ARAW-305.5: Charts Responsive Design
+Estimate: 2 hours
+Description: Optimize charts for mobile/tablet viewing
+Acceptance Criteria:
+□ Charts stack vertically on mobile
+□ Chart height adjusts for smaller screens
+□ Axes remain readable
+□ Tooltips work on touch devices
+□ Data table adapts or scrolls on small screens
+□ Tested on all screen sizes
+
+
+===============================================================================
+STORY 6: ARAW-306 - Climate Investment Overview
+===============================================================================
+Story Points: 8
+Priority: Medium
+Description: Implement Investment by Sector chart and Fund Source breakdown
+Acceptance Criteria:
+- Stacked bar chart renders correctly
+- Fund source cards display properly
+- Colors match design
+
+Sub-tasks:
+----------
+
+ARAW-306.1: Investment by Sector Stacked Bar Chart
+Estimate: 6 hours
+Description: Implement stacked vertical bar chart for sector investments
+Acceptance Criteria:
+□ Component at src/components/v3/charts/InvestmentBySectorChart.tsx
+□ Uses Recharts BarChart, Bar components
+□ X-axis: Sector names (8 for NAP, 5 for NDCIP)
+□ Y-axis: Amount (₱0 to ₱400 M)
+□ 4 stacked funding types: Gov Budget, Grant, Loan, Private
+□ Colors: Dark green (#129900), Green (#63CD00), Teal (#00AE9A), Yellow-green (#A6C012)
+□ Legend below chart
+□ Hover tooltip with breakdown
+□ Dynamic sectors based on NAP/NDCIP filter
+□ Uses mock data
+
+ARAW-306.2: Fund Source Main Card
+Estimate: 3 hours
+Description: Create large Government Budget card
+Acceptance Criteria:
+□ Component at src/components/v3/charts/FundSourceBreakdown.tsx
+□ Large teal card (#049688)
+□ "GOVERNMENT BUDGET" label
+□ Amount: "₱ 980 M" (large text)
+□ Percentage: "40%" (large text)
+□ Tooltip/insight on hover: "Largest funding source..."
+□ White text on teal background
+□ Corner radius: 8px
+□ Full width of right column
+
+ARAW-306.3: Fund Source Sub-Cards (Grant, Loan, Private)
+Estimate: 3 hours
+Description: Create three smaller fund source cards below main card
+Acceptance Criteria:
+□ Three cards in equal-width row
+□ Grant card: Bright green (#63CD00), "₱ 310 M", "32%"
+□ Loan card: Medium green, "₱ 175 M", "18%"
+□ Private card: Yellow-green (#A6C012), "₱ 95 M", "10%"
+□ White text on colored backgrounds
+□ Proper spacing between cards
+□ Same component structure as main card
+
+ARAW-306.4: Climate Investment Section Layout
+Estimate: 2 hours
+Description: Create two-column layout for chart and fund source
+Acceptance Criteria:
+□ Component at src/components/v3/sections/ClimateInvestmentSection.tsx
+□ Section title: "Climate Investment Overview"
+□ Left column: Investment by Sector chart (~50%)
+□ Right column: Fund Source cards (~50%)
+□ Gap: 16px
+□ Responsive: Stack vertically on mobile
+□ Equal heights or auto
+
+ARAW-306.5: Section Responsive Design
+Estimate: 2 hours
+Description: Optimize section for tablet/mobile
+Acceptance Criteria:
+□ Chart and cards stack on mobile
+□ Fund source sub-cards adjust (2 columns or stack)
+□ Chart remains readable
+□ Cards maintain proper proportions
+□ Tested on all screen sizes
+
+
+===============================================================================
+STORY 7: ARAW-307 - GHG Baseline by Sector
+===============================================================================
+Story Points: 5
+Priority: Medium
+Description: Implement full-width stacked bar chart with target lines
+Acceptance Criteria:
+- Chart spans full width
+- All 3 components visible
+- Target lines display correctly
+
+Sub-tasks:
+----------
+
+ARAW-307.1: GHG Baseline Stacked Bar Chart
+Estimate: 6 hours
+Description: Implement stacked bar chart with target lines
+Acceptance Criteria:
+□ Component at src/components/v3/charts/GHGBaselineChart.tsx
+□ Uses Recharts BarChart, Bar, ReferenceLine
+□ Full content width
+□ Title: "GHG VS 2020 BASELINE BY SECTOR"
+□ Subtitle: "40% of 2030 reduction target achieved"
+□ X-axis: 8 sectors
+□ Y-axis: 0 to 40 GT
+□ 3 stacked components: Actual (light blue #AFE2FF), Conditional (medium blue #006FAF), Unconditional (orange #F38A00)
+□ Target lines overlaid (Conditional, Unconditional)
+□ Legend with bars and lines
+□ Hover tooltip with breakdown
+□ Uses mock data
+
+ARAW-307.2: GHG Baseline Section Container
+Estimate: 2 hours
+Description: Create full-width section for GHG chart
+Acceptance Criteria:
+□ Component at src/components/v3/sections/GHGBaselineSection.tsx
+□ Full content width (max-w-6xl)
+□ ChartCard wrapper
+□ Proper spacing from sections above/below
+□ Responsive height
+
+ARAW-307.3: GHG Chart Responsive Design
+Estimate: 2 hours
+Description: Optimize chart for smaller screens
+Acceptance Criteria:
+□ Chart height adjusts for mobile
+□ Axes remain readable
+□ Legend adapts or moves
+□ Bars maintain visibility
+□ Tooltip works on touch
+□ Tested on all screen sizes
+
+
+===============================================================================
+STORY 8: ARAW-308 - Regional Investments & Map
+===============================================================================
+Story Points: 13
+Priority: Medium  
+Description: Implement regional bar chart and Philippines choropleth map with bubbles
+Acceptance Criteria:
+- Horizontal bars display correctly
+- Map renders with all features
+- Bubbles and legend work
+
+Sub-tasks:
+----------
+
+ARAW-308.1: Investments by Region Horizontal Bar Chart
+Estimate: 4 hours
+Description: Implement horizontal bar chart for 17 regions
+Acceptance Criteria:
+□ Component at src/components/v3/charts/InvestmentsByRegionChart.tsx
+□ Uses Recharts BarChart, Bar (horizontal orientation)
+□ Y-axis: 17 Philippine regions (BARMM, Region XIII, etc.)
+□ X-axis: Amount (₱0 to ₱90 M)
+□ Bars in blue gradient (dark #173F75 to light #8DB7EC)
+□ Sorted by investment amount (descending)
+□ Hover tooltip with region and amount
+□ Compact layout fits in 1/3 column
+□ Uses mock data
+
+ARAW-308.2: Philippines Map Base (GeoJSON)
+Estimate: 4 hours
+Description: Implement base Philippines choropleth map
+Acceptance Criteria:
+□ Component at src/components/v3/map/PhilippinesMap.tsx
+□ Uses Leaflet + react-leaflet
+□ Loads Philippines GeoJSON (ADM1 boundaries)
+□ Regional boundaries visible
+□ Base styling (white/gray fill)
+□ Zoom controls (+ / -)
+□ Pan functionality
+□ Responsive container (67% width)
+□ fitBounds to Philippines
+□ Can reuse patterns from V2.0
+
+ARAW-308.3: Map Bubble Overlays
+Estimate: 5 hours
+Description: Add circle markers sized by investment amount
+Acceptance Criteria:
+□ Circles overlaid on map at coordinates
+□ Size scaled by investment (3 tiers: ₱1B+, ₱600M+, ₱300M)
+□ Color-coded by income class (5 colors: green shades)
+□ Positioned by lat/long from data
+□ Bubbles use CircleMarker or custom SVG
+□ Smooth rendering
+□ Uses mock location data
+
+ARAW-308.4: Map Legend Component
+Estimate: 3 hours
+Description: Create map legend overlay
+Acceptance Criteria:
+□ Legend positioned top-left of map (overlay)
+□ Shows "Total PH Mainland: ₱15.2 B"
+□ Fund breakdown bubble scale (3 tiers with icons)
+□ Climate Impact Drivers checkboxes (4 items)
+□ Income class legend (5 colors with labels)
+□ Styled box with background
+□ Toggle controls functional
+
+ARAW-308.5: Map Tooltips & Interactions
+Estimate: 3 hours
+Description: Implement hover tooltips and interactions
+Acceptance Criteria:
+□ Hover on bubble: Shows region, investment, income class, CIDs
+□ Hover on region: Shows region name
+□ Custom styled tooltips matching design
+□ Smooth transitions
+□ Touch-friendly for mobile
+□ Uses Leaflet Tooltip
+
+ARAW-308.6: "Show Bubble Map" Toggle
+Estimate: 2 hours
+Description: Implement checkbox to show/hide bubble overlays
+Acceptance Criteria:
+□ Checkbox below legend: "Show bubble map"
+□ Toggles bubble visibility
+□ Smooth fade in/out
+□ State management
+□ Default: Checked (bubbles visible)
+
+ARAW-308.7: Regional Section Layout
+Estimate: 2 hours
+Description: Create two-column layout (bars + map)
+Acceptance Criteria:
+□ Component at src/components/v3/sections/RegionalSection.tsx
+□ Section title: "Regional Investments & Climate Impact Drivers"
+□ Left column: Bar chart (33% width)
+□ Right column: Map (67% width)
+□ Gap: 16px
+□ Equal heights
+□ Responsive: Stack on mobile
+
+ARAW-308.8: Regional Section Responsive Design
+Estimate: 3 hours
+Description: Optimize section for tablet/mobile
+Acceptance Criteria:
+□ Bars and map stack vertically on mobile
+□ Map maintains aspect ratio
+□ Bar chart remains readable when narrower
+□ Map controls accessible on touch devices
+□ Legend adapts or moves on small screens
+□ Tested on all screen sizes
+
+
+===============================================================================
+STORY 9: ARAW-309 - Footer Component
+===============================================================================
+Story Points: 3
+Priority: Low
+Description: Implement footer with logos, social links, and scroll-to-top
+Acceptance Criteria:
+- Footer matches header style
+- All logos display
+- Social links work
+
+Sub-tasks:
+----------
+
+ARAW-309.1: Footer Container & Layout
+Estimate: 2 hours
+Description: Create footer component with teal background
+Acceptance Criteria:
+□ Component at src/components/v3/layout/Footer.tsx
+□ Teal background (#049688) matching header
+□ Full width
+□ Height: ~200-250px
+□ Padding: 40px horizontal, 32px vertical
+□ Centered content layout
+□ White text
+
+ARAW-309.2: Footer Content (Logos & Text)
+Estimate: 3 hours
+Description: Add title, partner logos, and copyright
+Acceptance Criteria:
+□ Title: "Climate Finance Dashboard" (24px semibold, centered)
+□ Partner logos row (horizontal):
+  • DOF logo (white version)
+  • "partnership with" text
+  • Canada logo
+  • UN logo
+□ All logos ~60px height
+□ Proper spacing between logos
+□ Copyright text: "© Department of Finance. All rights reserved"
+□ Font: 13px regular
+□ All content centered
+
+ARAW-309.3: Social Media Links
+Estimate: 2 hours
+Description: Add "Follow Us" section with social icons
+Acceptance Criteria:
+□ "Follow Us" label (16px medium)
+□ 5 social media icons (white):
+  • Facebook
+  • Instagram
+  • X (Twitter)
+  • YouTube
+  • LinkedIn
+□ Icons ~24px size
+□ Horizontal row with spacing
+□ Icons are clickable (Link components)
+□ Placeholder URLs or real links
+□ Hover effects (opacity change)
+
+ARAW-309.4: Scroll to Top Button
+Estimate: 2 hours
+Description: Add floating scroll-to-top button
+Acceptance Criteria:
+□ Circle button with up arrow icon
+□ Fixed position: bottom-right corner
+□ Shows when scrolled down >500px
+□ Hides when at top
+□ Smooth scroll to top on click
+□ White circle with teal icon
+□ Fade in/out animation
+□ Works on all pages
+
+ARAW-309.5: Footer Responsive Design
+Estimate: 1 hour
+Description: Optimize footer for mobile/tablet
+Acceptance Criteria:
+□ Content remains centered
+□ Logos may stack on mobile
+□ Social icons remain in row
+□ Text remains readable
+□ Scroll-to-top button remains accessible
+□ Tested on all screen sizes
+
+
+===============================================================================
+ADDITIONAL JIRA TICKETS:
+===============================================================================
+
+STORY 10: ARAW-310 - Foundation & Setup
+Priority: High
+Story Points: 5
+Description: Set up TypeScript interfaces, design system, mock data, utilities
+(This should be done FIRST before other stories)
+
+Sub-tasks:
+----------
+
+ARAW-310.1: TypeScript Interfaces
+Estimate: 4 hours
+Description: Create all TypeScript interfaces and types
+Acceptance Criteria:
+□ File created: src/lib/types-v3.ts
+□ All data structure interfaces from v3_data_requirements.txt
+□ Component prop interfaces
+□ Filter state interfaces
+□ API response types
+□ Proper exports
+
+ARAW-310.2: Design System Constants
+Estimate: 3 hours
+Description: Implement design system constants
+Acceptance Criteria:
+□ File created: src/lib/design-system-v3.ts
+□ Color palette constants (all hex codes)
+□ Typography scale (font sizes, weights)
+□ Spacing standards
+□ Gradient definitions (5 KPI gradients)
+□ Chart color palettes
+□ Proper exports
+
+ARAW-310.3: Mock Data Generators
+Estimate: 5 hours
+Description: Create realistic mock data for all sections
+Acceptance Criteria:
+□ File created: src/lib/mock-data-v3.ts
+□ Key metrics data
+□ Funds mobilized time series
+□ GHG levels historical data
+□ Investment by sector data
+□ Regional investments (17 regions)
+□ Fund source breakdown
+□ GHG by sector data
+□ Map/choropleth location data
+□ Realistic PHP amounts and percentages
+
+ARAW-310.4: Utility Functions
+Estimate: 2 hours
+Description: Create helper functions
+Acceptance Criteria:
+□ File created: src/lib/utils-v3.ts
+□ Currency formatter (PHP with B/M suffixes)
+□ Number abbreviation (1.16 B format)
+□ Percentage formatter
+□ Date/time formatter
+□ Color utility functions
+□ Proper TypeScript typing
+
+
+STORY 11: ARAW-311 - Filter State Management
+Priority: High
+Story Points: 5
+Description: Implement global filter state with React Context
+(Should be done after Foundation, before or during component development)
+
+Sub-tasks:
+----------
+
+ARAW-311.1: Filter Context Setup
+Estimate: 4 hours
+Description: Create React Context for filter state
+Acceptance Criteria:
+□ File created: src/contexts/FilterContext.tsx
+□ Context provider component
+□ State includes all filter options (years, sectors, NAP/NDCIP, etc.)
+□ Actions/reducers to update state
+□ TypeScript typed
+□ Provider wraps app in layout.tsx
+
+ARAW-311.2: Custom Data Hooks
+Estimate: 4 hours
+Description: Create custom hooks for data fetching
+Acceptance Criteria:
+□ Files in: src/hooks/v3/
+□ useKeyMetrics hook
+□ useFundsMobilized hook
+□ useGHGLevels hook
+□ useInvestmentBySector hook
+□ useRegionalInvestments hook
+□ Each hook uses filter context
+□ Returns mock data initially
+□ Loading and error states
+
+ARAW-311.3: Data Filtering Logic
+Estimate: 3 hours
+Description: Implement client-side filtering functions
+Acceptance Criteria:
+□ File created: src/lib/data-filtering-v3.ts
+□ Filter by years
+□ Filter by sectors (NAP/NDCIP aware)
+□ Filter by fund source/type
+□ Filter by CID and income class
+□ Handle toggle states
+□ Pure functions
+□ TypeScript typed
+
+
+STORY 12: ARAW-312 - Responsive Design & Polish
+Priority: Low
+Story Points: 8
+Description: Final responsive design pass and UI polish across all sections
+(Done after all sections complete)
+
+Sub-tasks:
+----------
+
+ARAW-312.1: Mobile Responsive Audit
+Estimate: 4 hours
+Description: Test and fix mobile layout issues
+Acceptance Criteria:
+□ All sections tested on mobile (320px to 767px)
+□ Side panel becomes drawer on mobile
+□ Cards stack appropriately
+□ Charts readable on small screens
+□ No horizontal scroll
+□ Touch-friendly controls
+
+ARAW-312.2: Tablet Responsive Audit
+Estimate: 3 hours
+Description: Test and fix tablet layout issues
+Acceptance Criteria:
+□ All sections tested on tablet (768px to 1023px)
+□ Optimal use of space
+□ Grids adjust appropriately
+□ Charts and maps properly sized
+
+ARAW-312.3: Loading States
+Estimate: 3 hours
+Description: Add loading skeletons for all sections
+Acceptance Criteria:
+□ Skeleton loaders for KPI cards
+□ Chart loading placeholders
+□ Map loading spinner
+□ Smooth transitions from loading to loaded
+□ Uses HeroUI Skeleton component
+
+ARAW-312.4: Error Handling
+Estimate: 2 hours
+Description: Add error states and messages
+Acceptance Criteria:
+□ Error messages for failed data loads
+□ Retry buttons
+□ Graceful degradation
+□ User-friendly error text
+
+ARAW-312.5: Accessibility (A11y) Audit
+Estimate: 4 hours
+Description: Ensure WCAG 2.1 AA compliance
+Acceptance Criteria:
+□ Semantic HTML throughout
+□ ARIA labels on interactive elements
+□ Keyboard navigation works
+□ Color contrast meets standards
+□ Screen reader friendly
+□ Focus indicators visible
+□ Test with axe DevTools
+
+ARAW-312.6: Performance Optimization
+Estimate: 3 hours
+Description: Optimize bundle and rendering performance
+Acceptance Criteria:
+□ Code splitting for charts
+□ Lazy loading for map
+□ Image optimization (next/image)
+□ Bundle analysis run
+□ Target: <200 kB initial bundle
+□ Lighthouse score >90
+
+
+===============================================================================
+JIRA BOARD SUMMARY:
+===============================================================================
+
+Total Stories: 12
+- ARAW-310: Foundation & Setup (5 SP) - DO FIRST
+- ARAW-311: Filter State Management (5 SP) - DO SECOND
+- ARAW-301: Header (3 SP)
+- ARAW-302: Subheader (5 SP)
+- ARAW-303: Side Panel (8 SP)
+- ARAW-304: KPI Cards (8 SP)
+- ARAW-305: Financing & Emissions Charts (8 SP)
+- ARAW-306: Climate Investment Overview (8 SP)
+- ARAW-307: GHG Baseline (5 SP)
+- ARAW-308: Regional & Map (13 SP)
+- ARAW-309: Footer (3 SP)
+- ARAW-312: Responsive & Polish (8 SP) - DO LAST
+
+Total Story Points: 79 SP
+Total Sub-tasks: 79 sub-tasks
+
+Recommended Sprint Structure:
+------------------------------
+Sprint 1 (Week 1): Foundation + Header + Subheader
+- ARAW-310 (Foundation)
+- ARAW-311 (State Management)
+- ARAW-301 (Header)
+- ARAW-302 (Subheader)
+Total: 18 SP
+
+Sprint 2 (Week 2): Filters + KPI Cards
+- ARAW-303 (Side Panel)
+- ARAW-304 (KPI Cards)
+Total: 16 SP
+
+Sprint 3 (Week 3): Charts
+- ARAW-305 (Financing & Emissions)
+- ARAW-306 (Climate Investment)
+- ARAW-307 (GHG Baseline)
+Total: 21 SP
+
+Sprint 4 (Week 4): Map + Footer
+- ARAW-308 (Regional & Map)
+- ARAW-309 (Footer)
+Total: 16 SP
+
+Sprint 5 (Week 5): Polish & Deploy
+- ARAW-312 (Responsive & Polish)
+- Bug fixes
+- Final QA
+Total: 8 SP
+
+
+LABELS TO ADD IN JIRA:
+======================
+- v3.0-dashboard
+- frontend
+- component
+- chart
+- map
+- responsive
+- qa-ready
+- bug
+- enhancement
+
+
+WORKFLOW STATES:
+================
+1. To Do
+2. In Progress (Developer working)
+3. Code Review (Optional peer review)
+4. Ready for QA (Deployed to QA environment)
+5. In QA (Lei testing)
+6. Done (Approved by Lei)
+
+
+QA SIGN-OFF PROCESS:
+====================
+For each Story:
+1. Developer completes all sub-tasks
+2. Developer moves Story to "Ready for QA"
+3. Lei tests using QA checklist (from PM/QA summary doc)
+4. Lei either:
+   a) Approves → Move to "Done"
+   b) Reports bugs → Create Bug tickets, move back to "In Progress"
+5. Once approved, proceed to next Story
+
+
+===============================================================================
+END OF JIRA BOARD SETUP GUIDE
+===============================================================================
+
