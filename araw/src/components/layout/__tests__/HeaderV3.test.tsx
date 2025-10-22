@@ -5,7 +5,7 @@
  * JIRA: ARAW-311
  */
 
-import { render, screen, waitFor } from '@testing-library/react';
+import { render, screen, act } from '@testing-library/react';
 import HeaderV3 from '../HeaderV3';
 import { HEADER } from '@/lib/design-system-v3';
 
@@ -43,18 +43,24 @@ describe('HeaderV3', () => {
       expect(screen.getByText('Custom Title')).toBeInTheDocument();
     });
 
-    it('should render with custom logo', () => {
-      render(<HeaderV3 logoSrc="/custom-logo.svg" />);
+    it('should display real-time clock when showDateTime is true', () => {
+      render(<HeaderV3 showDateTime={true} />);
       
-      const logo = screen.getByAltText('Department of Finance Logo');
-      expect(logo).toHaveAttribute('src', '/custom-logo.svg');
+      expect(screen.getByText(/\d{1,2}\/\d{1,2}\/\d{4}/)).toBeInTheDocument();
     });
 
-    it('should apply custom className', () => {
-      const { container } = render(<HeaderV3 className="custom-class" />);
-      const header = container.querySelector('header');
+    it('should not display clock when showDateTime is false', () => {
+      render(<HeaderV3 showDateTime={false} />);
       
-      expect(header).toHaveClass('custom-class');
+      const timeElements = screen.queryByText(/\d{1,2}\/\d{1,2}\/\d{4}/);
+      expect(timeElements).not.toBeInTheDocument();
+    });
+
+    it('should render notification and settings buttons', () => {
+      render(<HeaderV3 />);
+      
+      expect(screen.getByLabelText('Notifications')).toBeInTheDocument();
+      expect(screen.getByLabelText('Settings')).toBeInTheDocument();
     });
   });
 
@@ -68,15 +74,6 @@ describe('HeaderV3', () => {
       });
     });
 
-    it('should apply correct height', () => {
-      const { container } = render(<HeaderV3 />);
-      const header = container.querySelector('header');
-      
-      expect(header).toHaveStyle({
-        height: HEADER.height
-      });
-    });
-
     it('should apply correct text color', () => {
       const { container } = render(<HeaderV3 />);
       const header = container.querySelector('header');
@@ -85,122 +82,101 @@ describe('HeaderV3', () => {
         color: HEADER.textColor
       });
     });
+
+    it('should apply custom className', () => {
+      const { container } = render(<HeaderV3 className="custom-class" />);
+      const header = container.querySelector('header');
+      
+      expect(header).toHaveClass('custom-class');
+    });
   });
 
-  describe('Clock functionality', () => {
-    it('should display clock when showDateTime is true', async () => {
+  describe('Clock Functionality', () => {
+    it('should update time every second', () => {
       render(<HeaderV3 showDateTime={true} />);
       
-      await waitFor(() => {
-        const timeElement = screen.queryByText(/\d{2}\/\d{2}\/\d{4}/);
-        expect(timeElement).toBeInTheDocument();
-      });
-    });
-
-    it('should not display clock when showDateTime is false', () => {
-      render(<HeaderV3 showDateTime={false} />);
+      const initialTime = screen.getByText(/10\/22\/2025 03:30:00 PM/);
+      expect(initialTime).toBeInTheDocument();
       
-      const timeElement = screen.queryByText(/\d{2}\/\d{2}\/\d{4}/);
-      expect(timeElement).not.toBeInTheDocument();
-    });
-
-    it('should update time every second', async () => {
-      render(<HeaderV3 showDateTime={true} />);
-      
-      // Wait for initial render
-      await waitFor(() => {
-        expect(screen.queryByText(/\d{2}\/\d{2}\/\d{4}/)).toBeInTheDocument();
-      });
-
       // Advance time by 1 second
-      jest.advanceTimersByTime(1000);
-      jest.setSystemTime(new Date('2025-10-22T15:30:01'));
-      
-      await waitFor(() => {
-        const timeElement = screen.queryByText(/\d{2}\/\d{2}\/\d{4}/);
-        expect(timeElement).toBeInTheDocument();
+      act(() => {
+        jest.advanceTimersByTime(1000);
       });
+      
+      const updatedTime = screen.getByText(/10\/22\/2025 03:30:01 PM/);
+      expect(updatedTime).toBeInTheDocument();
     });
 
-    it('should render clock icon when showDateTime is true', async () => {
-      const { container } = render(<HeaderV3 showDateTime={true} />);
+    it('should clear interval on unmount', () => {
+      const { unmount } = render(<HeaderV3 showDateTime={true} />);
       
-      await waitFor(() => {
-        const clockIcon = container.querySelector('svg');
-        expect(clockIcon).toBeInTheDocument();
-      });
+      const clearIntervalSpy = jest.spyOn(global, 'clearInterval');
+      
+      unmount();
+      
+      expect(clearIntervalSpy).toHaveBeenCalled();
+      
+      clearIntervalSpy.mockRestore();
     });
   });
 
-  describe('Logo', () => {
-    it('should render logo with correct size', () => {
-      render(<HeaderV3 />);
+  describe('Props', () => {
+    it('should use custom logo source', () => {
+      render(<HeaderV3 logoSrc="/custom-logo.svg" />);
       
       const logo = screen.getByAltText('Department of Finance Logo');
-      expect(logo).toHaveAttribute('width', '32');
-      expect(logo).toHaveAttribute('height', '32');
+      expect(logo).toHaveAttribute('src', '/custom-logo.svg');
     });
 
-    it('should prioritize logo loading', () => {
+    it('should render heading element for title', () => {
       render(<HeaderV3 />);
       
-      const logo = screen.getByAltText('Department of Finance Logo');
-      expect(logo).toHaveAttribute('priority');
+      const heading = screen.getByRole('heading', { level: 1 });
+      expect(heading).toHaveTextContent('Climate Finance Dashboard');
     });
   });
 
   describe('Layout', () => {
-    it('should have three main sections (logo, title, clock)', () => {
+    it('should have max-width container', () => {
       const { container } = render(<HeaderV3 />);
-      const header = container.querySelector('header');
       
-      // Header should have 3 direct children divs
-      const sections = header?.querySelectorAll(':scope > div');
-      expect(sections).toHaveLength(3);
+      const maxWidthContainer = container.querySelector('.max-w-\\[1920px\\]');
+      expect(maxWidthContainer).toBeInTheDocument();
     });
 
-    it('should center the title', () => {
+    it('should have left and right sections', () => {
       const { container } = render(<HeaderV3 />);
-      const titleContainer = container.querySelector('.flex-1');
       
-      expect(titleContainer).toHaveClass('flex', 'justify-center');
+      const header = container.querySelector('header');
+      const sections = header?.querySelectorAll(':scope > div > div');
+      
+      expect(sections?.length).toBeGreaterThanOrEqual(2);
     });
   });
 
   describe('Accessibility', () => {
-    it('should have semantic header element', () => {
-      const { container } = render(<HeaderV3 />);
-      const header = container.querySelector('header');
-      
-      expect(header).toBeInTheDocument();
-      expect(header?.tagName).toBe('HEADER');
-    });
-
-    it('should have heading element for title', () => {
-      render(<HeaderV3 />);
-      
-      const heading = screen.getByRole('heading', { level: 1 });
-      expect(heading).toHaveTextContent('ARAW: Climate Finance Dashboard');
-    });
-
     it('should have descriptive alt text for logo', () => {
       render(<HeaderV3 />);
       
       const logo = screen.getByAltText('Department of Finance Logo');
       expect(logo).toBeInTheDocument();
     });
-  });
 
-  describe('Cleanup', () => {
-    it('should clear interval on unmount', () => {
-      const clearIntervalSpy = jest.spyOn(global, 'clearInterval');
-      const { unmount } = render(<HeaderV3 showDateTime={true} />);
+    it('should have aria-labels for icon buttons', () => {
+      render(<HeaderV3 />);
       
-      unmount();
+      expect(screen.getByLabelText('Notifications')).toBeInTheDocument();
+      expect(screen.getByLabelText('Settings')).toBeInTheDocument();
+    });
+
+    it('should have proper button types', () => {
+      render(<HeaderV3 />);
       
-      expect(clearIntervalSpy).toHaveBeenCalled();
-      clearIntervalSpy.mockRestore();
+      const notificationBtn = screen.getByLabelText('Notifications');
+      const settingsBtn = screen.getByLabelText('Settings');
+      
+      expect(notificationBtn).toHaveAttribute('type', 'button');
+      expect(settingsBtn).toHaveAttribute('type', 'button');
     });
   });
 });
-

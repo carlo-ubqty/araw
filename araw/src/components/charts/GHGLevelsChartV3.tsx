@@ -2,6 +2,7 @@
  * ARAW V3.0 Dashboard - GHG Levels Chart Component
  * 
  * Line chart showing GHG emission trends with breakdown table
+ * Follows MVC: Component receives data via props (no hardcoded data)
  * JIRA: ARAW-315
  */
 
@@ -9,36 +10,46 @@
 
 import { LineChart, Line, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer, ReferenceLine } from 'recharts';
 
-// Mock data for the chart (historical GHG data)
-const mockData = [
-  { year: '1994', ghg: 180 },
-  { year: '1998', ghg: 190 },
-  { year: '2002', ghg: 200 },
-  { year: '2006', ghg: 210 },
-  { year: '2010', ghg: 220 },
-  { year: '2014', ghg: 215 },
-  { year: '2018', ghg: 205 },
-  { year: '2020', ghg: 195 },
-];
+export interface GHGHistoricalData {
+  year: string;
+  ghg: number;
+}
 
-// 2024 target data
-const ghgBreakdown = [
-  { gas: 'Carbon Dioxide (CO₂)', value: '139.194' },
-  { gas: 'Methane (CH₄)', value: '70.155' },
-  { gas: 'Nitrous Oxide (N₂O)', value: '17.233' },
-  { gas: 'Hydrofluorocarbon (HFC)', value: '3.978' },
-];
+export interface GHGBreakdownItem {
+  gas: string;
+  value: string;
+}
 
-export default function GHGLevelsChartV3() {
+export interface GHGTargetData {
+  year: string;
+  target: number;
+  breakdown: GHGBreakdownItem[];
+}
+
+export interface GHGLevelsChartV3Props {
+  historicalData?: GHGHistoricalData[];
+  targetData?: GHGTargetData;
+  title?: string;
+  subtitle?: string;
+  className?: string;
+}
+
+export default function GHGLevelsChartV3({
+  historicalData = [],
+  targetData,
+  title = 'GHG LEVELS',
+  subtitle = 'Includes CO₂, CH₄, N₂O, and HFCs (values in Gg, summed across gases)',
+  className = ''
+}: GHGLevelsChartV3Props) {
   return (
-    <div className="bg-white rounded-lg border border-gray-200 p-6">
+    <div className={`bg-white rounded-lg border border-gray-200 p-6 ${className}`}>
       {/* Title and Subtitle */}
       <div className="mb-4">
         <h3 className="font-semibold text-gray-900" style={{ fontSize: '20px' }}>
-          GHG LEVELS
+          {title}
         </h3>
         <p className="text-gray-600 mt-1" style={{ fontSize: '13px' }}>
-          Includes CO₂, CH₄, N₂O, and HFCs (values in Gg, summed across gases)
+          {subtitle}
         </p>
       </div>
 
@@ -46,7 +57,7 @@ export default function GHGLevelsChartV3() {
         {/* Chart */}
         <div className="flex-1">
           <ResponsiveContainer width="100%" height={280}>
-            <LineChart data={mockData} margin={{ top: 10, right: 10, left: 0, bottom: 0 }}>
+            <LineChart data={historicalData} margin={{ top: 10, right: 10, left: 0, bottom: 0 }}>
               <CartesianGrid strokeDasharray="3 3" stroke="#f0f0f0" />
               <XAxis 
                 dataKey="year" 
@@ -92,26 +103,29 @@ export default function GHGLevelsChartV3() {
         </div>
 
         {/* Data Table */}
-        <div className="w-64 flex-shrink-0">
-          <div className="border border-gray-200 rounded-lg p-4">
-            <div className="mb-3">
-              <p className="text-sm font-semibold text-gray-900">2024 Target</p>
-              <p className="text-2xl font-bold text-blue-600">-230.580 Gg</p>
-            </div>
-            
-            <div className="space-y-2 pt-3 border-t border-gray-200">
-              <p className="text-xs font-semibold text-gray-700 mb-2">Breakdown:</p>
-              {ghgBreakdown.map((item, index) => (
-                <div key={index} className="flex justify-between items-center text-xs">
-                  <span className="text-gray-600">{item.gas}</span>
-                  <span className="font-medium text-gray-900">{item.value}</span>
+        {targetData && (
+          <div className="w-64 flex-shrink-0">
+            <div className="border border-gray-200 rounded-lg p-4">
+              <div className="mb-3">
+                <p className="text-sm font-semibold text-gray-900">{targetData.year} Target</p>
+                <p className="text-2xl font-bold text-blue-600">{targetData.target} Gg</p>
+              </div>
+              
+              {targetData.breakdown.length > 0 && (
+                <div className="space-y-2 pt-3 border-t border-gray-200">
+                  <p className="text-xs font-semibold text-gray-700 mb-2">Breakdown:</p>
+                  {targetData.breakdown.map((item, index) => (
+                    <div key={index} className="flex justify-between items-center text-xs">
+                      <span className="text-gray-600">{item.gas}</span>
+                      <span className="font-medium text-gray-900">{item.value}</span>
+                    </div>
+                  ))}
                 </div>
-              ))}
+              )}
             </div>
           </div>
-        </div>
+        )}
       </div>
     </div>
   );
 }
-

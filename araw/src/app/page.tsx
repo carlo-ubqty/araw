@@ -8,6 +8,7 @@
  * - Section-by-section build using user-provided screenshots
  * - Container spacing standards from mockup specifications
  * - Modern, clean design with systematic spacing
+ * - MVC Architecture: Components receive data from service layer
  * 
  * JIRA Progress:
  * ✅ ARAW-310: Foundation & Setup (types, design system, utils, mock data)
@@ -15,18 +16,56 @@
  * ✅ ARAW-312: Subheader Component
  * ✅ ARAW-313: Side Panel (Filter Dropdowns)
  * ✅ ARAW-314: Key Metric Cards (5 KPI cards with gradients)
- * ✅ ARAW-315: Funds & Emissions Charts (2 charts)
+ * ✅ ARAW-315: Funds & Emissions Charts (2 charts) - WITH SERVICE LAYER
  * 🚧 ARAW-316: Climate Investment Charts (Next)
  */
 
+import { useState, useEffect } from 'react';
 import HeaderV3 from '@/components/layout/HeaderV3';
 import SubheaderV3 from '@/components/layout/SubheaderV3';
 import SidePanelV3 from '@/components/layout/SidePanelV3';
 import KPICardsRowV3 from '@/components/dashboard/KPICardsRowV3';
 import FundsMobilizedChartV3 from '@/components/charts/FundsMobilizedChartV3';
 import GHGLevelsChartV3 from '@/components/charts/GHGLevelsChartV3';
+import { DashboardServiceV3 } from '@/services/dashboardServiceV3';
+import type { FundsData } from '@/components/charts/FundsMobilizedChartV3';
+import type { GHGHistoricalData, GHGTargetData } from '@/components/charts/GHGLevelsChartV3';
 
 export default function DashboardV3() {
+  // State for chart data
+  const [fundsData, setFundsData] = useState<FundsData[]>([]);
+  const [ghgHistoricalData, setGhgHistoricalData] = useState<GHGHistoricalData[]>([]);
+  const [ghgTargetData, setGhgTargetData] = useState<GHGTargetData | undefined>();
+  const [isLoading, setIsLoading] = useState(true);
+
+  // Fetch data from service layer on component mount
+  useEffect(() => {
+    const fetchData = async () => {
+      try {
+        setIsLoading(true);
+        
+        // Fetch all data in parallel from service layer
+        const [funds, ghgData] = await Promise.all([
+          DashboardServiceV3.getFundsMobilizedData(),
+          DashboardServiceV3.getGHGLevelsData()
+        ]);
+        
+        // Set funds data (already in correct format)
+        setFundsData(funds);
+        
+        // Set GHG data (already separated by service layer)
+        setGhgHistoricalData(ghgData.historicalData);
+        setGhgTargetData(ghgData.targetData);
+      } catch (error) {
+        console.error('Error fetching dashboard data:', error);
+      } finally {
+        setIsLoading(false);
+      }
+    };
+    
+    fetchData();
+  }, []);
+
   return (
     <div className="min-h-screen flex flex-col bg-gray-100">
       {/* Header - ARAW-311 ✅ - Full 1920px width */}
@@ -48,11 +87,25 @@ export default function DashboardV3() {
               {/* KPI Cards Row - ARAW-314 ✅ */}
               <KPICardsRowV3 className="mb-6" />
               
-              {/* Funds & Emissions Charts - ARAW-315 ✅ */}
-              <div className="grid grid-cols-2 gap-4 mb-6">
-                <FundsMobilizedChartV3 />
-                <GHGLevelsChartV3 />
-              </div>
+              {/* Funds & Emissions Charts - ARAW-315 ✅ - WITH SERVICE LAYER */}
+              {isLoading ? (
+                <div className="grid grid-cols-2 gap-4 mb-6">
+                  <div className="bg-white rounded-lg border border-gray-200 p-6 h-[400px] flex items-center justify-center">
+                    <p className="text-gray-500">Loading chart data...</p>
+                  </div>
+                  <div className="bg-white rounded-lg border border-gray-200 p-6 h-[400px] flex items-center justify-center">
+                    <p className="text-gray-500">Loading chart data...</p>
+                  </div>
+                </div>
+              ) : (
+                <div className="grid grid-cols-2 gap-4 mb-6">
+                  <FundsMobilizedChartV3 data={fundsData} />
+                  <GHGLevelsChartV3 
+                    historicalData={ghgHistoricalData}
+                    targetData={ghgTargetData}
+                  />
+                </div>
+              )}
               
               {/* Development Progress Indicator */}
           <div className="bg-white rounded-lg shadow-sm p-8">

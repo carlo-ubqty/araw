@@ -2,6 +2,7 @@
  * ARAW V3.0 Dashboard - Funds Mobilized Chart Component
  * 
  * Stacked area chart showing Adaptation and Mitigation funding trends
+ * Follows MVC: Component receives data via props (no hardcoded data)
  * JIRA: ARAW-315
  */
 
@@ -10,32 +11,42 @@
 import { AreaChart, Area, XAxis, YAxis, CartesianGrid, Tooltip, Legend, ResponsiveContainer } from 'recharts';
 import { FUNDS_CHART_COLORS } from '@/lib/design-system-v3';
 
-// Mock data for the chart
-const mockData = [
-  { year: '2020', adaptation: 200, mitigation: 50 },
-  { year: '2021', adaptation: 400, mitigation: 80 },
-  { year: '2022', adaptation: 600, mitigation: 120 },
-  { year: '2023', adaptation: 800, mitigation: 150 },
-  { year: '2024', adaptation: 950, mitigation: 180 },
-  { year: '2025', adaptation: 1120, mitigation: 264 },
-];
+export interface FundsData {
+  year: string;
+  adaptation: number;
+  mitigation: number;
+}
 
-export default function FundsMobilizedChartV3() {
+export interface FundsMobilizedChartV3Props {
+  data?: FundsData[];
+  title?: string;
+  subtitle?: string;
+  noteText?: string;
+  className?: string;
+}
+
+export default function FundsMobilizedChartV3({
+  data = [],
+  title = 'FUNDS MOBILIZED FOR CLIMATE ACTION',
+  subtitle = 'Trending up by 5.2% this year 📈',
+  noteText = '2025 (GAA): Both funds are GAA allocations for 2025 and do not represent actual disbursements',
+  className = ''
+}: FundsMobilizedChartV3Props) {
   return (
-    <div className="bg-white rounded-lg border border-gray-200 p-6">
+    <div className={`bg-white rounded-lg border border-gray-200 p-6 ${className}`}>
       {/* Title and Subtitle */}
       <div className="mb-4">
         <h3 className="font-semibold text-gray-900" style={{ fontSize: '20px' }}>
-          FUNDS MOBILIZED FOR CLIMATE ACTION
+          {title}
         </h3>
         <p className="text-gray-600 mt-1" style={{ fontSize: '13px' }}>
-          Trending up by 5.2% this year 📈
+          {subtitle}
         </p>
       </div>
 
       {/* Chart */}
       <ResponsiveContainer width="100%" height={300}>
-        <AreaChart data={mockData} margin={{ top: 10, right: 30, left: 0, bottom: 0 }}>
+        <AreaChart data={data} margin={{ top: 10, right: 30, left: 0, bottom: 0 }}>
           <defs>
             <linearGradient id="colorAdaptation" x1="0" y1="0" x2="0" y2="1">
               <stop offset="5%" stopColor={FUNDS_CHART_COLORS.adaptation} stopOpacity={0.4}/>
@@ -93,18 +104,13 @@ export default function FundsMobilizedChartV3() {
       </ResponsiveContainer>
 
       {/* Note callout */}
-      <div className="mt-4 p-3 bg-amber-50 border border-amber-200 rounded-lg">
-        <p className="text-xs text-gray-700">
-          <strong>2025 (GAA)</strong>
-          <br />
-          🟧 Adaptation: ₱1,120 M | 🟨 Mitigation: ₱264 M
-          <br />
-          <span className="text-gray-600">
-            • Both funds are GAA allocations for 2025 and do not represent actual disbursements
-          </span>
-        </p>
-      </div>
+      {noteText && (
+        <div className="mt-4 p-3 bg-amber-50 border border-amber-200 rounded-lg">
+          <p className="text-xs text-gray-700">
+            {noteText}
+          </p>
+        </div>
+      )}
     </div>
   );
 }
-
