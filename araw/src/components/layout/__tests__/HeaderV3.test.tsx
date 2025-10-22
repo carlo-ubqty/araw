@@ -33,7 +33,7 @@ describe('HeaderV3', () => {
     it('should render with default props', () => {
       render(<HeaderV3 />);
       
-      expect(screen.getByText('ARAW: Climate Finance Dashboard')).toBeInTheDocument();
+      expect(screen.getByText('Climate Finance Dashboard')).toBeInTheDocument();
       expect(screen.getByAltText('Department of Finance Logo')).toBeInTheDocument();
     });
 

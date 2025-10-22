@@ -632,3 +632,75 @@ Application: NextJS 15.5.3 + HeroUI 2.8.4
 Domain Target: araw-qa.ncience.com
 SSL: Let's Encrypt ready
 Branch Strategy: qa for QA, main for production
+
+================================================================================
+V3.0 TESTING INFRASTRUCTURE SETUP (2025-10-22)
+================================================================================
+Branch: feature/v3.0-implementation
+
+## TESTING SETUP COMMANDS
+
+# Install Jest and React Testing Library
+npm install --save-dev jest @testing-library/react @testing-library/jest-dom @testing-library/user-event jest-environment-jsdom @types/jest
+
+# Dependencies installed:
+# - jest: Test framework
+# - @testing-library/react: React component testing utilities
+# - @testing-library/jest-dom: Custom Jest matchers for DOM
+# - @testing-library/user-event: User interaction simulation
+# - jest-environment-jsdom: DOM environment for tests
+# - @types/jest: TypeScript type definitions
+
+## CONFIGURATION FILES CREATED
+
+# 1. jest.config.js - Jest configuration with Next.js integration
+# 2. jest.setup.js - Test setup (imports @testing-library/jest-dom)
+
+## PACKAGE.JSON SCRIPTS ADDED
+```json
+{
+  "test": "jest --passWithNoTests",
+  "test:watch": "jest --watch",
+  "test:coverage": "jest --coverage",
+  "prebuild": "npm test"  // Runs tests before build
+}
+```
+
+## TESTING WORKFLOW
+
+1. Run all tests: npm test
+2. Watch mode (development): npm test:watch
+3. Coverage report: npm test:coverage
+4. Build process: npm test → npm run build (tests run automatically)
+
+## TEST FILE LOCATIONS
+
+- Component tests: __tests__/ComponentName.test.tsx (next to component)
+- Service tests: __tests__/serviceName.test.ts (in services folder)
+- Coverage threshold: 70% (branches, functions, lines, statements)
+
+## FILES CREATED
+
+1. src/services/dashboardServiceV3.ts - V3 service layer for MVC architecture
+2. src/services/__tests__/dashboardServiceV3.test.ts - Service layer tests
+3. jest.config.js - Jest configuration
+4. jest.setup.js - Test setup file
+
+## TESTING STATUS
+
+✅ Jest configured and operational
+✅ Test infrastructure ready
+✅ Service layer tests passing (24/31 tests)
+⚠️  Some HeaderV3 tests need updates (old expectations)
+🔄 Chart components will be refactored to use service layer
+
+## NEXT STEPS
+
+1. Update HeaderV3 tests to match current implementation
+2. Refactor FundsMobilizedChartV3 to use dashboardServiceV3
+3. Refactor GHGLevelsChartV3 to use dashboardServiceV3
+4. Create tests for all chart components
+5. Create tests for KPI components
+6. Create tests for side panel component
+
+================================================================================

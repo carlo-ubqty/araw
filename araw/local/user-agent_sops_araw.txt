@@ -25,6 +25,23 @@ SOPs (IMPORTANT! FOLLOW THESE IN OUR SESSIONS!)
 7. Keep a log of all the commands needed to recreate the environment in climate-finance-dashboard/local/env_log.txt
 8. Include working branch details in all logs (wus_logs.txt, env_logs.txt, deployment_notes.txt) - specify which git branch work was performed on, any branch switches, and final branch state for next agent
 9. Create concise, one-liner commits - keep commit messages clear and brief
+10. **MVC Architecture & Testing Requirements** (CRITICAL!)
+    a) ALWAYS follow MVC/service layer architecture:
+       - Components (View): Only UI rendering, receive data via props
+       - Services (Controller): Data fetching, business logic, transformations
+       - Types/Models: TypeScript interfaces, data structures
+    b) Create unit tests for ALL new components and services:
+       - Use Jest + @testing-library/react for component tests
+       - Use Jest for service/utility tests
+       - Test files: `ComponentName.test.tsx` or `serviceName.test.ts`
+       - Location: `__tests__` folder next to component or in same directory
+    c) Run tests before build: `npm test` → `npm run build`
+    d) Test coverage requirements:
+       - Components: Render tests, prop validation, user interactions
+       - Services: Data transformations, error handling, edge cases
+       - Utilities: All branches and edge cases
+    e) Mock external dependencies (APIs, Next.js features, etc.)
+    f) Update env_logs.txt with test setup commands
 
 PROJECT CONTEXT & DOMAIN REQUIREMENTS
 =====================================
