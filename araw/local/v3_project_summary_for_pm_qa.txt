@@ -360,20 +360,41 @@ Total Development Time: ~21 days (4-5 weeks with testing cycles)
 
 DEPLOYMENT WORKFLOW:
 ====================
+Development → QA → UAT → Production
+
+Per Section:
 1. Developer completes section on local environment
 2. Developer runs build and basic tests
 3. Deploy to araw-v3-qa.ncience.com
-4. Lei receives notification for QA testing
-5. Lei tests section using checklist above
-6. Lei reports bugs/issues (if any) or approves section
-7. Developer fixes bugs (if any) and redeploys
-8. Once approved, move to next section
+4. Move JIRA ticket to "Ready for QA"
+
+QA Phase (Lei):
+5. Lei receives notification for QA testing
+6. Lei tests section using checklist above
+7. If bugs found:
+   - Lei reports in JIRA
+   - Developer fixes and redeploys
+   - Return to step 6
+8. If approved:
+   - Lei moves ticket to "Ready for UAT"
+
+UAT Phase (Stakeholders):
+9. Jhonnel/stakeholders review section
+10. Move ticket to "In UAT" for user acceptance testing
+11. Users test functionality and usability
+12. If changes needed:
+    - Create change request
+    - Developer implements
+    - Return to QA phase
+13. If approved:
+    - Move ticket to "Done"
+    - Proceed to next section
 
 After All Sections Complete:
-- Full integration testing by Lei
-- Responsive design testing across devices
-- Performance testing
-- Final bug fixes
+- Full integration testing (QA + UAT)
+- End-to-end user testing
+- Performance and security review
+- Final stakeholder approval
 - Deploy to production (araw-qa.ncience.com or new domain)
 
 
