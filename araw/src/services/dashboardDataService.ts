@@ -20,6 +20,7 @@ export async function getTotalInvestment(filters?: Partial<FilterState>): Promis
     SELECT COALESCE(SUM(i.amount), 0) as total
     FROM investments i
     INNER JOIN projects p ON i.project_id = p.id
+    INNER JOIN sectors s ON p.sector_id = s.id
     WHERE 1=1
   `;
   const params: any[] = [];
@@ -28,6 +29,11 @@ export async function getTotalInvestment(filters?: Partial<FilterState>): Promis
   if (filters?.dataView) {
     sql += ` AND p.data_view IN (?, 'BOTH')`;
     params.push(filters.dataView);
+  }
+
+  if (filters?.selectedSectors && filters.selectedSectors.length > 0) {
+    sql += ` AND s.code IN (${filters.selectedSectors.map(() => '?').join(',')})`;
+    params.push(...filters.selectedSectors);
   }
 
   if (filters?.selectedYears && filters.selectedYears.length > 0) {
@@ -62,6 +68,7 @@ export async function getAdaptationInvestment(filters?: Partial<FilterState>): P
     SELECT COALESCE(SUM(i.amount), 0) as total
     FROM investments i
     INNER JOIN projects p ON i.project_id = p.id
+    INNER JOIN sectors s ON p.sector_id = s.id
     WHERE i.climate_type IN ('Adaptation', 'Both')
   `;
   const params: any[] = [];
@@ -69,6 +76,11 @@ export async function getAdaptationInvestment(filters?: Partial<FilterState>): P
   if (filters?.dataView) {
     sql += ` AND p.data_view IN (?, 'BOTH')`;
     params.push(filters.dataView);
+  }
+
+  if (filters?.selectedSectors && filters.selectedSectors.length > 0) {
+    sql += ` AND s.code IN (${filters.selectedSectors.map(() => '?').join(',')})`;
+    params.push(...filters.selectedSectors);
   }
 
   if (filters?.selectedYears && filters.selectedYears.length > 0) {
@@ -88,6 +100,7 @@ export async function getMitigationInvestment(filters?: Partial<FilterState>): P
     SELECT COALESCE(SUM(i.amount), 0) as total
     FROM investments i
     INNER JOIN projects p ON i.project_id = p.id
+    INNER JOIN sectors s ON p.sector_id = s.id
     WHERE i.climate_type IN ('Mitigation', 'Both')
   `;
   const params: any[] = [];
@@ -95,6 +108,11 @@ export async function getMitigationInvestment(filters?: Partial<FilterState>): P
   if (filters?.dataView) {
     sql += ` AND p.data_view IN (?, 'BOTH')`;
     params.push(filters.dataView);
+  }
+
+  if (filters?.selectedSectors && filters.selectedSectors.length > 0) {
+    sql += ` AND s.code IN (${filters.selectedSectors.map(() => '?').join(',')})`;
+    params.push(...filters.selectedSectors);
   }
 
   if (filters?.selectedYears && filters.selectedYears.length > 0) {
@@ -113,6 +131,7 @@ export async function getTotalProjects(filters?: Partial<FilterState>): Promise<
   let sql = `
     SELECT COUNT(DISTINCT p.id) as total
     FROM projects p
+    INNER JOIN sectors s ON p.sector_id = s.id
     WHERE 1=1
   `;
   const params: any[] = [];
@@ -120,6 +139,11 @@ export async function getTotalProjects(filters?: Partial<FilterState>): Promise<
   if (filters?.dataView) {
     sql += ` AND p.data_view IN (?, 'BOTH')`;
     params.push(filters.dataView);
+  }
+
+  if (filters?.selectedSectors && filters.selectedSectors.length > 0) {
+    sql += ` AND s.code IN (${filters.selectedSectors.map(() => '?').join(',')})`;
+    params.push(...filters.selectedSectors);
   }
 
   if (filters?.projectStatus) {
@@ -151,6 +175,7 @@ export async function getFundsMobilizedData(
       COALESCE(SUM(CASE WHEN i.climate_type = 'Mitigation' THEN i.amount ELSE 0 END), 0) as mitigation
     FROM investments i
     INNER JOIN projects p ON i.project_id = p.id
+    INNER JOIN sectors s ON p.sector_id = s.id
     WHERE 1=1
   `;
   const params: any[] = [];
@@ -158,6 +183,16 @@ export async function getFundsMobilizedData(
   if (filters?.dataView) {
     sql += ` AND p.data_view IN (?, 'BOTH')`;
     params.push(filters.dataView);
+  }
+
+  if (filters?.selectedSectors && filters.selectedSectors.length > 0) {
+    sql += ` AND s.code IN (${filters.selectedSectors.map(() => '?').join(',')})`;
+    params.push(...filters.selectedSectors);
+  }
+
+  if (filters?.selectedYears && filters.selectedYears.length > 0) {
+    sql += ` AND i.fiscal_year IN (${filters.selectedYears.map(() => '?').join(',')})`;
+    params.push(...filters.selectedYears);
   }
 
   sql += ` GROUP BY i.fiscal_year ORDER BY i.fiscal_year`;
@@ -252,6 +287,13 @@ export async function getInvestmentBySectorData(
     { display: 'Energy', codes: ['NAP_ENE', 'NDCIP_ENE'] }
   ];
 
+  // Build WHERE clause for sector codes
+  // If selectedSectors is provided, use those; otherwise use all mapped codes
+  const allCodes = ['NAP_AGR', 'NDCIP_AGR', 'NAP_WAT', 'NAP_ECO', 'NAP_HLT', 'NAP_LND', 'NAP_LIV', 'NAP_ENE', 'NDCIP_ENE'];
+  const targetCodes = filters?.selectedSectors && filters.selectedSectors.length > 0
+    ? filters.selectedSectors
+    : allCodes;
+
   let sql = `
     SELECT 
       s.code,
@@ -263,9 +305,9 @@ export async function getInvestmentBySectorData(
     FROM sectors s
     LEFT JOIN projects p ON s.id = p.sector_id
     LEFT JOIN investments i ON p.id = i.project_id
-    WHERE s.code IN ('NAP_AGR', 'NDCIP_AGR', 'NAP_WAT', 'NAP_ECO', 'NAP_HLT', 'NAP_LND', 'NAP_LIV', 'NAP_ENE', 'NDCIP_ENE')
+    WHERE s.code IN (${targetCodes.map(() => '?').join(',')})
   `;
-  const params: any[] = [];
+  const params: any[] = [...targetCodes];
 
   if (filters?.dataView) {
     sql += ` AND s.data_view IN (?, 'BOTH')`;
@@ -339,6 +381,7 @@ export async function getFundSourceBreakdownData(
       SUM(i.amount) as total
     FROM investments i
     INNER JOIN projects p ON i.project_id = p.id
+    INNER JOIN sectors s ON p.sector_id = s.id
     WHERE 1=1
   `;
   const params: any[] = [];
@@ -346,6 +389,11 @@ export async function getFundSourceBreakdownData(
   if (filters?.dataView) {
     sql += ` AND p.data_view IN (?, 'BOTH')`;
     params.push(filters.dataView);
+  }
+
+  if (filters?.selectedSectors && filters.selectedSectors.length > 0) {
+    sql += ` AND s.code IN (${filters.selectedSectors.map(() => '?').join(',')})`;
+    params.push(...filters.selectedSectors);
   }
 
   if (filters?.selectedYears && filters.selectedYears.length > 0) {
@@ -500,6 +548,7 @@ export async function getInvestmentsByRegionData(
     FROM regions r
     LEFT JOIN projects p ON r.id = p.region_id
     LEFT JOIN investments i ON p.id = i.project_id
+    LEFT JOIN sectors s ON p.sector_id = s.id
     WHERE 1=1
   `;
   const params: any[] = [];
@@ -507,6 +556,11 @@ export async function getInvestmentsByRegionData(
   if (filters?.dataView) {
     sql += ` AND (p.data_view IN (?, 'BOTH') OR p.data_view IS NULL)`;
     params.push(filters.dataView);
+  }
+
+  if (filters?.selectedSectors && filters.selectedSectors.length > 0) {
+    sql += ` AND (s.code IN (${filters.selectedSectors.map(() => '?').join(',')}) OR s.code IS NULL)`;
+    params.push(...filters.selectedSectors);
   }
 
   if (filters?.selectedYears && filters.selectedYears.length > 0) {

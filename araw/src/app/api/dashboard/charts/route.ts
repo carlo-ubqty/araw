@@ -14,6 +14,7 @@ export async function GET(request: Request) {
     const filters = {
       selectedYears: searchParams.get('years')?.split(',').map(Number).filter(Boolean),
       dataView: searchParams.get('dataView') as 'NAP' | 'NDCIP' | undefined,
+      selectedSectors: searchParams.get('sectors')?.split(',').filter(Boolean),
       projectStatus: searchParams.get('projectStatus') as 'planned' | 'ongoing' | 'completed' | undefined,
     };
     

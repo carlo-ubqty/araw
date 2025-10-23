@@ -37,6 +37,9 @@ export class DashboardServiceV3 {
       if (filters?.dataView) {
         params.set('dataView', filters.dataView);
       }
+      if (filters?.selectedSectors && filters.selectedSectors.length > 0) {
+        params.set('sectors', filters.selectedSectors.join(','));
+      }
       if (filters?.projectStatus) {
         params.set('projectStatus', filters.projectStatus);
       }
@@ -76,6 +79,9 @@ export class DashboardServiceV3 {
       }
       if (filters?.dataView) {
         params.set('dataView', filters.dataView);
+      }
+      if (filters?.selectedSectors && filters.selectedSectors.length > 0) {
+        params.set('sectors', filters.selectedSectors.join(','));
       }
       if (filters?.projectStatus) {
         params.set('projectStatus', filters.projectStatus);
