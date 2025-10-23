@@ -284,6 +284,11 @@ export async function getInvestmentBySectorData(
 export async function getFundSourceBreakdownData(
   filters?: Partial<FilterState>
 ) {
+  // TODO: Database has incorrect scale for Government Budget (1.396 trillion vs millions for others)
+  // Using mockup data until database is corrected. Query exists but is commented out.
+  // The import from Excel had unit conversion issues.
+  
+  /* Original query (commented out due to bad data):
   let sql = `
     SELECT 
       i.fund_source,
@@ -305,29 +310,37 @@ export async function getFundSourceBreakdownData(
   }
 
   sql += ` GROUP BY i.fund_source`;
-
   const results = await query<{ fund_source: string; total: number }>(sql, params);
-  
-  // Calculate total and percentages
-  const grandTotal = results.reduce((sum, row) => sum + row.total, 0);
-  
-  // Find government budget (main source)
-  const govBudget = results.find(r => r.fund_source === 'Government Budget');
-  const others = results.filter(r => r.fund_source !== 'Government Budget');
+  */
 
+  // Mock data from mockup (matching dashboard design)
   return {
     mainSource: {
       label: 'GOVERNMENT BUDGET',
-      amount: `₱ ${Math.round((govBudget?.total || 0) / 1000000)} M`,
-      percentage: `${Math.round(((govBudget?.total || 0) / grandTotal) * 100)}%`,
-      color: '#049688'
+      amount: '₱ 980 M',
+      percentage: '40%',
+      color: '#1B9988'
     },
-    subSources: others.map(row => ({
-      label: row.fund_source.toUpperCase(),
-      amount: `₱ ${Math.round(row.total / 1000000)} M`,
-      percentage: `${Math.round((row.total / grandTotal) * 100)}%`,
-      color: getColorForFundSource(row.fund_source)
-    }))
+    subSources: [
+      {
+        label: 'GRANT',
+        amount: '₱ 310 M',
+        percentage: '32%',
+        color: '#85C928'
+      },
+      {
+        label: 'LOAN',
+        amount: '₱ 175 M',
+        percentage: '18%',
+        color: '#1B9988'
+      },
+      {
+        label: 'PRIVATE',
+        amount: '₱ 95 M',
+        percentage: '10%',
+        color: '#C1CD23'
+      }
+    ]
   };
 }
 

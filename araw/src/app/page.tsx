@@ -30,9 +30,10 @@ import SubheaderV3 from '@/components/layout/SubheaderV3';
 import SidePanelV3 from '@/components/layout/SidePanelV3';
 import KeyMetricsSectionV3 from '@/components/sections/KeyMetricsSectionV3';
 import FinancingEmissionsTrendsV3 from '@/components/sections/FinancingEmissionsTrendsV3';
-import InvestmentBySectorChartV3, { type SectorInvestmentData } from '@/components/charts/InvestmentBySectorChartV3';
-import FundSourceBreakdownV3, { type FundSourceItem } from '@/components/charts/FundSourceBreakdownV3';
-import GHGBySectorChartV3, { type GHGBySectorData } from '@/components/charts/GHGBySectorChartV3';
+import ClimateInvestmentOverviewV3 from '@/components/sections/ClimateInvestmentOverviewV3';
+import type { SectorInvestmentData } from '@/components/charts/InvestmentBySectorChartV3';
+import type { FundSourceItem } from '@/components/charts/FundSourceBreakdownV3';
+import type { GHGBySectorData } from '@/components/charts/GHGBySectorChartV3';
 import InvestmentsByRegionChartV3, { type RegionalInvestmentData } from '@/components/charts/InvestmentsByRegionChartV3';
 import type { MapLocationData } from '@/components/map/PhilippinesMapV3';
 import { DashboardServiceV3, type KPIData } from '@/services/dashboardServiceV3';
@@ -189,35 +190,22 @@ export default function DashboardV3() {
                 />
               )}
               
-              {/* Climate Investment Overview - ARAW-316 ✅ - WITH SERVICE LAYER */}
+              {/* Climate Investment Overview - ARAW-316 + ARAW-317 ✅ - WITH SERVICE LAYER */}
+              {/* 2-Column: Left (Investment by Sector + GHG by Sector stacked), Right (Fund Source) */}
               {isLoading ? (
-                <div className="grid grid-cols-2 gap-4 mb-6">
-                  <div className="bg-white rounded-lg border border-gray-200 p-6 h-[450px] flex items-center justify-center">
-                    <p className="text-gray-500">Loading investment data...</p>
-                  </div>
-                  <div className="bg-white rounded-lg border border-gray-200 p-6 h-[450px] flex items-center justify-center">
-                    <p className="text-gray-500">Loading fund source data...</p>
-                  </div>
+                <div className="bg-white rounded-lg border border-gray-200 p-6 h-[900px] flex items-center justify-center mb-6">
+                  <p className="text-gray-500">Loading climate investment data...</p>
                 </div>
               ) : (
-                <div className="grid grid-cols-2 gap-4 mb-6">
-                  <InvestmentBySectorChartV3 data={investmentBySectorData} />
-                  {fundSourceMain && (
-                    <FundSourceBreakdownV3 
-                      mainSource={fundSourceMain}
-                      subSources={fundSourceSub}
-                    />
-                  )}
-                </div>
-              )}
-              
-              {/* GHG by Sector - ARAW-317 ✅ - FULL WIDTH - WITH SERVICE LAYER */}
-              {isLoading ? (
-                <div className="bg-white rounded-lg border border-gray-200 p-6 h-[500px] flex items-center justify-center mb-6">
-                  <p className="text-gray-500">Loading GHG by sector data...</p>
-                </div>
-              ) : (
-                <GHGBySectorChartV3 data={ghgBySectorData} className="mb-6" />
+                fundSourceMain && (
+                  <ClimateInvestmentOverviewV3
+                    investmentData={investmentBySectorData}
+                    ghgBySectorData={ghgBySectorData}
+                    fundSourceMain={fundSourceMain}
+                    fundSourceSub={fundSourceSub}
+                    className="mb-6"
+                  />
+                )
               )}
               
               {/* Regional Investments & Map - ARAW-318 ✅ - 2-COLUMN LAYOUT - WITH SERVICE LAYER */}

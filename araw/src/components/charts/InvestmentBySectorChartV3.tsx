@@ -22,94 +22,114 @@ export interface InvestmentBySectorChartV3Props {
   data?: SectorInvestmentData[];
   title?: string;
   subtitle?: string;
+  showContainer?: boolean;
   className?: string;
 }
 
-// Color scheme for funding types (green shades)
+// Color scheme for funding types (matching mockup)
 const FUNDING_COLORS = {
-  govBudget: '#129900',    // Dark green
-  grant: '#63CD00',        // Bright green
-  loan: '#00AE9A',         // Teal
-  private: '#A6C012',      // Yellow-green
+  govBudget: '#0A5F4E',    // Dark green (Government Budget)
+  grant: '#63CD00',        // Bright green (Grant)
+  loan: '#00AE9A',         // Teal (Loan)
+  private: '#A6C012',      // Yellow-green (Private)
 };
 
 export default function InvestmentBySectorChartV3({
   data = [],
   title = 'INVESTMENT BY SECTOR',
-  subtitle = 'Breakdown by funding type',
+  subtitle = 'Total climate investments have grown 161% since 2014, with ₱427.8B allocated in 2014.',
+  showContainer = true,
   className = ''
 }: InvestmentBySectorChartV3Props) {
-  return (
-    <div className={`bg-white rounded-lg border border-gray-200 p-6 ${className}`}>
+  const chartContent = (
+    <>
       {/* Title and Subtitle */}
       <div className="mb-4">
-        <h3 className="font-semibold text-gray-900" style={{ fontSize: '20px' }}>
+        <h3 className="font-semibold text-gray-900 flex items-center gap-2" style={{ fontSize: '14px' }}>
+          <svg width="16" height="16" viewBox="0 0 16 16" fill="none" xmlns="http://www.w3.org/2000/svg">
+            <rect x="2" y="6" width="3" height="8" fill="currentColor"/>
+            <rect x="6.5" y="3" width="3" height="11" fill="currentColor"/>
+            <rect x="11" y="8" width="3" height="6" fill="currentColor"/>
+          </svg>
           {title}
         </h3>
         {subtitle && (
-          <p className="text-gray-600 mt-1" style={{ fontSize: '13px' }}>
+          <p className="text-gray-600 mt-1" style={{ fontSize: '11px' }}>
             {subtitle}
           </p>
         )}
       </div>
 
       {/* Chart */}
-      <ResponsiveContainer width="100%" height={350}>
-        <BarChart data={data} margin={{ top: 10, right: 10, left: 0, bottom: 0 }}>
-          <CartesianGrid strokeDasharray="3 3" stroke="#f0f0f0" vertical={false} />
+      <ResponsiveContainer width="100%" height={320}>
+        <BarChart data={data} margin={{ top: 10, right: 10, left: 0, bottom: 80 }}>
+          <CartesianGrid strokeDasharray="3 3" stroke="#e5e5e5" vertical={false} />
           <XAxis 
             dataKey="sector" 
-            tick={{ fill: '#6E6E6E', fontSize: 12, fontWeight: 500 }}
-            axisLine={{ stroke: '#E0E0E0' }}
+            tick={{ fill: '#666666', fontSize: 10 }}
+            axisLine={{ stroke: '#e5e5e5' }}
+            tickLine={false}
             angle={-45}
             textAnchor="end"
             height={80}
           />
           <YAxis 
-            tick={{ fill: '#6E6E6E', fontSize: 14, fontWeight: 500 }}
-            axisLine={{ stroke: '#E0E0E0' }}
+            tick={{ fill: '#666666', fontSize: 12 }}
+            axisLine={{ stroke: '#e5e5e5' }}
+            tickLine={false}
             tickFormatter={(value) => `₱${value}M`}
           />
           <Tooltip 
             contentStyle={{ 
               backgroundColor: 'white', 
-              border: '1px solid #E0E0E0', 
-              borderRadius: '8px',
-              fontSize: '13px'
+              border: '1px solid #e0e0e0', 
+              borderRadius: '6px',
+              fontSize: '11px'
             }}
             formatter={(value: number) => [`₱${value}M`, '']}
             labelStyle={{ fontWeight: 600, marginBottom: '4px' }}
           />
           <Legend 
-            wrapperStyle={{ fontSize: '13px', paddingTop: '16px' }}
+            wrapperStyle={{ fontSize: '11px', paddingTop: '8px' }}
             iconType="square"
+            iconSize={10}
           />
           <Bar 
             dataKey="govBudget" 
             stackId="a" 
             fill={FUNDING_COLORS.govBudget}
-            name="🟢 Government Budget"
+            name="Government Budget"
           />
           <Bar 
             dataKey="grant" 
             stackId="a" 
             fill={FUNDING_COLORS.grant}
-            name="🟢 Grant"
+            name="Grant"
           />
           <Bar 
             dataKey="loan" 
             stackId="a" 
             fill={FUNDING_COLORS.loan}
-            name="🟦 Loan"
+            name="Loan"
           />
           <Bar 
             dataKey="private" 
             stackId="a" 
             fill={FUNDING_COLORS.private}
-            name="🟡 Private"
+            name="Private"
           />
         </BarChart>
       </ResponsiveContainer>
+    </>
+  );
+
+  if (!showContainer) {
+    return chartContent;
+  }
+
+  return (
+    <div className={`bg-white rounded-lg border border-gray-200 p-6 ${className}`}>
+      {chartContent}
     </div>
   );
 }

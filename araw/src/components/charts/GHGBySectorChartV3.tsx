@@ -25,6 +25,7 @@ export interface GHGBySectorChartV3Props {
   title?: string;
   subtitle?: string;
   progressPercentage?: number;
+  showContainer?: boolean;
   className?: string;
 }
 
@@ -40,66 +41,73 @@ export default function GHGBySectorChartV3({
   title = 'GHG VS 2020 BASELINE BY SECTOR',
   subtitle,
   progressPercentage = 40,
+  showContainer = true,
   className = ''
 }: GHGBySectorChartV3Props) {
   const displaySubtitle = subtitle || `${progressPercentage}% of 2030 reduction target achieved 🔺`;
 
-  return (
-    <div className={`bg-white rounded-lg border border-gray-200 p-6 ${className}`}>
+  const chartContent = (
+    <>
       {/* Title and Subtitle */}
       <div className="mb-4">
-        <h3 className="font-semibold text-gray-900" style={{ fontSize: '20px' }}>
+        <h3 className="font-semibold text-gray-900 flex items-center gap-2" style={{ fontSize: '14px' }}>
+          <svg width="16" height="16" viewBox="0 0 16 16" fill="none" xmlns="http://www.w3.org/2000/svg">
+            <path d="M2 8h4M2 4h6M2 12h8" stroke="currentColor" strokeWidth="2" strokeLinecap="round"/>
+            <path d="M10 4l4 4-4 4" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" fill="none"/>
+          </svg>
           {title}
         </h3>
         {displaySubtitle && (
-          <p className="text-gray-600 mt-1" style={{ fontSize: '13px' }}>
+          <p className="text-gray-600 mt-1" style={{ fontSize: '11px' }}>
             {displaySubtitle}
           </p>
         )}
       </div>
 
       {/* Chart */}
-      <ResponsiveContainer width="100%" height={400}>
-        <BarChart data={data} margin={{ top: 10, right: 30, left: 0, bottom: 60 }}>
-          <CartesianGrid strokeDasharray="3 3" stroke="#f0f0f0" vertical={false} />
+      <ResponsiveContainer width="100%" height={350}>
+        <BarChart data={data} margin={{ top: 10, right: 20, left: 0, bottom: 80 }}>
+          <CartesianGrid strokeDasharray="3 3" stroke="#e5e5e5" vertical={false} />
           <XAxis 
             dataKey="sector" 
-            tick={{ fill: '#6E6E6E', fontSize: 12, fontWeight: 500 }}
-            axisLine={{ stroke: '#E0E0E0' }}
+            tick={{ fill: '#666666', fontSize: 10 }}
+            axisLine={{ stroke: '#e5e5e5' }}
+            tickLine={false}
             angle={-45}
             textAnchor="end"
             height={80}
           />
           <YAxis 
-            tick={{ fill: '#6E6E6E', fontSize: 14, fontWeight: 500 }}
-            axisLine={{ stroke: '#E0E0E0' }}
+            tick={{ fill: '#666666', fontSize: 12 }}
+            axisLine={{ stroke: '#e5e5e5' }}
+            tickLine={false}
             tickFormatter={(value) => `${value} GT`}
-            domain={[0, 40]}
           />
           <Tooltip 
             contentStyle={{ 
               backgroundColor: 'white', 
-              border: '1px solid #E0E0E0', 
-              borderRadius: '8px',
-              fontSize: '13px'
+              border: '1px solid #e0e0e0', 
+              borderRadius: '6px',
+              fontSize: '11px'
             }}
             formatter={(value: number, name: string) => {
               const labels: Record<string, string> = {
                 actual: 'Actual',
-                conditional: 'Conditional',
-                unconditional: 'Unconditional'
+                conditional: '% Conditional',
+                unconditional: '■ Unconditional'
               };
               return [`${value} GT`, labels[name] || name];
             }}
             labelStyle={{ fontWeight: 600, marginBottom: '4px' }}
           />
           <Legend 
-            wrapperStyle={{ fontSize: '13px', paddingTop: '16px' }}
+            wrapperStyle={{ fontSize: '11px', paddingTop: '8px' }}
             iconType="rect"
+            iconSize={10}
             formatter={(value) => {
               const labels: Record<string, string> = {
                 actual: '■ Actual',
-                conditional: '■ Conditional',
+                conditional: '■ % Conditional',
                 unconditional: '■ Unconditional'
               };
               return labels[value] || value;
@@ -125,11 +133,18 @@ export default function GHGBySectorChartV3({
             fill={GHG_COLORS.unconditional}
             name="unconditional"
           />
-          
-          {/* Target Lines (if needed) */}
-          {/* These would be implemented with ReferenceLine for specific targets */}
         </BarChart>
       </ResponsiveContainer>
+    </>
+  );
+
+  if (!showContainer) {
+    return chartContent;
+  }
+
+  return (
+    <div className={`bg-white rounded-lg border border-gray-200 p-6 ${className}`}>
+      {chartContent}
     </div>
   );
 }
