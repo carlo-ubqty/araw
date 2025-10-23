@@ -65,6 +65,7 @@ export interface KPICardsRowV3Props {
   adaptationInvestment?: string;
   mitigationInvestment?: string;
   totalProjects?: string;
+  displayMode?: 'amount' | 'projects';
   className?: string;
 }
 
@@ -75,8 +76,14 @@ export default function KPICardsRowV3({
   adaptationInvestment = '₱ 1.12 B',
   mitigationInvestment = '₱ 32.64 M',
   totalProjects = '579',
+  displayMode = 'amount',
   className = ''
 }: KPICardsRowV3Props) {
+  // Card 4 switches based on displayMode
+  const card4Label = displayMode === 'amount' ? 'MITIGATION INVESTMENT' : 'TOTAL PROJECTS';
+  const card4Value = displayMode === 'amount' ? mitigationInvestment : totalProjects;
+  const card4Icon = displayMode === 'amount' ? <LeafIcon /> : <ProjectsIcon />;
+  
   return (
     <div className={`grid grid-cols-5 gap-2 ${className}`}>
       {/* Card 1: Total Investment */}
@@ -107,16 +114,16 @@ export default function KPICardsRowV3({
         gradientTo={KPI_GRADIENTS.adaptationInvestment.to}
       />
 
-      {/* Card 4: Mitigation Investment */}
+      {/* Card 4: Dynamic - Mitigation Investment OR Total Projects (based on displayMode toggle) */}
       <KPICardV3
-        icon={<LeafIcon />}
-        label="MITIGATION INVESTMENT"
-        value={mitigationInvestment}
+        icon={card4Icon}
+        label={card4Label}
+        value={card4Value}
         gradientFrom={KPI_GRADIENTS.mitigationInvestment.from}
         gradientTo={KPI_GRADIENTS.mitigationInvestment.to}
       />
 
-      {/* Card 5: Total Projects */}
+      {/* Card 5: Total Projects (Always shown) */}
       <KPICardV3
         icon={<ProjectsIcon />}
         label="TOTAL PROJECTS"

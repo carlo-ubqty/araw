@@ -16,6 +16,7 @@ export interface KeyMetricsSectionV3Props {
   adaptationInvestment: string;
   mitigationInvestment: string;
   totalProjects: string;
+  displayMode?: 'amount' | 'projects';
   className?: string;
 }
 
@@ -26,6 +27,7 @@ export default function KeyMetricsSectionV3({
   adaptationInvestment,
   mitigationInvestment,
   totalProjects,
+  displayMode = 'amount',
   className = ''
 }: KeyMetricsSectionV3Props) {
   return (
@@ -38,6 +40,7 @@ export default function KeyMetricsSectionV3({
         adaptationInvestment={adaptationInvestment}
         mitigationInvestment={mitigationInvestment}
         totalProjects={totalProjects}
+        displayMode={displayMode}
       />
     </div>
   );

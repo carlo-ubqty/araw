@@ -28,6 +28,7 @@ import dynamic from 'next/dynamic';
 import HeaderV3 from '@/components/layout/HeaderV3';
 import SubheaderV3 from '@/components/layout/SubheaderV3';
 import SidePanelV3 from '@/components/layout/SidePanelV3';
+import FooterV3 from '@/components/layout/FooterV3';
 import KeyMetricsSectionV3 from '@/components/sections/KeyMetricsSectionV3';
 import FinancingEmissionsTrendsV3 from '@/components/sections/FinancingEmissionsTrendsV3';
 import ClimateInvestmentOverviewV3 from '@/components/sections/ClimateInvestmentOverviewV3';
@@ -60,6 +61,13 @@ const RegionalInvestmentsMapV3 = dynamic(() => import('@/components/sections/Reg
 });
 
 export default function DashboardV3() {
+  // Filter State - Centralized
+  const [dataView, setDataView] = useState<'NAP' | 'NDCIP'>('NAP');
+  const [selectedSectors, setSelectedSectors] = useState<string[]>([]);
+  const [displayMode, setDisplayMode] = useState<'amount' | 'projects'>('amount');
+  const [projectStatus, setProjectStatus] = useState<'ongoing' | 'completed'>('completed');
+  const [selectedYears, setSelectedYears] = useState<number[]>([]);
+  
   // State for KPI and chart data
   const [kpiData, setKpiData] = useState<KPIData | null>(null);
   const [fundsData, setFundsData] = useState<FundsData[]>([]);
@@ -74,21 +82,30 @@ export default function DashboardV3() {
   const [mapTotalInvestment, setMapTotalInvestment] = useState<string>('');
   const [isLoading, setIsLoading] = useState(true);
 
-  // Fetch data from service layer on component mount
+  // Fetch data from service layer - refetch when filters change
   useEffect(() => {
     const fetchData = async () => {
       try {
         setIsLoading(true);
         
-        // Fetch all data in parallel from service layer (MVC pattern)
+        // Build filter object
+        const filters = {
+          dataView,
+          selectedSectors,
+          displayMode,
+          projectStatus,
+          selectedYears
+        };
+        
+        // Fetch all data in parallel from service layer with filters (MVC pattern)
         const [kpis, funds, ghgData, investmentData, fundSourceData, ghgBySector, regional] = await Promise.all([
-          DashboardServiceV3.getKPIMetrics(),
-          DashboardServiceV3.getFundsMobilizedData(),
-          DashboardServiceV3.getGHGLevelsData(),
-          DashboardServiceV3.getInvestmentBySectorData(),
-          DashboardServiceV3.getFundSourceBreakdownData(),
-          DashboardServiceV3.getGHGBySectorData(),
-          DashboardServiceV3.getInvestmentsByRegionData(),
+          DashboardServiceV3.getKPIMetrics(filters),
+          DashboardServiceV3.getFundsMobilizedData(filters),
+          DashboardServiceV3.getGHGLevelsData(filters),
+          DashboardServiceV3.getInvestmentBySectorData(filters),
+          DashboardServiceV3.getFundSourceBreakdownData(filters),
+          DashboardServiceV3.getGHGBySectorData(filters),
+          DashboardServiceV3.getInvestmentsByRegionData(filters),
         ]);
         
         // Set KPI data
@@ -122,7 +139,7 @@ export default function DashboardV3() {
     };
     
     fetchData();
-  }, []);
+  }, [dataView, selectedSectors, displayMode, projectStatus, selectedYears]);
 
   return (
     <div className="min-h-screen flex flex-col bg-gray-100">
@@ -131,13 +148,28 @@ export default function DashboardV3() {
       
       {/* Main Layout: Sidebar (295px) + Content Area (1625px) = 1920px */}
       <div className="flex max-w-[1920px] mx-auto w-full" style={{ backgroundColor: '#D8EEE8' }}>
-        {/* Sidebar - 295px - ARAW-313 ✅ */}
-        <SidePanelV3 />
+        {/* Sidebar - 295px - ARAW-313 ✅ - WITH FILTER CALLBACKS */}
+        <SidePanelV3 
+          onFilterChange={(filters) => {
+            if (filters.selectedYears !== undefined) {
+              setSelectedYears(filters.selectedYears);
+            }
+            // Add more filter handlers as needed
+          }}
+        />
         
         {/* Content Area - 1625px */}
         <div className="flex-1 flex flex-col">
-          {/* Subheader - ARAW-312 ✅ */}
-          <SubheaderV3 />
+          {/* Subheader - ARAW-312 ✅ - WITH FILTER CALLBACKS */}
+          <SubheaderV3 
+            onDataViewChange={(view) => {
+              setDataView(view);
+              setSelectedSectors([]); // Reset sectors when switching views
+            }}
+            onSectorsChange={(sectors) => setSelectedSectors(sectors)}
+            onDisplayModeChange={(mode) => setDisplayMode(mode)}
+            onStatusChange={(status) => setProjectStatus(status)}
+          />
           
           {/* Main Content */}
           <main className="flex-1">
@@ -168,6 +200,7 @@ export default function DashboardV3() {
                   adaptationInvestment={kpiData.adaptationInvestment}
                   mitigationInvestment={kpiData.mitigationInvestment}
                   totalProjects={kpiData.totalProjects}
+                  displayMode={displayMode}
                   className="mb-6"
                 />
               ) : (
@@ -241,64 +274,13 @@ export default function DashboardV3() {
                   className="mb-6"
                 />
               )}
-              
-              {/* Development Progress Indicator */}
-          <div className="bg-white rounded-lg shadow-sm p-8">
-            <h2 className="text-3xl font-bold text-gray-900 mb-4">
-              V3.0 Dashboard Implementation
-            </h2>
-                    <p className="text-lg text-gray-600 mb-2">
-                      Building section by section with MVC architecture...
-                    </p>
-                    <div className="mt-6 p-4 bg-green-50 border border-green-200 rounded">
-                      <p className="text-sm text-green-800">
-                        <strong>Current Status:</strong> Foundation, header, subheader, side panel, KPI cards (with service layer), and Funds/GHG charts (with service layer) complete. MVC architecture fully implemented!
-                      </p>
-                    </div>
-            
-            <div className="mt-8 space-y-4">
-              <div className="border-l-4 border-green-500 pl-4">
-                <h3 className="font-semibold text-gray-800">✅ Completed Components</h3>
-                <ul className="text-sm text-gray-600 mt-2 space-y-1">
-                  <li>✅ ARAW-310: Foundation & Setup (types, design system, utils, mock data)</li>
-                  <li>✅ ARAW-311: Header Component (HeaderV3.tsx + tests)</li>
-                  <li>✅ ARAW-312: Subheader Component (SubheaderV3.tsx)</li>
-                  <li>✅ ARAW-313: Side Panel (SidePanelV3.tsx with collapsible filters)</li>
-                  <li>✅ ARAW-314: Key Metric Cards (KPICardV3 + KPICardsRowV3 + service layer + tests)</li>
-                  <li>✅ ARAW-315: Funds & GHG Charts (FundsMobilizedChartV3 + GHGLevelsChartV3 + service layer + tests)</li>
-                  <li>✅ ARAW-316: Climate Investment Overview (InvestmentBySectorChartV3 + FundSourceBreakdownV3 + service layer + tests)</li>
-                  <li>✅ ARAW-317: GHG by Sector (GHGBySectorChartV3 + service layer + tests)</li>
-                  <li>✅ ARAW-318: Regional Investments & Map (InvestmentsByRegionChartV3 + PhilippinesMapV3 + service layer + tests)</li>
-                </ul>
-              </div>
-              
-              <div className="border-l-4 border-purple-500 pl-4">
-                <h3 className="font-semibold text-gray-800">🚧 Next Up</h3>
-                <ul className="text-sm text-gray-600 mt-2 space-y-1">
-                  <li>🚧 ARAW-319: Footer Component</li>
-                </ul>
-              </div>
-              
-              <div className="border-l-4 border-orange-500 pl-4">
-                <h3 className="font-semibold text-gray-800">📊 Progress</h3>
-                <div className="mt-2">
-                  <div className="flex items-center gap-2">
-                    <div className="flex-1 bg-gray-200 rounded-full h-4">
-                      <div className="bg-green-600 h-4 rounded-full" style={{ width: '75%' }}></div>
-                    </div>
-                    <span className="text-sm font-medium text-gray-700">75%</span>
-                  </div>
-                  <p className="text-xs text-gray-500 mt-1">
-                    9 of 12 stories completed
-                  </p>
-                </div>
-              </div>
-            </div>
-          </div>
             </div>
           </main>
         </div>
       </div>
+      
+      {/* Footer - ARAW-319 ✅ */}
+      <FooterV3 />
     </div>
   );
 }
