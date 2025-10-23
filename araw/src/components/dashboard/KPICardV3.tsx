@@ -50,8 +50,8 @@ export default function KPICardV3({
         </span>
       </div>
 
-      {/* Value */}
-      <div className="flex flex-col">
+      {/* Value + Subtitle inline */}
+      <div className="flex items-baseline gap-2">
         <span 
           className="text-white font-bold leading-none"
           style={{ fontSize: '48px' }}
@@ -60,7 +60,7 @@ export default function KPICardV3({
         </span>
         {subtitle && (
           <span 
-            className="text-white opacity-80 mt-1"
+            className="text-white opacity-80"
             style={{ fontSize: '13px' }}
           >
             {subtitle}
@@ -70,4 +70,5 @@ export default function KPICardV3({
     </div>
   );
 }
+
 

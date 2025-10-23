@@ -1,0 +1,405 @@
+================================================================================
+ARAW V3.0 - DATA MIGRATION TO UAT
+================================================================================
+Date: October 23, 2025
+Purpose: Migrate database schema and 33K+ climate finance records to UAT
+Environment: UAT - RHEL + MySQL 8.0
+================================================================================
+
+
+OVERVIEW
+================================================================================
+This guide will help you replicate the complete database setup from local
+development to the UAT environment.
+
+Total Data:
+  - 249 implementing agencies
+  - 32,405 projects
+  - 32,641 investment records
+  - 19 GHG emission records
+  - PHP 1,400.76 Billion in climate finance data
+
+
+PREREQUISITES
+================================================================================
+- MySQL 8.0+ running on UAT server
+- SSH access to UAT server
+- Database admin credentials
+- Files to upload (see checklist below)
+
+
+FILES NEEDED
+================================================================================
+From your local environment, prepare these files:
+
+1. Database Schema & Seeds:
+   - database/schema.sql
+   - database/seed.sql
+
+2. Data Files:
+   - data/parsed-ccet-data.json (140 MB)
+   - data/Araw Available Datasets (10.16.2025).xlsx
+
+3. Import Scripts:
+   - scripts/import-data-standalone.ts
+   - scripts/import-ghg-data.ts
+   - package.json (for dependencies)
+
+
+STEP-BY-STEP MIGRATION
+================================================================================
+
+STEP 1: DEPLOY CODE TO UAT SERVER VIA GIT
+--------------------------------------------------------------------------------
+# SSH to UAT server
+ssh user@uat-server
+
+# Navigate to application directory (or clone if first deployment)
+cd /var/www/araw-uat
+
+# If first deployment, clone repository:
+# git clone <repository-url> /var/www/araw-uat
+# cd /var/www/araw-uat
+
+# Pull latest code from repository
+git fetch origin
+git checkout feature/v3.0-implementation
+git pull origin feature/v3.0-implementation
+
+# Verify you have the required files
+ls -l database/schema.sql database/seed.sql
+ls -l data/parsed-ccet-data.json
+ls -l scripts/import-data-standalone.ts scripts/import-ghg-data.ts
+
+# Note: All database scripts and data files are in the repository
+
+
+STEP 2: CREATE DATABASE
+--------------------------------------------------------------------------------
+# On UAT server
+ssh user@uat-server
+
+mysql -u root -p << 'EOF'
+-- Create database
+CREATE DATABASE IF NOT EXISTS araw_climate_finance_uat 
+  CHARACTER SET utf8mb4 
+  COLLATE utf8mb4_unicode_ci;
+
+-- Create application user (recommended)
+CREATE USER IF NOT EXISTS 'araw_app'@'localhost' 
+  IDENTIFIED BY 'SECURE_PASSWORD_HERE';
+
+GRANT ALL PRIVILEGES ON araw_climate_finance_uat.* 
+  TO 'araw_app'@'localhost';
+
+FLUSH PRIVILEGES;
+
+-- Verify
+SHOW DATABASES LIKE 'araw%';
+SELECT user, host FROM mysql.user WHERE user = 'araw_app';
+EOF
+
+
+STEP 3: DEPLOY SCHEMA
+--------------------------------------------------------------------------------
+cd /tmp/araw-migration
+
+# Load schema
+mysql -u root -p araw_climate_finance_uat < database/schema.sql
+
+# Verify tables created
+mysql -u root -p araw_climate_finance_uat -e "
+  SELECT 
+    TABLE_NAME, 
+    TABLE_ROWS, 
+    ROUND((DATA_LENGTH + INDEX_LENGTH) / 1024 / 1024, 2) AS 'Size (MB)'
+  FROM information_schema.TABLES
+  WHERE TABLE_SCHEMA = 'araw_climate_finance_uat'
+  ORDER BY TABLE_NAME;
+"
+
+# Expected: 12 tables (all with 0 rows initially)
+
+
+STEP 4: LOAD MASTER DATA
+--------------------------------------------------------------------------------
+# Load seed data (sectors, regions, funders, etc.)
+mysql -u root -p araw_climate_finance_uat < database/seed.sql
+
+# Verify master data
+mysql -u root -p araw_climate_finance_uat -e "
+  SELECT 'Sectors' as Data, COUNT(*) as Count FROM sectors
+  UNION ALL
+  SELECT 'Regions', COUNT(*) FROM regions
+  UNION ALL
+  SELECT 'Funders', COUNT(*) FROM funders
+  UNION ALL
+  SELECT 'Climate Impact Drivers', COUNT(*) FROM climate_impact_drivers;
+"
+
+# Expected counts will match seed.sql
+
+
+STEP 5: INSTALL NODE.JS DEPENDENCIES
+--------------------------------------------------------------------------------
+cd /tmp/araw-migration
+
+# Install only required packages for import
+npm install typescript ts-node exceljs mysql2
+
+
+STEP 6: CONFIGURE DATABASE CONNECTION FOR UAT
+--------------------------------------------------------------------------------
+# Create environment file for import scripts
+cd /var/www/araw-uat
+
+cat > .env.import << 'EOF'
+DB_HOST=localhost
+DB_PORT=3306
+DB_USER=root
+DB_PASSWORD=YOUR_UAT_PASSWORD
+DB_NAME=araw_climate_finance_uat
+EOF
+
+# Secure the file
+chmod 600 .env.import
+
+# The import scripts will read from environment or use defaults
+# No code changes needed - database name/credentials come from environment
+
+
+STEP 7: IMPORT MAIN DATASET (33K records)
+--------------------------------------------------------------------------------
+cd /var/www/araw-uat
+
+# Set database connection for this session
+export DB_HOST=localhost
+export DB_PORT=3306
+export DB_USER=root
+export DB_PASSWORD=YOUR_UAT_PASSWORD
+export DB_NAME=araw_climate_finance_uat
+
+# Run import (takes ~15 seconds)
+npx ts-node scripts/import-data-standalone.ts
+
+# You should see:
+#   ✓ Connected to MySQL
+#   ✓ Loaded 33523 records
+#   Progress updates every 1000 records...
+#   ✓ Processed 33523/33523 records
+#   
+#   IMPORT STATISTICS
+#   Departments Created: 30
+#   Agencies Created: 202
+#   Projects Created: 32393
+#   Investments Created: 32612
+#   Errors: 0
+#   
+#   DATABASE VERIFICATION
+#   Implementing Agencies: 249
+#   Projects: 32405
+#   Investments: 32641
+#   Total Amount: ₱1400.76 Billion
+
+
+STEP 8: IMPORT GHG DATA
+--------------------------------------------------------------------------------
+# Import GHG inventory data
+npx ts-node scripts/import-ghg-data.ts
+
+# You should see:
+#   ✓ Connected to MySQL
+#   ✓ Found GHG Table sheet
+#   ✓ Parsed 7 GHG records
+#   ✓ Imported GHG data for Energy
+#   ✓ Imported GHG data for Agriculture
+#   ✓ Imported GHG data for Waste
+#   ✓ Imported GHG data for IPPU
+#   ✓ Imported GHG data for LULUCF
+#   ✓ Imported GHG data for Total Emissions (w/o LULUCF)
+#   ✓ Imported GHG data for Net Emissions (w/ LULUCF)
+#   ✓ Total GHG records in database: 19
+
+
+STEP 9: VERIFICATION
+--------------------------------------------------------------------------------
+# Comprehensive data check
+mysql -u root -p araw_climate_finance_uat << 'EOF'
+-- Summary check
+SELECT 
+  'Database' as Component,
+  'Ready' as Status,
+  CONCAT('PHP ', ROUND(SUM(amount)/1000000000, 2), ' Billion') as Value
+FROM investments
+UNION ALL
+SELECT 
+  'Projects',
+  'Loaded',
+  CONCAT(COUNT(*), ' projects')
+FROM projects
+UNION ALL
+SELECT
+  'Agencies',
+  'Loaded',
+  CONCAT(COUNT(*), ' agencies')
+FROM implementing_agencies
+UNION ALL
+SELECT
+  'Fiscal Years',
+  'Coverage',
+  CONCAT(MIN(fiscal_year), ' - ', MAX(fiscal_year))
+FROM investments
+UNION ALL
+SELECT
+  'GHG Data',
+  'Loaded',
+  CONCAT(COUNT(*), ' records')
+FROM ghg_emissions;
+
+-- Data by fiscal year
+SELECT 
+  fiscal_year,
+  COUNT(*) as investments,
+  ROUND(SUM(amount)/1000000000, 2) as 'Total (Billion PHP)'
+FROM investments
+GROUP BY fiscal_year
+ORDER BY fiscal_year;
+
+-- Data integrity check
+SELECT 
+  'Orphaned Investments' as Check_Type,
+  COUNT(*) as Count
+FROM investments i
+LEFT JOIN projects p ON i.project_id = p.id
+WHERE p.id IS NULL
+UNION ALL
+SELECT 
+  'Projects Without Investments',
+  COUNT(*)
+FROM projects p
+LEFT JOIN investments i ON p.id = i.project_id
+WHERE i.id IS NULL;
+EOF
+
+
+STEP 10: CREATE BACKUP
+--------------------------------------------------------------------------------
+# Create initial backup for safety
+mkdir -p /var/backups/araw-uat
+mysqldump -u root -p araw_climate_finance_uat \
+  | gzip > /var/backups/araw-uat/initial-$(date +%Y%m%d-%H%M%S).sql.gz
+
+# Verify backup
+ls -lh /var/backups/araw-uat/
+
+# Test backup can be restored (optional)
+# mysql -u root -p test_restore_db < /var/backups/araw-uat/initial-*.sql.gz
+
+
+STEP 11: CLEANUP
+--------------------------------------------------------------------------------
+# Remove environment file (sensitive data)
+cd /var/www/araw-uat
+rm -f .env.import
+
+# Clear environment variables
+unset DB_PASSWORD
+
+# Application code remains in /var/www/araw-uat for application use
+
+
+VERIFICATION CHECKLIST
+================================================================================
+After migration, verify:
+
+[ ] Database exists: araw_climate_finance_uat
+[ ] 12 tables present
+[ ] 249 implementing agencies
+[ ] 32,405 projects
+[ ] 32,641 investment records  
+[ ] 19 GHG emission records
+[ ] PHP 1,400.76 Billion total investment amount
+[ ] Data spans 2020-2025 fiscal years
+[ ] No orphaned records (integrity check passed)
+[ ] Backup created successfully
+[ ] Application can connect to database
+
+
+TROUBLESHOOTING
+================================================================================
+
+Problem: "Can't connect to MySQL server"
+Solution: 
+  - Check MySQL is running: systemctl status mysqld
+  - Verify credentials
+  - Check firewall: firewall-cmd --list-ports
+
+Problem: "Database already exists"
+Solution:
+  - Drop and recreate: DROP DATABASE araw_climate_finance_uat;
+  - Or use different database name
+
+Problem: "Import script fails with module errors"
+Solution:
+  - Install dependencies: npm install typescript ts-node exceljs mysql2
+  - Check Node.js version: node --version (need 18+)
+
+Problem: "Unknown column error during import"
+Solution:
+  - Verify schema.sql was applied correctly
+  - Check table structure: DESCRIBE investments;
+
+Problem: "Slow import performance"
+Solution:
+  - Disable binary logging temporarily: SET sql_log_bin = 0;
+  - Check disk I/O: iostat
+  - Increase innodb_buffer_pool_size if possible
+
+
+ROLLBACK PROCEDURE
+================================================================================
+If migration fails:
+
+1. Drop database:
+   mysql -u root -p -e "DROP DATABASE IF EXISTS araw_climate_finance_uat;"
+
+2. Restore from backup (if exists):
+   mysql -u root -p araw_climate_finance_uat < backup.sql
+
+3. Start over from STEP 2
+
+
+NEXT STEPS
+================================================================================
+After successful UAT migration:
+
+1. Update application .env.local:
+   DB_NAME=araw_climate_finance_uat
+   DB_USER=araw_app
+   DB_PASSWORD=<your_password>
+   NEXT_PUBLIC_USE_DATABASE=true
+
+2. Test application connectivity
+
+3. Run UAT testing
+
+4. Document any issues
+
+5. Proceed to Production migration when UAT is validated
+
+
+TIMING ESTIMATES
+================================================================================
+- File upload: 5-10 minutes (depends on connection speed)
+- Schema deployment: < 1 minute
+- CCET data import: ~15 seconds
+- GHG data import: < 5 seconds
+- Verification: 2-3 minutes
+- Total: ~20 minutes
+
+
+================================================================================
+END OF UAT DATA MIGRATION GUIDE
+================================================================================
+Last Updated: 2025-10-23
+

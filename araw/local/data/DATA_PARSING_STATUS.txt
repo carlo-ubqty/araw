@@ -1,0 +1,282 @@
+ARAW V3.0 - Excel Data Parsing Status
+======================================
+Date: October 23, 2025
+Status: PHASE 1 COMPLETE - Major CCET PAPs Data Successfully Parsed
+
+================================================================================
+PARSING RESULTS SUMMARY
+================================================================================
+
+FILE 1: "Araw National CCET PAPs Figures 2017 - GAA FY2025.xlsx"
+STATUS: SUCCESSFULLY PARSED
+
+Total Records Extracted: 33,523 records
+Total Investment Value: P1,445.05 Billion
+  - Adaptation: P1,386.98 Billion (96%)
+  - Mitigation: P58.06 Billion (4%)
+
+BREAKDOWN BY YEAR:
+- 2022: 5,283 records
+- 2023: 1,368 records
+- 2025: 26,872 records
+
+BREAKDOWN BY DATA TYPE:
+- GAA (Appropriations): 32,155 records
+- NEP (Proposed): 1,368 records
+
+OUTPUT FILE: data/parsed-ccet-data.json
+
+================================================================================
+DATA STRUCTURE (Successfully Extracted Fields)
+================================================================================
+
+Each record contains:
+- departmentId: UACS Department ID
+- departmentName: Department name (e.g., "Department of Agriculture (DA)")
+- agencyId: UACS Agency ID
+- agencyName: Agency name
+- papId: Program/Activity/Project ID
+- papName: PAP description
+- typologyCode: Climate change typology code (A### or M###)
+- typologyDescription: Typology description
+- fiscalYear: Year (2022-2025)
+- dataType: "GAA", "Actual", or "NEP"
+- mooe: Maintenance and Other Operating Expenses (PHP)
+- capitalOutlay: Capital Outlay (PHP)
+- totalAmount: Total amount (PHP, actual values not thousands)
+- adaptationAmount: Adaptation portion (PHP)
+- mitigationAmount: Mitigation portion (PHP)
+- status: Project status (PENDING, SUBMITTED, etc.)
+
+SAMPLE RECORD:
+{
+  "departmentId": "04",
+  "departmentName": "Department of Agrarian Reform (DAR)",
+  "agencyId": "001",
+  "agencyName": "Office of the Secretary",
+  "papId": "330100100004000",
+  "papName": "Climate Resilient Farm Productivity Support",
+  "typologyCode": "A112-03",
+  "typologyDescription": "Develop climate-resilient crop and livestock...",
+  "fiscalYear": 2025,
+  "dataType": "GAA",
+  "mooe": 434071000,
+  "capitalOutlay": 0,
+  "totalAmount": 434071000,
+  "adaptationAmount": 434071000,
+  "mitigationAmount": 0,
+  "status": "SUBMITTED"
+}
+
+================================================================================
+PARSING SUCCESS FACTORS
+================================================================================
+
+What Worked:
+1. Successfully detected merged cell headers across all sheets
+2. Automatically identified "In Thousand Pesos" notation and applied 1000x multiplier
+3. Extracted formula cell results ([object Object] handling)
+4. Properly categorized Adaptation vs Mitigation based on typology codes
+5. Filtered out subtotal/grand total rows
+6. Skipped zero-amount entries
+
+Column Mapping Success:
+- Columns 1-2: Department (ID + Name)
+- Columns 3-4: Agency (ID + Name)
+- Columns 5-6: PAP (ID + Description)
+- Columns 7-8: Typology (Code + Description)
+- Columns 9-14: Financial breakdowns (MOOE, CO)
+- Columns 22-30: Adaptation/Mitigation totals
+
+================================================================================
+SHEETS NOT YET PARSED (Need Column Structure Adjustment)
+================================================================================
+
+From FILE 1 - Sheets that returned 0 records:
+- 2024 (GAA): 7,938 rows - different column structure
+- 2024 (NEP): 1,741 rows - different column structure
+- 2023 (GAA): 8,199 rows - different column structure
+- 2023 (Actual): 595 rows - different column structure
+- 2022 (Actual): 436 rows - different column structure
+- 2021 (Actual): 383 rows - needs investigation
+- 2020 (Actual): 7,069 rows - needs investigation
+- 2019-2017: Various sheets - needs investigation
+
+Reason: These sheets have slight variations in column positions that need custom handling.
+
+FILE 2: "Araw Available Datasets (10.16.2025).xlsx"
+STATUS: NOT YET PARSED
+
+Sheets:
+1. Detail1 (343 rows) - Mitigation data
+2. 2019-2023 (Actual) (540 rows) - Time series
+3. 2023-2025 (GAA) (605 rows) - Budget allocations
+4. GHG Table (9 rows) - GHG inventory summary
+5. ADB Data (9 rows) - ADB climate financing
+
+================================================================================
+NEXT STEPS
+================================================================================
+
+IMMEDIATE PRIORITIES:
+
+1. PARSE REMAINING SHEETS FROM FILE 1
+   - Adjust parser for 2024, 2023, 2021, 2020 sheet structures
+   - Extract older years (2019-2017) for historical trend analysis
+   - Goal: Get full 2017-2025 time series
+
+2. PARSE FILE 2 DATA
+   - GHG Table (9 rows) - Easy, high priority
+   - ADB Data (9 rows) - Easy, good supplemental data
+   - Time series sheets - For trend analysis
+
+3. DATABASE SCHEMA MAPPING
+   - Map parsed JSON to our database tables
+   - Create import scripts for parsed data
+   - Load into MySQL
+
+MAPPING TO DATABASE TABLES:
+
+ParsedProject -> Multiple Tables:
+
+departments table:
+  - department_id (from departmentId)
+  - name (from departmentName)
+
+agencies table:
+  - agency_id (from agencyId)
+  - name (from agencyName)
+  - department_id (from departmentId)
+
+projects table:
+  - project_code (from papId)
+  - name (from papName)
+  - department_id, agency_id
+  - total_amount (from totalAmount)
+  - status
+  - data_view: 'NAP' (infer from typology code)
+
+investments table:
+  - project_id (lookup from projects)
+  - fiscal_year (from fiscalYear)
+  - fund_source: 'Government Budget' (default for CCET)
+  - fund_type: 'Public'
+  - climate_type: 'Adaptation' or 'Mitigation' (from amounts)
+  - amount
+  - data_type (from dataType: GAA/Actual/NEP)
+
+typologies table (NEW - not in original schema):
+  - typology_code (from typologyCode)
+  - description (from typologyDescription)
+  - category: 'Adaptation' or 'Mitigation' (from A/M prefix)
+
+================================================================================
+PARSER SCRIPTS CREATED
+================================================================================
+
+1. scripts/inspect-excel.ts
+   - Inspects any Excel file
+   - Shows sheet structure, columns, data types
+   - Usage: npx ts-node scripts/inspect-excel.ts <file-or-directory>
+
+2. scripts/detailed-inspect.ts
+   - Shows detailed row-by-row analysis
+   - Useful for debugging column structures
+
+3. scripts/parse-ccet-data.ts
+   - Main parser for CCET PAPs data
+   - Handles 2022-2025 GAA/NEP sheets
+   - Output: data/parsed-ccet-data.json (33,523 records)
+
+================================================================================
+CHALLENGES SOLVED
+================================================================================
+
+1. Merged Cell Headers
+   - Solution: Dynamic header row detection
+   - Scans first 20 rows for "DEPARTMENT" or "UACS" keywords
+
+2. Inconsistent Value Units
+   - Solution: Auto-detect "In Thousand Pesos" text
+   - Apply 1000x multiplier automatically
+
+3. Formula Cells
+   - Solution: Extract formula results instead of formula text
+   - Handle [object Object] by getting .result property
+
+4. Nested Structures
+   - Solution: Parse flat, skip subtotal rows
+   - Detect "total", "sub-total", "grand total" in PAP names
+
+5. Missing/Empty Data
+   - Solution: Skip rows with missing critical fields (dept, PAP)
+   - Skip zero-amount entries
+
+================================================================================
+DATA QUALITY OBSERVATIONS
+================================================================================
+
+GOOD:
+- Department names standardized
+- PAP IDs consistently formatted (15 digits)
+- Typology codes well-structured (A###-## or M###-##)
+- Clear Adaptation vs Mitigation indicators
+- Status fields present
+
+NEEDS ATTENTION:
+- Some sheets have different column layouts (2024, 2023)
+- Older years (2017-2020) may have different structures
+- Need to validate totals match source sheets
+
+RECOMMENDATIONS:
+- Cross-reference totals with "Data Summary" sheet
+- Verify department/agency lists are complete
+- Map typology codes to NAP/NDCIP sectors
+
+================================================================================
+ESTIMATED REMAINING WORK
+================================================================================
+
+PHASE 2: Parse Remaining Sheets (2-3 hours)
+- Adjust parser for 2024, 2023, 2021, 2020 variations
+- Extract 2019-2017 historical data
+- Parse File 2 summary sheets
+
+PHASE 3: Database Import (2-3 hours)
+- Create department/agency master tables
+- Create typology mapping table
+- Import projects
+- Import investments
+- Validate data integrity
+
+PHASE 4: Dashboard Integration (1-2 hours)
+- Update dashboardServiceV3 to query real data
+- Test with actual database
+- Verify charts display correctly
+
+TOTAL ESTIMATED TIME: 5-8 hours additional work
+
+================================================================================
+CURRENT STATUS: READY FOR PHASE 2
+================================================================================
+
+What We Have:
+- 33,523 records successfully parsed
+- P1.4 Trillion in climate finance data
+- Clean JSON output for 2022-2025 GAA/NEP
+- Working parser infrastructure
+
+What We Need:
+- Parse remaining sheet variations
+- Complete File 2 parsing
+- Map to database schema
+- Import to MySQL
+
+Ready to proceed with Phase 2 when you're ready!
+
+================================================================================
+Document Version: 1.0
+Last Updated: October 23, 2025
+Next Review: After Phase 2 completion
+================================================================================
+

@@ -1,0 +1,286 @@
+ARAW V3.0 Dashboard - Design System Specifications
+==================================================
+Date: 2025-10-22
+Source: Figma designs from Janika
+Status: EXTRACTED FROM SCREENSHOTS
+
+GLOBAL SPECIFICATIONS:
+======================
+
+Font Family:
+- Primary: "Inter" (sole font style across entire dashboard)
+
+Primary Color Palette:
+- Black: #161616
+- Teal (primary): #049688
+- Backdrop Accent: #D8EEE8
+- White: #FFFFFF
+
+SPACING STANDARDS:
+==================
+- Red badges in mockups indicate spacing between containers
+- Numerical values are illustrative and subject to change
+- Spacing values to be extracted from Figma measurements
+
+===============================================================================
+
+COMPONENT SPECIFICATIONS:
+=========================
+
+1. HEADER
+---------
+Location: Top of page, full width
+Background Color: Teal #049688
+
+Elements:
+- O1: Logo + Title "Climate Finance Dashboard"
+  - Font: 24px | semibold
+  
+- O2: Real-time timestamp (format: 09/10/2025 12:42:06 AM)
+  - Font: 16px | regular
+  - Position: Top right
+  
+- O3: Action icons (notifications, settings)
+  - Position: Far right
+
+Layout: Full-width teal bar with centered/distributed elements
+
+
+2. SUBHEADER (Filter Controls)
+-------------------------------
+Background: #DDFFF6 + teal stroke
+
+Left Section:
+- O2: "Adjust display by:" label
+  - Data view toggle: NATIONAL ADAPTATION PLAN (NAP) DATA / NDC IMPLEMENTATION PLAN (NDCIP) DATA
+  - Radio buttons or toggle switches
+  
+- O3: "Select sectors:" chips
+  - Sectors: Agriculture, Water, Forestry, Health, Coastal & Marine, Human Settlements, DRRM, Energy
+  - Style: Pill/chip buttons with borders
+  
+Right Section:
+- O1: Action buttons (AMOUNT, PROJECTS, ONGOING, COMPLETED)
+  - COMPLETED button: Blue gradient background
+
+Typography:
+- O1 & O3: 13px | regular
+- O2: 16px | medium
+- Background: #DDFFF6 + teal stroke
+
+
+3. SIDE PANEL (Filters)
+------------------------
+Background: #FAFAFA
+Width: ~250px (left sidebar)
+
+Filter Sections:
+- O1: "Filters" header (16px | semibold)
+- O2: Year checkboxes (2025, 2024, 2023, 2022, 2021)
+  - Font: 16px | regular
+- O3: Collapsible filter groups with +/- icons
+
+Typography:
+- Headers: 16px | semibold
+- Options: 16px | regular
+
+
+4. KEY METRIC CARDS
+--------------------
+Layout: Horizontal row of 5 cards
+
+Card A - Total Investment (Green):
+- O1: Icon + "TOTAL INVESTMENT" label (16px | medium)
+- O2: Large value "₱ 1.16 B" (48px | bold)
+- Gradient: Linear
+  - Green: #349260 + #83BB5B
+
+Card B - GHG Reduction Actual (Blue):
+- Same structure as Card A
+- Gradient: #29D2EC + #0099FF
+
+Card C - Adaptation Investment (Orange):
+- Same structure
+- Gradient: #F16C19 + #F1DF3C
+
+Card D - Mitigation Investment (Orange variant):
+- Same structure  
+- Gradient: Similar to Card C
+
+Card E - Total Projects (Indigo):
+- Same structure
+- Gradient: #007CF8 + #6F37FF
+
+General Card Specs:
+- Corner radius: 8-12px
+- Padding: 16-20px
+- Shadow: subtle
+- Text on gradient background (white text)
+
+
+5. FUNDS MOBILIZED CARD (Area Chart)
+-------------------------------------
+Title: "FUNDS MOBILIZED FOR CLIMATE ACTION"
+Subtitle: O2 - "Trending up by 5.2% this year 📈" (16px)
+
+Chart Elements:
+- O3: Y-axis label "₱800 M"
+- O4: Data point annotation box (with 2025 GAA details)
+- O5: X-axis years (2020-2025)
+
+Chart Colors:
+- O4 Background: #F16C19 (orange) + 40% opacity
+- O5 Background: #F1DF3C (yellow) + 40% opacity
+- Legend: Adaptation (orange), Mitigation (yellow)
+
+Typography:
+- O1: 20px | semibold
+- O2: 13px | regular
+- O3: 16px | medium (#6E6E6E)
+- Card font details apply to all cards
+
+
+6. INVESTMENT BY SECTOR CARD (Stacked Bar)
+-------------------------------------------
+Title: "INVESTMENT BY SECTOR"
+Subtitle: "Total climate investments have grown 161% since 2016, with ₱457.4B allocated in 2024."
+
+Chart Colors:
+- O1: #F0F0F0
+- O2: #00AE9A
+- O3: #63CD00
+- O4: #129900
+- O5: #A6C012
+
+Legend Items:
+- Government Budget (dark green)
+- Grant (green)
+- Loan (lime green)
+- Private (yellow-green)
+
+X-axis: Sectors (Agriculture, Water, Forestry, Health, Coastal & Marine, Human Settlements, DRRM, Energy)
+Y-axis: ₱0 to ₱400 M
+
+
+7. GHG BASELINE CARD (Stacked Bar)
+-----------------------------------
+Title: "GHG VS 2020 BASELINE BY SECTOR"
+Subtitle: "40% of 2030 reduction target achieved 🔺"
+
+Chart Colors:
+- O1: #AFE2FF (Actual - light blue)
+- O2: #006FAF (Conditional - medium blue)
+- O3: #F38A00 (Unconditional - orange)
+
+Legend:
+- Actual (light blue line)
+- Conditional Target (dark blue line)
+- Unconditional Target (orange line)
+
+Y-axis: 0 GT to 40 GT
+X-axis: Same sectors as Investment by Sector
+
+
+8. INVESTMENTS BY REGION CARD (Horizontal Bar)
+-----------------------------------------------
+Title: "INVESTMENTS BY REGION"
+Subtitle: "BARMM, Region XIII, and Region I lead in allocations"
+
+Bar Colors (gradient from dark to light blue):
+- O1: #173F75 (dark blue)
+- O2: #007BFF (bright blue)
+- O3: #5093E0 (muted blue)
+- O4: #8DB7EC (light blue)
+
+Regions listed vertically:
+BARMM, Region XIII, Region I, Region II, Region X, Region IX, NCR, Region VIII, Region III, Region XI, Region XII, Region IV-A, Region IV-B, Region VI, Region V, Region VII, CAR
+
+X-axis: ₱0 to ₱90 M
+
+
+9. MAP COMPONENT
+----------------
+Title: "CLIMATE IMPACT DRIVERS/INCOME CLASS VS INVESTMENTS"
+Subtitle: "Mapping investments against CIDs and income class."
+
+Map Features:
+- Philippines choropleth with bubble overlays
+- Tooltip functionality on hover
+
+Legend - General Map Legend:
+- Total PH Mainland: ₱15.2 B
+- Fund Breakdown (Bubble Scale):
+  - ₱1B+
+  - ₱600 M+
+  - ₱300 M
+
+Legend - Climate Impact Drivers:
+- Increased Temperature & Drought
+- Sea level rise and extreme sea levels
+- Extreme Precipitation
+- Extreme wind and tropical cyclones
+
+Legend - Income Class (5 classes):
+- Income Class 5: ₱1B+
+- Income Class 4: ₱600 M+
+- Income Class 3: ₱300 M+
+- Income Class 2: ₱300 M+
+- Income Class 1: <₱300 M
+
+Bubble Colors:
+- dark green: #216F82
+- green: #83DE9E
+- bright green: #65C595
+- apple green: #ABE47D
+- light green: #E8F4CF
+
+Toggle: "Show bubble map" checkbox
+
+
+10. FOOTER
+----------
+Background: Teal #049688 (matches header)
+Height: ~200px
+
+Content:
+- "Climate Finance Dashboard" title (centered, white text)
+- Partner logos: DOF logo, Canada logo, UN logo
+- "Follow Us" social media links (Facebook, Instagram, X/Twitter, YouTube, LinkedIn)
+- Copyright: "© Department of Finance. All rights reserved"
+- Scroll to top button (circle with up arrow, right side)
+
+Typography: White text on teal background
+
+
+===============================================================================
+
+RESPONSIVE CONSIDERATIONS:
+==========================
+- Red badges show spacing between major containers
+- Layout appears to be fixed-width centered design
+- Mobile/tablet responsive behavior to be determined during implementation
+
+===============================================================================
+
+NOTES FROM ANNOTATIONS DOCUMENT:
+================================
+
+Key Functional Requirements:
+- NAP has 8 sectors, NDCIP has 5 sectors (affects sector selector)
+- Fund sourcing and sectors vary between NAP and NDCIP views
+- Investment data should reflect by sector including private sector where available
+- Filters are aligned with each section based on function
+- Year filter and Project Status filter for Key Metrics and Financing Trends
+- Fund Source, Fund Type, Funder, and Implementing Agency filters for Funding section
+- CIDs and Income Class filters for Regional/Heatmap sections
+- Amount vs Projects toggle changes violet card display
+- Ongoing vs Completed toggle affects project counts
+
+Data Sources Referenced:
+- National CCET PAPs Figures 2017 - GAA FY2025
+- NICCDIES data
+- Climate Budget Brief - GAA v.21, Green Climate Fund
+- Tracking Climate Adaptation Finance in the Philippines
+- Climate Finance, NAP 2023-2050, CCC documents
+
+

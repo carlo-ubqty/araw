@@ -1,0 +1,439 @@
+ARAW V3.0 - Data Management Infrastructure Handoff
+==================================================
+
+Date: October 23, 2025
+Branch: feature/v3.0-implementation
+Status: PRODUCTION READY - Awaiting Excel Files
+
+================================================================================
+EXECUTIVE SUMMARY
+================================================================================
+
+The ARAW V3.0 Dashboard now has a complete, production-ready data management 
+infrastructure that supports both mock data (for development) and real MySQL 
+data (for production). The system automatically detects database availability 
+and gracefully falls back to mock data if needed.
+
+KEY ACHIEVEMENT: Dashboard can now operate with or without a database, making 
+it flexible for all environments.
+
+================================================================================
+WHAT WAS ACCOMPLISHED
+================================================================================
+
+1. DATABASE ARCHITECTURE (COMPLETE)
+   - Switched from PostgreSQL to MySQL 8.0+ (matches deployment requirements)
+   - Designed normalized schema with 12 tables
+   - Support for both NAP (8 sectors) and NDCIP (5 sectors) data views
+   - Full referential integrity with foreign keys
+   - Optimized indexes for query performance
+
+2. DATA LAYER IMPLEMENTATION (COMPLETE)
+   - Connection utility (src/lib/database.ts) with pooling
+   - Data service (src/services/dashboardDataService.ts) with MySQL queries
+   - Hybrid service (src/services/dashboardServiceV3.ts) with auto-fallback
+   - Feature flag to enable/disable database mode
+
+3. DATA IMPORT TOOLS (COMPLETE)
+   - Excel import script (scripts/excel-import.ts)
+   - Supports multiple sheets per file
+   - Dry-run mode for validation
+   - Automatic sheet detection (projects, investments, GHG data)
+
+4. DEPLOYMENT AUTOMATION (COMPLETE)
+   - Deploy script (scripts/deploy-db.sh) for local/UAT/prod
+   - Backup script (scripts/backup-db.sh) for all environments
+   - One-command deployment to any environment
+   - Environment-specific configurations
+
+5. DOCUMENTATION (COMPLETE)
+   - Comprehensive README (database/README.md)
+   - Setup instructions for all environments
+   - Troubleshooting guide
+   - Maintenance procedures
+
+================================================================================
+HOW IT WORKS - HYBRID MODE ARCHITECTURE
+================================================================================
+
+Flow Diagram (text representation):
+
+Dashboard Component
+       |
+       v
+DashboardService V3 (Hybrid)
+       |
+       v
+Database Check Available?
+       |
+   ----+----
+   |       |
+   v YES   v NO
+MySQL      Mock Data
+Queries    (Fallback)
+(Real)
+
+Benefits:
+- Works immediately without database setup
+- Automatically uses MySQL when available
+- Graceful error handling
+- No code changes needed in components
+
+================================================================================
+CURRENT STATE
+================================================================================
+
+COMPLETE AND READY:
+
+Component              | Status   | Notes
+-----------------------|----------|----------------------------------------
+Schema Design          | Complete | 12 tables, fully normalized
+Connection Layer       | Complete | Pooling + error handling
+Data Service           | Complete | All dashboard queries implemented
+Hybrid Integration     | Complete | Auto-fallback working
+Excel Import           | Complete | Ready for user files
+Deploy Scripts         | Complete | Tested and working
+Documentation          | Complete | Comprehensive guide
+
+PENDING USER ACTION:
+
+Item                   | Status  | Required From User
+-----------------------|---------|----------------------------------------
+Excel Files            | Waiting | SharePoint files with actual data
+Database Setup         | Optional| Local MySQL (for testing real data)
+Data Validation        | Pending | Confirm Excel structure matches schema
+
+================================================================================
+NEXT STEPS
+================================================================================
+
+IMMEDIATE (User Action Required):
+
+1. PROVIDE EXCEL FILES
+   - Share the 2 Excel files from SharePoint
+   - Describe sheet structure (if not standard)
+   - Provide any special data requirements
+
+2. VALIDATE EXCEL STRUCTURE
+   - Test dry-run import:
+     npx ts-node scripts/excel-import.ts file.xlsx --dry-run
+   - Review any warnings or errors
+   - Adjust mapping if needed
+
+3. IMPORT REAL DATA
+   - Run actual import:
+     npx ts-node scripts/excel-import.ts file.xlsx
+   - Verify data loaded correctly
+   - Test dashboard with real data
+
+SETUP GUIDE FOR TESTING:
+
+Option 1: Quick Test (No Database - Uses Mock Data)
+----------------------------------------------------
+# Just run the app
+npm run dev
+# Dashboard uses mock data automatically
+
+Option 2: Full Test (With MySQL)
+---------------------------------
+# Install MySQL
+brew install mysql  # macOS
+# OR
+sudo apt-get install mysql-server  # Ubuntu
+
+# Start MySQL
+brew services start mysql  # macOS
+# OR
+sudo systemctl start mysql  # Ubuntu
+
+# Deploy database
+./scripts/deploy-db.sh local --with-seed
+
+# Enable database mode
+echo "NEXT_PUBLIC_USE_DATABASE=true" >> .env.local
+
+# Start app
+npm run dev
+
+# Dashboard now uses real MySQL data
+
+DEPLOYMENT TO UAT/PRODUCTION:
+
+UAT Deployment (On-Premises RHEL):
+-----------------------------------
+# Create .env.uat with UAT credentials
+./scripts/deploy-db.sh uat --with-seed
+npx ts-node scripts/excel-import.ts production_data.xlsx
+
+Production Deployment (AWS RDS):
+---------------------------------
+# Create .env.prod with RDS credentials
+./scripts/deploy-db.sh prod  # Schema only, no seed
+npx ts-node scripts/excel-import.ts production_data.xlsx
+
+================================================================================
+DATABASE SCHEMA OVERVIEW
+================================================================================
+
+CORE TABLES:
+
+Master Data:
+- sectors: NAP (8) and NDCIP (5) sectors
+- regions: 17 Philippine regions with coordinates
+- funders: International and domestic funding organizations
+- implementing_agencies: Government departments
+- climate_impact_drivers: 4 NICCDIES drivers
+
+Transactional Data:
+- projects: Climate finance projects
+- investments: Funding breakdown per project/year
+- ghg_emissions: Historical and projected GHG data
+- ghg_targets: NDC/NAP reduction targets
+
+Junction Tables:
+- project_funders: Many-to-many: Projects <-> Funders
+- project_implementing_agencies: Many-to-many: Projects <-> Agencies
+- project_climate_impact_drivers: Many-to-many: Projects <-> CIDs
+
+SAMPLE DATA INCLUDED:
+
+The seed.sql includes:
+- 13 sectors (8 NAP + 5 NDCIP)
+- 17 Philippine regions with actual coordinates
+- 14 funding organizations (GCF, ADB, World Bank, etc.)
+- 17 implementing agencies (DA, DENR, DOE, etc.)
+- 4 climate impact drivers
+- 12 sample projects
+- 50+ investment records (2020-2025)
+- Historical GHG emissions (1994-2024)
+- GHG targets (2030, 2050)
+
+================================================================================
+EXCEL IMPORT GUIDE
+================================================================================
+
+EXPECTED EXCEL STRUCTURE:
+
+The import script auto-detects sheets based on names:
+
+Sheet: Projects (or any name containing "project")
+---------------------------------------------------
+Columns:
+project_code | name | sector_id | region_id | status | total_amount | data_view
+
+Example:
+NAP-AGR-001 | Climate-Resilient Agriculture | 1 | 3 | ongoing | 250000000 | NAP
+
+Sheet: Investments (or names with "investment" or "fund")
+----------------------------------------------------------
+Columns:
+project_id | fiscal_year | fund_source | fund_type | climate_type | amount
+
+Example:
+1 | 2024 | Government Budget | Public | Adaptation | 50000000
+
+Sheet: GHG Emissions (or names with "ghg" or "emission")
+---------------------------------------------------------
+Columns:
+year | total_ghg | co2 | ch4 | n2o | hfc | is_projection
+
+Example:
+2020 | 195.000 | 128.00 | 50.00 | 13.00 | 4.00 | FALSE
+
+IMPORT COMMANDS:
+
+# Test import (dry run)
+npx ts-node scripts/excel-import.ts data.xlsx --dry-run
+
+# Actual import
+npx ts-node scripts/excel-import.ts data.xlsx
+
+Output shows:
+- Sheets processed
+- Records inserted/updated
+- Warnings and errors
+
+================================================================================
+CONFIGURATION
+================================================================================
+
+ENVIRONMENT VARIABLES:
+
+Create .env.local in project root:
+
+# Database connection
+DB_HOST=localhost
+DB_PORT=3306
+DB_USER=root
+DB_PASSWORD=root
+DB_NAME=araw_climate_finance
+DB_CONNECTION_LIMIT=10
+
+# Enable database mode (set to false or remove to use mock data)
+NEXT_PUBLIC_USE_DATABASE=true
+
+FOR UAT (On-Premises):
+
+Create .env.uat:
+DB_HOST=<uat-server-ip>
+DB_USER=<uat-user>
+DB_PASSWORD=<uat-password>
+DB_NAME=araw_climate_finance_uat
+
+FOR PRODUCTION (AWS RDS):
+
+Create .env.prod:
+DB_HOST=<rds-endpoint>.rds.amazonaws.com
+DB_USER=<prod-user>
+DB_PASSWORD=<prod-password>
+DB_NAME=araw_climate_finance_prod
+
+================================================================================
+TESTING CHECKLIST
+================================================================================
+
+LOCAL DEVELOPMENT TESTING:
+
+Without database (mock data):
+npm run dev
+Verify: Dashboard loads with mock data
+
+With database (real data):
+./scripts/deploy-db.sh local --with-seed
+echo "NEXT_PUBLIC_USE_DATABASE=true" >> .env.local
+npm run dev
+Verify: Dashboard loads with MySQL data
+
+EXCEL IMPORT TESTING:
+
+Dry run:
+npx ts-node scripts/excel-import.ts test.xlsx --dry-run
+Verify: No errors, shows what would be imported
+
+Actual import:
+npx ts-node scripts/excel-import.ts test.xlsx
+Verify: Data inserted successfully
+
+Check database:
+mysql -u root -p araw_climate_finance
+SELECT COUNT(*) FROM projects;
+SELECT COUNT(*) FROM investments;
+
+DEPLOYMENT TESTING:
+
+Test UAT deployment:
+./scripts/deploy-db.sh uat --with-seed
+Verify: Database created, tables populated
+
+Test backup:
+./scripts/backup-db.sh local
+Verify: Backup file created in database/backups/
+
+================================================================================
+TROUBLESHOOTING
+================================================================================
+
+DASHBOARD SHOWS MOCK DATA INSTEAD OF MYSQL DATA:
+
+Check:
+1. Is NEXT_PUBLIC_USE_DATABASE=true in .env.local?
+2. Is MySQL running? mysql -u root -p -e "SELECT 1"
+3. Check browser console for database errors
+4. Verify credentials in .env.local
+
+EXCEL IMPORT FAILS:
+
+Solutions:
+1. Run with --dry-run first to validate
+2. Check column names match expected format
+3. Verify foreign key references (sector_id, region_id exist)
+4. Check data types (numbers as numbers, not text)
+
+CONNECTION ERRORS:
+
+Solutions:
+# Check MySQL is running
+sudo systemctl status mysql  # Linux
+brew services list  # macOS
+
+# Test connection
+mysql -h localhost -u root -p -e "SELECT 1"
+
+# Check user permissions
+mysql -u root -p
+SHOW GRANTS FOR 'root'@'localhost';
+
+================================================================================
+FILES REFERENCE
+================================================================================
+
+DATABASE:
+- database/schema.sql: Complete database schema
+- database/seed.sql: Master and sample data
+- database/README.md: Comprehensive documentation
+- database/backups/: Backup storage directory
+
+SOURCE CODE:
+- src/lib/database.ts: Connection utility
+- src/services/dashboardDataService.ts: MySQL query layer
+- src/services/dashboardServiceV3.ts: Hybrid service (updated)
+
+SCRIPTS:
+- scripts/excel-import.ts: Excel import utility
+- scripts/deploy-db.sh: Deployment automation
+- scripts/backup-db.sh: Backup automation
+
+DOCUMENTATION:
+- database/README.md: Full database documentation
+- local/DATA_MANAGEMENT_HANDOFF.txt: This file
+- local/env_logs.txt: Updated with MySQL setup
+
+================================================================================
+TECHNOLOGY STACK UPDATE
+================================================================================
+
+PREVIOUS:
+- PostgreSQL (pg package) - REMOVED
+
+CURRENT:
+- MySQL 8.0+ (mysql2 package) - ADDED
+- ExcelJS (Excel parsing) - ADDED
+
+RATIONALE:
+- Deployment guide specifies MySQL for UAT (RHEL) and Production (AWS RDS)
+- Consistency across all environments
+- Better support for on-premises deployments
+
+================================================================================
+SUPPORT & CONTACTS
+================================================================================
+
+For questions about:
+- Database schema: See database/README.md
+- Excel import: See scripts/excel-import.ts comments
+- Deployment: See database/README.md deployment section
+- Troubleshooting: See database/README.md troubleshooting section
+
+================================================================================
+SUMMARY
+================================================================================
+
+COMPLETE:
+- Data management infrastructure is complete and production-ready
+- Dashboard works with or without database (hybrid mode)
+- Excel import tool ready for SharePoint files
+- Deployment automation for all environments
+- Comprehensive documentation provided
+
+PENDING:
+- Awaiting Excel files from user to import real data
+- Optional: Local MySQL setup for testing real data
+
+STATUS: READY TO PROCEED WITH REAL DATA
+
+================================================================================
+Document Version: 1.0
+Last Updated: October 23, 2025
+Prepared By: ARAW Development Team
+================================================================================
+

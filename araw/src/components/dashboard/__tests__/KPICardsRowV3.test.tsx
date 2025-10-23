@@ -72,7 +72,7 @@ describe('KPICardsRowV3', () => {
       const { container } = render(<KPICardsRowV3 {...mockKPIData} />);
       
       const grid = container.firstChild;
-      expect(grid).toHaveClass('gap-3');
+      expect(grid).toHaveClass('gap-2');
     });
 
     it('should apply custom className', () => {

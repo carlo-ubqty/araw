@@ -1,57 +1,52 @@
-// API Route: GET /api/dashboard/charts
-import { NextRequest, NextResponse } from 'next/server';
-import { DashboardService } from '@/services/dashboardService';
-import { APIResponse, DashboardFilters } from '@/lib/types';
+/**
+ * ARAW V3.0 Dashboard - Charts Data API Route
+ * Server-side endpoint for fetching all chart data from MySQL
+ */
 
-export async function GET(request: NextRequest) {
+import { NextResponse } from 'next/server';
+import * as DataService from '@/services/dashboardDataService';
+
+export async function GET(request: Request) {
   try {
-    const searchParams = request.nextUrl.searchParams;
+    const { searchParams } = new URL(request.url);
     
-    // Parse filter parameters
-    const filters: DashboardFilters = {
-      dateRange: {
-        start: searchParams.get('start') || '2019-01-01',
-        end: searchParams.get('end') || '2024-12-31',
-      },
-      sector: searchParams.get('sector') || undefined,
-      region: searchParams.get('region') || undefined,
-      fundingSource: searchParams.get('fundingSource') || undefined,
-      projectStatus: searchParams.get('projectStatus') || undefined,
+    // Parse filters from query params
+    const filters = {
+      selectedYears: searchParams.get('years')?.split(',').map(Number).filter(Boolean),
+      dataView: searchParams.get('dataView') as 'NAP' | 'NDCIP' | undefined,
+      projectStatus: searchParams.get('projectStatus') as 'planned' | 'ongoing' | 'completed' | undefined,
     };
-
-    // Optional: Get specific chart by ID
-    const chartId = searchParams.get('id');
     
-    const charts = await DashboardService.getChartConfigs(filters);
+    // Fetch all chart data in parallel
+    const [
+      fundsMobilized,
+      ghgHistorical,
+      investmentBySector,
+      fundSourceBreakdown,
+      ghgBySector,
+      regionalInvestments
+    ] = await Promise.all([
+      DataService.getFundsMobilizedData(filters),
+      DataService.getGHGHistoricalData(filters),
+      DataService.getInvestmentBySectorData(filters),
+      DataService.getFundSourceBreakdownData(filters),
+      DataService.getGHGBySectorData(filters),
+      DataService.getInvestmentsByRegionData(filters)
+    ]);
     
-    // Filter by specific chart if requested
-    const data = chartId ? charts.find(chart => chart.id === chartId) : charts;
-    
-    if (chartId && !data) {
-      const errorResponse: APIResponse = {
-        success: false,
-        error: 'Chart not found',
-        message: `No chart found with ID: ${chartId}`,
-      };
-      return NextResponse.json(errorResponse, { status: 404 });
-    }
-
-    const response: APIResponse = {
-      success: true,
-      data,
-      message: chartId ? 'Chart data retrieved successfully' : 'Chart configurations retrieved successfully',
-    };
-
-    return NextResponse.json(response);
+    return NextResponse.json({
+      fundsMobilized,
+      ghgHistorical,
+      investmentBySector,
+      fundSourceBreakdown,
+      ghgBySector,
+      regionalInvestments,
+    });
   } catch (error) {
-    console.error('Error fetching chart data:', error);
-    
-    const errorResponse: APIResponse = {
-      success: false,
-      error: 'Failed to fetch chart data',
-      message: error instanceof Error ? error.message : 'Unknown error',
-    };
-
-    return NextResponse.json(errorResponse, { status: 500 });
+    console.error('[API /dashboard/charts] Error:', error);
+    return NextResponse.json(
+      { error: 'Failed to fetch chart data' },
+      { status: 500 }
+    );
   }
 }

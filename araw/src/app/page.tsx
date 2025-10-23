@@ -70,7 +70,7 @@ export default function DashboardV3() {
         setIsLoading(true);
         
         // Fetch all data in parallel from service layer (MVC pattern)
-        const [kpis, funds, ghgData, investmentData, fundSourceData, ghgBySector, regional, mapData] = await Promise.all([
+        const [kpis, funds, ghgData, investmentData, fundSourceData, ghgBySector, regional] = await Promise.all([
           DashboardServiceV3.getKPIMetrics(),
           DashboardServiceV3.getFundsMobilizedData(),
           DashboardServiceV3.getGHGLevelsData(),
@@ -78,7 +78,6 @@ export default function DashboardV3() {
           DashboardServiceV3.getFundSourceBreakdownData(),
           DashboardServiceV3.getGHGBySectorData(),
           DashboardServiceV3.getInvestmentsByRegionData(),
-          DashboardServiceV3.getMapLocationData()
         ]);
         
         // Set KPI data
@@ -99,10 +98,11 @@ export default function DashboardV3() {
         // Set GHG by sector data
         setGhgBySectorData(ghgBySector);
         
-        // Set regional and map data
+        // Set regional data
         setRegionalData(regional);
-        setMapLocations(mapData.locations);
-        setMapTotalInvestment(mapData.totalInvestment);
+        // Map data: TODO - implement when needed
+        setMapLocations([]);
+        setMapTotalInvestment('₱ 0.00 M');
       } catch (error) {
         console.error('Error fetching dashboard data:', error);
       } finally {

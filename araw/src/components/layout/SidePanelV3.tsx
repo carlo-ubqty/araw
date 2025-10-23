@@ -262,3 +262,4 @@ export default function SidePanelV3({ onFilterChange, className = '' }: SidePane
   );
 }
 
+

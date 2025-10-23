@@ -78,11 +78,12 @@ describe('FundsMobilizedChartV3', () => {
       expect(noteSections).not.toBeInTheDocument();
     });
 
-    it('should render default note text', () => {
+    it('should not render note text by default', () => {
       render(<FundsMobilizedChartV3 data={mockData} />);
       
-      expect(screen.getByText(/2025 \(GAA\)/)).toBeInTheDocument();
-      expect(screen.getByText(/do not represent actual disbursements/)).toBeInTheDocument();
+      // No note text should be visible by default (note text prop not provided)
+      const noteSection = screen.queryByText(/GAA allocations/);
+      expect(noteSection).not.toBeInTheDocument();
     });
   });
 
@@ -127,4 +128,5 @@ describe('FundsMobilizedChartV3', () => {
     });
   });
 });
+
 

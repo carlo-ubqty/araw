@@ -1,0 +1,337 @@
+================================================================================
+ARAW V3.0 - GIT DEPLOYMENT WORKFLOW
+================================================================================
+Date: October 23, 2025
+Purpose: Git-based deployment workflow for UAT and Production
+================================================================================
+
+
+OVERVIEW
+================================================================================
+
+The ARAW application and all data migration files are deployed via Git.
+This ensures version control, traceability, and consistency across environments.
+
+Repository Structure:
+  - /database/ - Schema and seed SQL files
+  - /data/ - Parsed data files for import (committed to repo)
+  - /scripts/ - Import and migration scripts
+  - /src/ - Application code
+  - /deployment/ - This documentation
+
+
+GIT WORKFLOW
+================================================================================
+
+DEVELOPMENT → UAT → PRODUCTION
+
+1. Development (Local):
+   - Work on feature branches
+   - Test locally with local MySQL
+   - Commit changes with descriptive messages
+
+2. UAT Deployment:
+   - Push to feature branch
+   - Pull on UAT server from feature branch
+   - Run data migration scripts
+   - Conduct user acceptance testing
+
+3. Production Deployment:
+   - Merge feature branch to main/master
+   - Create release tag
+   - Pull on production server from main/master
+   - Run data migration scripts
+   - Monitor and verify
+
+
+BRANCHES
+================================================================================
+
+main/master:
+  - Production-ready code only
+  - Protected branch (requires PR approval)
+  - Tagged releases for rollback capability
+
+feature/v3.0-implementation:
+  - Current development branch
+  - Used for UAT deployments
+  - Merge to main after UAT approval
+
+hotfix/*:
+  - Emergency fixes for production
+  - Branched from main
+  - Merged back to main and feature branches
+
+
+DATA FILES IN REPOSITORY
+================================================================================
+
+The following data files ARE committed to the repository:
+
+✓ data/parsed-ccet-data.json (140 MB)
+  - 33,523 climate finance records
+  - Pre-parsed and validated
+  - Ready for import
+
+✓ data/Araw Available Datasets (10.16.2025).xlsx
+  - Source data for GHG imports
+  - Reference file
+
+✓ database/schema.sql
+  - Complete database schema
+  - Version controlled
+
+✓ database/seed.sql
+  - Master data (sectors, regions, etc.)
+  - Version controlled
+
+Note: These are static reference datasets, not user-generated data.
+They are safe to commit and ensure consistency across environments.
+
+
+UAT DEPLOYMENT VIA GIT
+================================================================================
+
+# On UAT server
+ssh user@uat-server
+cd /var/www/araw-uat
+
+# First time setup
+git clone <repository-url> /var/www/araw-uat
+cd /var/www/araw-uat
+git checkout feature/v3.0-implementation
+
+# Subsequent deployments
+git fetch origin
+git pull origin feature/v3.0-implementation
+
+# Install dependencies (if package.json changed)
+npm install
+
+# Run data migration
+# See: deployment/DATA_MIGRATION_UAT.txt
+
+
+PRODUCTION DEPLOYMENT VIA GIT
+================================================================================
+
+# On Production server
+ssh ec2-user@production-server
+cd /var/www/araw-production
+
+# First time setup
+git clone <repository-url> /var/www/araw-production
+cd /var/www/araw-production
+git checkout main
+
+# Subsequent deployments
+git fetch origin
+git pull origin main  # or specific release tag
+
+# Install dependencies
+npm install --production
+
+# Build application
+npm run build
+
+# Run data migration
+# See: deployment/DATA_MIGRATION_PRODUCTION.txt
+
+
+DEPLOYMENT CHECKLIST
+================================================================================
+
+BEFORE DEPLOYING:
+
+[ ] All changes committed with clear messages
+[ ] Code reviewed (PR approved for production)
+[ ] Tests passing locally
+[ ] Database migration scripts tested locally
+[ ] Release notes prepared
+[ ] Deployment window scheduled
+[ ] Team notified
+
+DURING DEPLOYMENT:
+
+[ ] Pull latest code via git
+[ ] Verify correct branch/tag checked out
+[ ] Install/update dependencies
+[ ] Run database migrations
+[ ] Build application (production only)
+[ ] Run smoke tests
+[ ] Check logs for errors
+
+AFTER DEPLOYMENT:
+
+[ ] Verify application running
+[ ] Run validation scripts
+[ ] Check monitoring dashboards
+[ - Update deployment log
+[ ] Notify stakeholders
+[ ] Document any issues
+
+
+ROLLBACK VIA GIT
+================================================================================
+
+If deployment fails, roll back to previous version:
+
+# Quick rollback to previous commit
+git log --oneline -n 5  # Find previous working commit
+git checkout <commit-hash>
+npm install
+npm run build
+# Restart application
+
+# Or rollback to tagged release
+git checkout v3.0.0  # previous working tag
+npm install
+npm run build
+# Restart application
+
+# Database rollback
+# See ROLLBACK PROCEDURE in migration guides
+
+
+GIT COMMANDS REFERENCE
+================================================================================
+
+# Check current branch and status
+git branch
+git status
+
+# View recent commits
+git log --oneline -n 10
+
+# Pull specific branch
+git fetch origin
+git checkout <branch-name>
+git pull origin <branch-name>
+
+# View file changes
+git diff <file-name>
+
+# Check out specific tag
+git tag -l  # list tags
+git checkout tags/v3.0.0
+
+# Undo uncommitted changes
+git reset --hard HEAD
+
+
+ENVIRONMENT-SPECIFIC CONFIGURATIONS
+================================================================================
+
+Development (.env.local):
+  DB_HOST=localhost
+  DB_NAME=araw_climate_finance
+  NEXT_PUBLIC_USE_DATABASE=true
+
+UAT (.env.local):
+  DB_HOST=localhost
+  DB_NAME=araw_climate_finance_uat
+  NEXT_PUBLIC_USE_DATABASE=true
+  NODE_ENV=production
+
+Production (.env.local or AWS Secrets Manager):
+  DB_HOST=<rds-endpoint>
+  DB_NAME=araw_climate_finance
+  NEXT_PUBLIC_USE_DATABASE=true
+  NODE_ENV=production
+
+Note: .env.local is NOT committed to git (.gitignore)
+Each environment maintains its own configuration
+
+
+SECURITY CONSIDERATIONS
+================================================================================
+
+Repository Security:
+  ✓ No passwords or secrets in code
+  ✓ .env files in .gitignore
+  ✓ Use AWS Secrets Manager for production credentials
+  ✓ Limit repository access to authorized personnel
+
+Deployment Security:
+  ✓ Use SSH keys for git authentication
+  ✓ Deploy from protected branches only
+  ✓ Verify commit signatures (if enabled)
+  ✓ Run security scans before production deploy
+
+
+CONTINUOUS INTEGRATION (Future)
+================================================================================
+
+When CI/CD is implemented:
+  - Automated tests on every commit
+  - Automated builds for UAT deployments
+  - Manual approval gate for production
+  - Automated rollback on failure
+  - Deployment notifications via Slack/email
+
+
+BEST PRACTICES
+================================================================================
+
+1. Always pull before starting work:
+   git pull origin <branch>
+
+2. Commit frequently with clear messages:
+   git commit -m "feat: Add GHG emissions import script"
+
+3. Test locally before pushing:
+   npm test && npm run build
+
+4. Use meaningful branch names:
+   feature/add-ghg-import
+   bugfix/fix-investment-calculation
+
+5. Tag releases for easy rollback:
+   git tag -a v3.0.1 -m "Release 3.0.1 - GHG data support"
+   git push origin v3.0.1
+
+6. Keep deployment logs:
+   Document what was deployed, when, by whom
+
+7. Never force push to main/master:
+   Destroys history and breaks deployments
+
+
+TROUBLESHOOTING
+================================================================================
+
+Problem: "fatal: not a git repository"
+Solution: You're not in the right directory
+  cd /var/www/araw-uat
+
+Problem: "error: Your local changes would be overwritten"
+Solution: Stash or discard local changes
+  git stash  # save changes
+  git pull
+  git stash pop  # restore changes
+
+Problem: "Permission denied (publickey)"
+Solution: SSH key not configured
+  ssh-add ~/.ssh/id_rsa
+  # Or configure deploy key
+
+Problem: "Already up to date" but new code exists
+Solution: Fetch first
+  git fetch origin
+  git status
+  git pull origin <branch>
+
+
+CONTACT INFORMATION
+================================================================================
+
+Git Repository: <repository-url>
+Git Admin: devops@example.com
+Deployment Issues: infra@example.com
+Questions: tech-lead@example.com
+
+
+================================================================================
+END OF GIT DEPLOYMENT NOTES
+================================================================================
+

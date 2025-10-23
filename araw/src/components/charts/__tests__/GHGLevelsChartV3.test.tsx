@@ -75,8 +75,8 @@ describe('GHGLevelsChartV3', () => {
     });
   });
 
-  describe('Target Data Table', () => {
-    it('should render target data when provided', () => {
+  describe('Target Data (Tooltip)', () => {
+    it('should not render target data in main view (tooltip only)', () => {
       render(
         <GHGLevelsChartV3 
           historicalData={mockHistoricalData}
@@ -84,11 +84,12 @@ describe('GHGLevelsChartV3', () => {
         />
       );
       
-      expect(screen.getByText('2024 Target')).toBeInTheDocument();
-      expect(screen.getByText('-230.58 Gg')).toBeInTheDocument();
+      // Target data is now shown in tooltip on hover, not in main view
+      expect(screen.queryByText('2024 Target')).not.toBeInTheDocument();
+      expect(screen.queryByText('-230.58 Gg')).not.toBeInTheDocument();
     });
 
-    it('should render breakdown items', () => {
+    it('should not render breakdown items in main view (tooltip only)', () => {
       render(
         <GHGLevelsChartV3 
           historicalData={mockHistoricalData}
@@ -96,23 +97,24 @@ describe('GHGLevelsChartV3', () => {
         />
       );
       
-      expect(screen.getByText('Carbon Dioxide (CO₂)')).toBeInTheDocument();
-      expect(screen.getByText('Methane (CH₄)')).toBeInTheDocument();
-      expect(screen.getByText('Nitrous Oxide (N₂O)')).toBeInTheDocument();
-      expect(screen.getByText('Hydrofluorocarbon (HFC)')).toBeInTheDocument();
+      // Breakdown is now shown in tooltip on hover, not in main view
+      expect(screen.queryByText('Carbon Dioxide (CO₂)')).not.toBeInTheDocument();
+      expect(screen.queryByText('Methane (CH₄)')).not.toBeInTheDocument();
+      expect(screen.queryByText('Nitrous Oxide (N₂O)')).not.toBeInTheDocument();
+      expect(screen.queryByText('Hydrofluorocarbon (HFC)')).not.toBeInTheDocument();
       
-      expect(screen.getByText('139.194')).toBeInTheDocument();
-      expect(screen.getByText('70.155')).toBeInTheDocument();
+      expect(screen.queryByText('139.194')).not.toBeInTheDocument();
+      expect(screen.queryByText('70.155')).not.toBeInTheDocument();
     });
 
-    it('should not render target table when targetData is not provided', () => {
+    it('should not render target table in main view', () => {
       render(<GHGLevelsChartV3 historicalData={mockHistoricalData} />);
       
       expect(screen.queryByText(/Target/)).not.toBeInTheDocument();
       expect(screen.queryByText(/Breakdown:/)).not.toBeInTheDocument();
     });
 
-    it('should handle target data with empty breakdown', () => {
+    it('should handle target data with empty breakdown (tooltip)', () => {
       const targetWithoutBreakdown: GHGTargetData = {
         year: '2024',
         target: -230.580,
@@ -126,7 +128,8 @@ describe('GHGLevelsChartV3', () => {
         />
       );
       
-      expect(screen.getByText('2024 Target')).toBeInTheDocument();
+      // Target data is in tooltip, not main view
+      expect(screen.queryByText('2024 Target')).not.toBeInTheDocument();
       expect(screen.queryByText('Breakdown:')).not.toBeInTheDocument();
     });
   });
@@ -175,4 +178,5 @@ describe('GHGLevelsChartV3', () => {
     });
   });
 });
+
 

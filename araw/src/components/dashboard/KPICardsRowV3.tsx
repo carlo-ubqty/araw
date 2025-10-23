@@ -78,7 +78,7 @@ export default function KPICardsRowV3({
   className = ''
 }: KPICardsRowV3Props) {
   return (
-    <div className={`grid grid-cols-5 gap-3 ${className}`}>
+    <div className={`grid grid-cols-5 gap-2 ${className}`}>
       {/* Card 1: Total Investment */}
       <KPICardV3
         icon={<PesoIcon />}
@@ -127,4 +127,5 @@ export default function KPICardsRowV3({
     </div>
   );
 }
+
 

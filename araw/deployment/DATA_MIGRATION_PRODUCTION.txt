@@ -1,0 +1,558 @@
+================================================================================
+ARAW V3.0 - DATA MIGRATION TO PRODUCTION
+================================================================================
+Date: October 23, 2025
+Purpose: Migrate database schema and 33K+ climate finance records to Production
+Environment: Production - AWS EC2 + RDS MySQL 8.0
+================================================================================
+
+
+OVERVIEW
+================================================================================
+This guide provides PRODUCTION-GRADE procedures for migrating the complete
+database to AWS RDS MySQL in production environment.
+
+Total Data:
+  - 249 implementing agencies
+  - 32,405 projects
+  - 32,641 investment records
+  - 19 GHG emission records
+  - PHP 1,400.76 Billion in climate finance data
+
+CRITICAL: Follow all steps exactly. Production deployment requires change
+management approval and proper backup procedures.
+
+
+PREREQUISITES
+================================================================================
+REQUIRED APPROVALS:
+  [ ] Change Management Ticket approved
+  [ ] Production deployment window scheduled
+  [ ] Stakeholder notifications sent
+  [ ] Rollback plan reviewed and approved
+  [ ] Database backup confirmed available
+
+REQUIRED ACCESS:
+  [ ] AWS Console access with RDS permissions
+  [ ] Production EC2 instance SSH access
+  [ ] RDS master credentials
+  [ ] VPN/Bastion access configured
+
+REQUIRED FILES:
+  [ ] database/schema.sql
+  [ ] database/seed.sql
+  [ ] data/parsed-ccet-data.json (140 MB)
+  [ ] data/Araw Available Datasets (10.16.2025).xlsx
+  [ ] scripts/import-data-standalone.ts
+  [ ] scripts/import-ghg-data.ts
+
+
+PRE-MIGRATION CHECKLIST
+================================================================================
+BEFORE STARTING:
+  [ ] UAT testing completed successfully
+  [ ] All critical bugs resolved
+  [ ] Performance testing passed
+  [ ] Security audit completed
+  [ ] Database backup window confirmed
+  [ ] Rollback procedure tested in UAT
+  [ ] Team on standby for support
+  [ ] Monitoring dashboards ready
+  [ ] Communication plan activated
+
+
+RDS CONFIGURATION VERIFICATION
+================================================================================
+# Check RDS instance specifications
+- Instance Class: db.t3.medium or higher (recommended: db.r5.large)
+- Storage: 100 GB minimum, autoscaling enabled
+- MySQL Version: 8.0.35 or higher
+- Backup Retention: 7-30 days
+- Multi-AZ: Enabled (recommended)
+- Encryption: Enabled
+- Parameter Group: Optimized for InnoDB
+
+# Verify RDS endpoint
+aws rds describe-db-instances \
+  --db-instance-identifier araw-production \
+  --query 'DBInstances[0].Endpoint'
+
+
+STEP-BY-STEP MIGRATION
+================================================================================
+
+STEP 1: DEPLOY CODE TO PRODUCTION VIA GIT
+--------------------------------------------------------------------------------
+# SSH to production EC2 instance
+ssh ec2-user@production-ec2
+
+# Navigate to application directory (or clone if first deployment)
+cd /var/www/araw-production
+
+# If first deployment, clone repository:
+# git clone <repository-url> /var/www/araw-production
+# cd /var/www/araw-production
+
+# Pull latest code from repository
+git fetch origin
+git checkout feature/v3.0-implementation  # or main/master after merge
+git pull origin feature/v3.0-implementation
+
+# Verify you have the required files
+ls -l database/schema.sql database/seed.sql
+ls -l data/parsed-ccet-data.json
+ls -l scripts/import-data-standalone.ts scripts/import-ghg-data.ts
+
+# Note: All database scripts and data files are in the repository
+# No need to upload files separately
+
+
+STEP 2: VERIFY PRODUCTION ENVIRONMENT
+--------------------------------------------------------------------------------
+cd /var/www/araw-production
+
+# Install/update Node.js dependencies
+npm install --production
+
+# Verify Node.js version
+node --version  # Should be 18+
+
+
+STEP 3: CREATE PRODUCTION DATABASE
+--------------------------------------------------------------------------------
+# Get RDS endpoint from AWS Console or:
+export RDS_ENDPOINT="araw-prod.xxxxxxxxxx.us-east-1.rds.amazonaws.com"
+export RDS_PORT=3306
+export MASTER_USER="admin"
+export MASTER_PASS="<stored-in-secrets-manager>"
+
+# Connect to RDS
+mysql -h $RDS_ENDPOINT -P $RDS_PORT -u $MASTER_USER -p << 'EOF'
+-- Create production database
+CREATE DATABASE IF NOT EXISTS araw_climate_finance 
+  CHARACTER SET utf8mb4 
+  COLLATE utf8mb4_unicode_ci;
+
+-- Create application user with limited privileges
+CREATE USER IF NOT EXISTS 'araw_app'@'%' 
+  IDENTIFIED BY '<strong-password-from-secrets-manager>';
+
+-- Grant only necessary privileges (principle of least privilege)
+GRANT SELECT, INSERT, UPDATE ON araw_climate_finance.* 
+  TO 'araw_app'@'%';
+
+FLUSH PRIVILEGES;
+
+-- Verify
+SHOW DATABASES LIKE 'araw%';
+SELECT user, host FROM mysql.user WHERE user = 'araw_app';
+EOF
+
+
+STEP 4: DEPLOY SCHEMA
+--------------------------------------------------------------------------------
+# Deploy schema to RDS
+mysql -h $RDS_ENDPOINT -P $RDS_PORT -u $MASTER_USER -p \
+  araw_climate_finance < database/schema.sql
+
+# Verify tables
+mysql -h $RDS_ENDPOINT -P $RDS_PORT -u $MASTER_USER -p \
+  araw_climate_finance -e "
+    SELECT 
+      TABLE_NAME, 
+      ENGINE,
+      TABLE_ROWS, 
+      ROUND((DATA_LENGTH + INDEX_LENGTH) / 1024 / 1024, 2) AS 'Size_MB'
+    FROM information_schema.TABLES
+    WHERE TABLE_SCHEMA = 'araw_climate_finance'
+    ORDER BY TABLE_NAME;
+  "
+
+# Expected: 12 tables, all InnoDB engine, 0 rows
+
+
+STEP 5: LOAD MASTER DATA
+--------------------------------------------------------------------------------
+# Load seed data
+mysql -h $RDS_ENDPOINT -P $RDS_PORT -u $MASTER_USER -p \
+  araw_climate_finance < database/seed.sql
+
+# Verify master data loaded
+mysql -h $RDS_ENDPOINT -P $RDS_PORT -u $MASTER_USER -p \
+  araw_climate_finance -e "
+    SELECT 'sectors' as table_name, COUNT(*) as count FROM sectors
+    UNION ALL
+    SELECT 'regions', COUNT(*) FROM regions
+    UNION ALL
+    SELECT 'funders', COUNT(*) FROM funders
+    UNION ALL
+    SELECT 'climate_impact_drivers', COUNT(*) FROM climate_impact_drivers;
+  "
+
+
+STEP 6: CONFIGURE DATABASE CONNECTION FOR PRODUCTION
+--------------------------------------------------------------------------------
+cd /var/www/araw-production
+
+# Get database credentials from AWS Secrets Manager
+aws secretsmanager get-secret-value \
+  --secret-id araw/production/database \
+  --query SecretString --output text
+
+# Set environment variables for import scripts
+# (Use values from Secrets Manager)
+export RDS_ENDPOINT="araw-prod.xxxxxxxxxx.us-east-1.rds.amazonaws.com"
+export RDS_PORT="3306"
+export DB_USER="admin"
+export DB_PASSWORD="<from-secrets-manager>"
+export DB_NAME="araw_climate_finance"
+
+# Verify connection
+mysql -h $RDS_ENDPOINT -P $RDS_PORT -u $DB_USER -p$DB_PASSWORD \
+  -e "SELECT VERSION();"
+
+# Note: Import scripts will use these environment variables
+# No code changes needed
+
+
+STEP 7: IMPORT MAIN DATASET (WITH MONITORING)
+--------------------------------------------------------------------------------
+cd /var/www/araw-production
+
+# Start import with timing
+echo "Starting CCET data import at $(date)"
+time npx ts-node scripts/import-data-standalone.ts | tee import-log.txt
+
+# Monitor during import (in separate terminal)
+watch -n 5 'mysql -h $RDS_ENDPOINT -u $MASTER_USER -p$MASTER_PASS \
+  araw_climate_finance -e "SELECT COUNT(*) as investments FROM investments"'
+
+# Expected output:
+#   ✓ Connected to MySQL
+#   ✓ Loaded 33523 records
+#   Progress: 1000/33523 (2200 rec/sec)
+#   Progress: 2000/33523 (2180 rec/sec)
+#   ...
+#   ✓ Processed 33523/33523 records
+#   
+#   Total time: ~15 seconds
+
+# Verify import success
+if grep -q "Errors: 0" import-log.txt; then
+    echo "✓ Import successful"
+else
+    echo "✗ Import had errors - check import-log.txt"
+    exit 1
+fi
+
+
+STEP 8: IMPORT GHG DATA
+--------------------------------------------------------------------------------
+# Import GHG inventory data
+echo "Starting GHG data import at $(date)"
+npx ts-node scripts/import-ghg-data.ts | tee ghg-import-log.txt
+
+# Verify
+if grep -q "GHG DATA IMPORT COMPLETE" ghg-import-log.txt; then
+    echo "✓ GHG import successful"
+else
+    echo "✗ GHG import failed"
+    exit 1
+fi
+
+
+STEP 9: COMPREHENSIVE VERIFICATION
+--------------------------------------------------------------------------------
+# Run full data integrity checks
+mysql -h $RDS_ENDPOINT -P $RDS_PORT -u $MASTER_USER -p \
+  araw_climate_finance << 'EOF' > verification-report.txt
+
+-- Summary
+SELECT '==================== SUMMARY ====================' as '';
+SELECT 
+  'Database' as Component,
+  'Ready' as Status,
+  CONCAT('PHP ', ROUND(SUM(amount)/1000000000, 2), ' Billion') as Value
+FROM investments
+UNION ALL
+SELECT 'Projects', 'Loaded', CONCAT(COUNT(*), ' projects') FROM projects
+UNION ALL
+SELECT 'Agencies', 'Loaded', CONCAT(COUNT(*), ' agencies') FROM implementing_agencies
+UNION ALL
+SELECT 'GHG Data', 'Loaded', CONCAT(COUNT(*), ' records') FROM ghg_emissions;
+
+-- By fiscal year
+SELECT '' as '';
+SELECT '==================== BY YEAR ====================' as '';
+SELECT 
+  fiscal_year,
+  COUNT(*) as investments,
+  ROUND(SUM(amount)/1000000000, 2) as 'Billion_PHP'
+FROM investments
+GROUP BY fiscal_year
+ORDER BY fiscal_year;
+
+-- Data integrity
+SELECT '' as '';
+SELECT '==================== INTEGRITY ====================' as '';
+SELECT 
+  'Orphaned Investments' as Check_Type,
+  COUNT(*) as Count,
+  CASE WHEN COUNT(*) = 0 THEN 'PASS' ELSE 'FAIL' END as Status
+FROM investments i
+LEFT JOIN projects p ON i.project_id = p.id
+WHERE p.id IS NULL
+UNION ALL
+SELECT 
+  'Projects Without Investments',
+  COUNT(*),
+  CASE WHEN COUNT(*) < 100 THEN 'PASS' ELSE 'WARNING' END
+FROM projects p
+LEFT JOIN investments i ON p.id = i.project_id
+WHERE i.id IS NULL;
+
+-- Performance check
+SELECT '' as '';
+SELECT '==================== PERFORMANCE ====================' as '';
+SELECT 
+  'Total Records' as Metric,
+  (SELECT COUNT(*) FROM investments) + 
+  (SELECT COUNT(*) FROM projects) +
+  (SELECT COUNT(*) FROM implementing_agencies) as Value;
+
+SELECT 
+  'Database Size (MB)' as Metric,
+  ROUND(SUM(DATA_LENGTH + INDEX_LENGTH) / 1024 / 1024, 2) as Value
+FROM information_schema.TABLES
+WHERE TABLE_SCHEMA = 'araw_climate_finance';
+
+EOF
+
+# Display and review verification report
+cat verification-report.txt
+
+# CRITICAL: Verify these values:
+#   - Total Investment: PHP 1400.76 Billion
+#   - Projects: 32,405
+#   - Investments: 32,641
+#   - Agencies: 249
+#   - GHG Records: 19
+#   - Orphaned Investments: 0
+#   - All integrity checks: PASS
+
+
+STEP 10: CREATE POST-MIGRATION BACKUP
+--------------------------------------------------------------------------------
+# Create RDS snapshot via AWS Console or CLI
+aws rds create-db-snapshot \
+  --db-instance-identifier araw-production \
+  --db-snapshot-identifier araw-prod-post-migration-$(date +%Y%m%d-%H%M%S) \
+  --tags Key=Purpose,Value=PostMigration Key=Date,Value=$(date +%Y-%m-%d)
+
+# Wait for snapshot to complete
+aws rds wait db-snapshot-completed \
+  --db-snapshot-identifier araw-prod-post-migration-*
+
+# Verify snapshot
+aws rds describe-db-snapshots \
+  --db-snapshot-identifier araw-prod-post-migration-* \
+  --query 'DBSnapshots[0].[DBSnapshotIdentifier,Status,SnapshotCreateTime]'
+
+
+STEP 11: CONFIGURE APPLICATION
+--------------------------------------------------------------------------------
+# Update production application environment variables
+# (Use AWS Secrets Manager or Parameter Store)
+
+aws secretsmanager create-secret \
+  --name araw/production/database \
+  --description "ARAW Production Database Configuration" \
+  --secret-string '{
+    "DB_HOST": "araw-prod.xxx.rds.amazonaws.com",
+    "DB_PORT": "3306",
+    "DB_USER": "araw_app",
+    "DB_PASSWORD": "<secure-password>",
+    "DB_NAME": "araw_climate_finance",
+    "NEXT_PUBLIC_USE_DATABASE": "true"
+  }'
+
+
+STEP 12: SMOKE TEST
+--------------------------------------------------------------------------------
+# Test database connectivity from application
+mysql -h $RDS_ENDPOINT -P $RDS_PORT -u araw_app -p \
+  araw_climate_finance -e "
+    SELECT COUNT(*) as test FROM investments LIMIT 1;
+  "
+
+# If application is deployed, test API endpoints
+curl -s https://araw-prod.example.com/api/dashboard/kpis | jq .
+
+# Expected: JSON response with real data
+
+
+STEP 13: ENABLE MONITORING
+--------------------------------------------------------------------------------
+# Enable RDS Enhanced Monitoring (if not already enabled)
+aws rds modify-db-instance \
+  --db-instance-identifier araw-production \
+  --monitoring-interval 60 \
+  --monitoring-role-arn arn:aws:iam::xxx:role/rds-monitoring-role \
+  --apply-immediately
+
+# Set up CloudWatch alarms
+aws cloudwatch put-metric-alarm \
+  --alarm-name araw-prod-db-cpu-high \
+  --alarm-description "Alert if DB CPU > 80%" \
+  --metric-name CPUUtilization \
+  --namespace AWS/RDS \
+  --statistic Average \
+  --period 300 \
+  --threshold 80 \
+  --comparison-operator GreaterThanThreshold \
+  --datapoints-to-alarm 2 \
+  --evaluation-periods 2 \
+  --dimensions Name=DBInstanceIdentifier,Value=araw-production
+
+
+STEP 14: CLEANUP
+--------------------------------------------------------------------------------
+cd /var/www/araw-production
+
+# Clear sensitive environment variables
+unset DB_PASSWORD
+unset RDS_ENDPOINT
+
+# Keep logs for audit trail
+mkdir -p /var/log/araw-migrations
+mv import-log.txt /var/log/araw-migrations/production-$(date +%Y%m%d-%H%M%S)-import.log
+mv ghg-import-log.txt /var/log/araw-migrations/production-$(date +%Y%m%d-%H%M%S)-ghg.log
+mv verification-report.txt /var/log/araw-migrations/production-$(date +%Y%m%d-%H%M%S)-verify.txt
+
+# Secure log directory
+chmod 750 /var/log/araw-migrations
+chown -R ec2-user:ec2-user /var/log/araw-migrations
+
+# Application code remains in /var/www/araw-production
+
+
+POST-MIGRATION CHECKLIST
+================================================================================
+[ ] Database created successfully
+[ ] Schema deployed (12 tables)
+[ ] Master data loaded
+[ ] 33,523 records imported
+[ ] GHG data imported
+[ ] Verification report reviewed - all checks PASS
+[ ] Total investment amount confirmed: PHP 1,400.76 Billion
+[ ] No orphaned records
+[ ] RDS snapshot created
+[ ] Application configured with database credentials
+[ ] Smoke tests passed
+[ ] Monitoring enabled
+[ ] CloudWatch alarms configured
+[ ] Migration logs saved
+[ ] Temporary files cleaned up
+[ ] Stakeholders notified of success
+[ ] Documentation updated
+
+
+ROLLBACK PROCEDURE
+================================================================================
+IF CRITICAL ISSUE DETECTED:
+
+IMMEDIATE ROLLBACK (< 5 minutes):
+1. Disable application access to new database
+2. Point application to backup database (if exists)
+3. Assess issue severity
+
+FULL ROLLBACK (if needed):
+1. Delete new database:
+   mysql -h $RDS_ENDPOINT -u $MASTER_USER -p \
+     -e "DROP DATABASE araw_climate_finance;"
+
+2. Restore from pre-migration RDS snapshot:
+   aws rds restore-db-instance-from-db-snapshot \
+     --db-instance-identifier araw-production-rollback \
+     --db-snapshot-identifier araw-prod-pre-migration-xxx
+
+3. Update application to use rollback database
+
+4. Verify data integrity
+
+5. Investigate root cause
+
+
+MONITORING & MAINTENANCE
+================================================================================
+
+Daily Checks (First Week):
+- Monitor query performance
+- Check error logs
+- Review slow query log
+- Monitor disk usage
+
+Weekly Maintenance:
+- Review backup retention
+- Analyze query patterns
+- Optimize indexes if needed
+- Update statistics: ANALYZE TABLE investments;
+
+
+PERFORMANCE OPTIMIZATION (If Needed)
+================================================================================
+
+If queries are slow:
+
+1. Add indexes on commonly queried columns:
+   CREATE INDEX idx_investments_year ON investments(fiscal_year);
+   CREATE INDEX idx_investments_climate ON investments(climate_type);
+   CREATE INDEX idx_projects_status ON projects(status);
+
+2. Analyze tables:
+   ANALYZE TABLE investments, projects, implementing_agencies;
+
+3. Check query execution plans:
+   EXPLAIN SELECT ... FROM investments WHERE ...;
+
+4. Consider RDS instance upgrade if CPU consistently > 70%
+
+
+TIMING ESTIMATES (Production)
+================================================================================
+- Preparation & upload: 10-15 minutes
+- Schema deployment: 1-2 minutes
+- CCET data import: 15-30 seconds (network latency)
+- GHG data import: < 10 seconds
+- Verification: 5 minutes
+- Snapshot creation: 5-10 minutes
+- Total: ~25-35 minutes
+
+
+SUPPORT CONTACTS
+================================================================================
+- DevOps Team: devops@example.com
+- Database Admin: dba@example.com  
+- AWS Support: <case-number>
+- Project Manager: pm@example.com
+
+
+SUCCESS CRITERIA
+================================================================================
+Migration is successful when:
+✓ All 33,523 records imported without errors
+✓ Total investment amount = PHP 1,400.76 Billion
+✓ No orphaned records in database
+✓ Application can query data successfully
+✓ Response times < 500ms for dashboard queries
+✓ All integrity checks pass
+✓ Backup/snapshot created successfully
+✓ Monitoring shows normal metrics
+
+
+================================================================================
+END OF PRODUCTION DATA MIGRATION GUIDE
+================================================================================
+Last Updated: 2025-10-23
+Classification: INTERNAL USE ONLY
+

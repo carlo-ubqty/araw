@@ -42,6 +42,46 @@ SOPs (IMPORTANT! FOLLOW THESE IN OUR SESSIONS!)
        - Utilities: All branches and edge cases
     e) Mock external dependencies (APIs, Next.js features, etc.)
     f) Update env_logs.txt with test setup commands
+11. **Documentation Format Requirements** (CRITICAL!)
+    - ALL documentation files in local/ folder MUST be plain text (.txt)
+    - NO markdown files (.md) in local/ folder
+    - Use plain text formatting (ASCII art, equals signs, dashes for headers)
+    - Reason: Consistency and readability in terminal/text editors
+
+12. **Local Folder Organization** (Reference Map)
+    Structure:
+    local/
+    ├── user-agent_sops_araw.txt  ← SOPs (this file, top level)
+    ├── wus_logs.txt              ← Work Unit Session logs (top level)
+    ├── data/                     ← Data import & management docs (6 files)
+    │   ├── DATA_IMPORT_COMPLETE.txt
+    │   ├── DATA_MANAGEMENT_HANDOFF.txt
+    │   ├── DATA_PARSING_STATUS.txt
+    │   ├── data_import_summary.txt
+    │   ├── data_integration_plan.txt
+    │   └── v3_data_requirements.txt
+    ├── deployment/               ← Deployment guides (2 files)
+    │   ├── DEPLOYMENT_GUIDE_DOF.txt
+    │   └── deployment_notes.txt
+    ├── planning/                 ← V3 planning & architecture (9 files)
+    │   ├── v3_architecture_refactor_plan.txt
+    │   ├── v3_design_system.txt
+    │   ├── v3_implementation_plan.txt
+    │   ├── v3_jira_board_setup.txt
+    │   ├── v3_mockup_catalogue.txt
+    │   ├── v3_planning_summary.txt
+    │   ├── v3_project_summary_for_pm_qa.txt
+    │   ├── v3_realignment_oct22.txt
+    │   └── v3_work_breakdown.txt
+    ├── refactoring/              ← Refactoring summaries (2 files)
+    │   ├── refactoring_phase2_summary.txt
+    │   └── refactoring_phase3_summary.txt
+    ├── handoffs/                 ← Agent handoff docs (2 files)
+    │   ├── HANDOFF_TO_NEXT_AGENT.txt
+    │   └── docs_context_summary.txt
+    └── session-notes/            ← Session logs & notes (2 files)
+        ├── env_logs.txt
+        └── v3_session_notes.txt
 
 PROJECT CONTEXT & DOMAIN REQUIREMENTS
 =====================================

@@ -1,0 +1,467 @@
+ARAW Climate Finance Dashboard - Version 3.0 Implementation Plan
+====================================================================
+Project Manager: Jhonnel
+QA Lead: Lei
+Development Team: Carlo + Agent
+Date: October 22, 2025
+
+PROJECT OVERVIEW:
+=================
+Complete redesign and fresh implementation of the ARAW Climate Finance Dashboard
+based on final Figma mockups from Janika.
+
+Technical Stack:
+- NextJS 15.5.3 + TypeScript
+- HeroUI 2.8.4 UI Components
+- Recharts for data visualizations
+- Leaflet for Philippines map
+
+Branch: feature/v3.0-implementation
+Deployment Target: araw-v3-qa.ncience.com (when ready)
+
+
+IMPLEMENTATION APPROACH:
+========================
+Section-by-section development with QA after each major section is complete.
+Each section will be developed, tested internally, then deployed to QA environment
+for Lei's testing before moving to the next section.
+
+Estimated Timeline: 4-5 weeks
+Development Model: Iterative, with QA checkpoints after each section
+
+
+DASHBOARD SECTIONS (9 Total):
+==============================
+
+SECTION 1: HEADER
+-----------------
+Description: Top teal bar with DOF logo, "Climate Finance Dashboard" title, 
+             real-time clock, and action icons (notifications, settings)
+Components:
+- Teal header bar (#049688)
+- DOF logo + title (left side)
+- Real-time timestamp (right side, format: MM/DD/YYYY HH:MM:SS AM/PM)
+- Notification and settings icons
+
+QA Checklist:
+□ Header displays full width with teal background
+□ DOF logo loads correctly
+□ Title displays: "Climate Finance Dashboard"
+□ Real-time clock updates every second
+□ Clock shows correct format
+□ Notification icon visible and clickable
+□ Settings icon visible and clickable
+□ Layout is responsive (test on desktop, tablet, mobile)
+
+Estimated Dev Time: 1 day
+JIRA Ticket: ARAW-301 (Section 1: Header Component)
+
+
+SECTION 2: SUBHEADER (Filter Controls)
+---------------------------------------
+Description: Light teal bar below header with data view toggles, sector chips,
+             and action buttons
+Components:
+- "Adjust display by" toggle: NAP DATA / NDCIP DATA (radio buttons)
+- "Select sectors" multi-select chips (8 for NAP, 5 for NDCIP)
+- Action buttons: AMOUNT, PROJECTS, ONGOING, COMPLETED
+
+QA Checklist:
+□ Subheader displays with light teal background (#DDFFF6)
+□ NAP/NDCIP toggle works (radio button behavior)
+□ Sector chips display correctly (8 for NAP, 5 for NDCIP)
+□ Sector chips are multi-selectable
+□ Active chips show filled state
+□ Action buttons display properly
+□ COMPLETED button has blue gradient background
+□ Buttons toggle correctly (AMOUNT vs PROJECTS, ONGOING vs COMPLETED)
+□ Layout is responsive
+
+Estimated Dev Time: 2 days
+JIRA Ticket: ARAW-302 (Section 2: Subheader & Filter Controls)
+
+
+SECTION 3: SIDE PANEL (Left Sidebar Filters)
+---------------------------------------------
+Description: Left sidebar with collapsible filter sections
+Components:
+- Year filter (checkboxes: 2025, 2024, 2023, 2022, 2021)
+- Fund Source (collapsible section with checkboxes)
+- Fund Type (Public, Private, Mixed checkboxes)
+- Funder (organization checkboxes: ADB, UNDP, World Bank, etc.)
+- Implementing Agency (government departments checkboxes)
+- Climate Impact Drivers (collapsible, 4 options)
+- Income Class (collapsible, 5 levels)
+
+QA Checklist:
+□ Side panel displays on left side with #FAFAFA background
+□ Panel width approximately 250px
+□ "Filters" header displays correctly
+□ Year checkboxes all visible and functional (2025-2021)
+□ Each filter section can expand/collapse with +/- icons
+□ Multiple selections work (checkboxes)
+□ Expand/collapse animations smooth
+□ Panel scrolls if content exceeds viewport
+□ All filter options display correctly
+□ Filter selections persist when toggling sections
+
+Estimated Dev Time: 2 days
+JIRA Ticket: ARAW-303 (Section 3: Side Panel Filters)
+
+
+SECTION 4: KEY METRIC CARDS (KPIs)
+-----------------------------------
+Description: Row of 5 gradient cards showing key metrics
+Components:
+Card A: Total Investment (Green gradient: #349260 to #83BB5B)
+Card B: GHG Reduction Actual (Blue gradient: #29D2EC to #0099FF)
+Card C: Adaptation Investment (Orange gradient: #F16C19 to #F1DF3C)
+Card D: Mitigation Investment (Orange) OR Total Projects (Indigo) - toggles
+Card E: Total Projects (Indigo gradient: #007CF8 to #6F37FF)
+
+QA Checklist:
+□ All 5 cards display in a horizontal row
+□ Cards have equal width and spacing
+□ Each card shows correct gradient background
+□ Icon displays for each card (top left)
+□ Label text displays correctly (e.g., "TOTAL INVESTMENT")
+□ Value displays in large font (48px bold)
+□ Values formatted correctly (e.g., "₱ 1.16 B", "56%", "579 Projects")
+□ Card D toggles between Mitigation and Projects based on button selection
+□ White text is readable on all gradient backgrounds
+□ Cards have subtle shadow
+□ Layout is responsive (stacks or adjusts on mobile/tablet)
+□ Hover effects work (if applicable)
+
+Estimated Dev Time: 2 days
+JIRA Ticket: ARAW-304 (Section 4: Key Metric Cards)
+
+
+SECTION 5: FINANCING & EMISSIONS TRENDS (Two Charts)
+-----------------------------------------------------
+Description: Two side-by-side charts showing funding trends and GHG levels
+Components:
+Left Chart: "Funds Mobilized for Climate Action" (Stacked area chart)
+- X-axis: Years 2020-2025
+- Y-axis: Amount (₱0 to ₱1.2 B)
+- Two areas: Adaptation (orange), Mitigation (yellow)
+- Legend below chart
+- Annotation box for 2025 data
+
+Right Chart: "GHG Levels" (Line chart)
+- X-axis: Years 1994-2020
+- Y-axis: GHG levels (0 to 240 Gg)
+- Blue line with data points
+- Data table on right showing breakdown (CO₂, CH₄, N₂O, HFC)
+- 2024 target indicator
+
+QA Checklist:
+□ Two charts display side by side (equal width)
+□ Section title "Financing and Emissions Trends" displays
+□ Left chart: Stacked area chart renders correctly
+□ Orange area (Adaptation) and yellow area (Mitigation) visible
+□ Chart axes labeled properly (years, amounts)
+□ Legend displays: Adaptation, Mitigation
+□ 2025 data annotation box displays with GAA details
+□ Hover tooltip shows breakdown when hovering over chart
+□ Right chart: Line chart renders correctly
+□ Blue line with data points visible
+□ Data table shows gas breakdown
+□ Target line/marker visible for 2024
+□ Charts are responsive (stack on mobile/tablet)
+□ All text is readable
+
+Estimated Dev Time: 3 days
+JIRA Ticket: ARAW-305 (Section 5: Financing & Emissions Charts)
+
+
+SECTION 6: CLIMATE INVESTMENT OVERVIEW (Chart + Cards)
+-------------------------------------------------------
+Description: Two-column layout with investment chart and fund source breakdown
+Components:
+Left: "Investment by Sector" (Stacked vertical bar chart)
+- 8 sectors for NAP (Agriculture, Water, Forestry, Health, Coastal & Marine,
+  Human Settlements, DRRM, Energy)
+- 5 sectors for NDCIP (Agriculture, Waste, Industry, Transport, Energy)
+- 4 funding types stacked: Government Budget, Grant, Loan, Private
+- Color-coded bars in green shades
+
+Right: "Fund Source" (Card display)
+- Main card: Government Budget (teal, ₱980 M, 40%)
+- Three sub-cards: Grant (₱310 M, 32%), Loan (₱175 M, 18%), Private (₱95 M, 10%)
+- All cards show amounts and percentages
+
+QA Checklist:
+□ Section title "Climate Investment Overview" displays
+□ Two components side by side
+□ Left: Stacked bar chart renders correctly
+□ Correct number of sectors display (8 for NAP, 5 for NDCIP based on toggle)
+□ All 4 funding types visible in stack (different colors)
+□ Legend displays correctly
+□ Bars are properly stacked and scaled
+□ Hover tooltip shows breakdown by funding type
+□ Right: Large teal card displays (Government Budget)
+□ Amount "₱980 M" and "40%" visible on main card
+□ Three smaller cards below (Grant, Loan, Private)
+□ All amounts and percentages correct
+□ Color gradients display correctly (green shades)
+□ Cards have white text that's readable
+□ Layout is responsive
+
+Estimated Dev Time: 3 days
+JIRA Ticket: ARAW-306 (Section 6: Climate Investment Overview)
+
+
+SECTION 7: GHG VS 2020 BASELINE BY SECTOR (Full-width Chart)
+-------------------------------------------------------------
+Description: Full-width stacked bar chart with target lines
+Components:
+- Stacked vertical bars for 8 sectors (same as Investment by Sector)
+- 3 components per bar: Actual (light blue), Conditional (medium blue),
+  Unconditional (orange)
+- Target lines overlaid
+- Title with progress indicator: "40% of 2030 reduction target achieved"
+
+QA Checklist:
+□ Chart spans full content width
+□ Title displays with progress indicator
+□ All 8 sectors display on X-axis
+□ Y-axis shows 0 to 40 GT scale
+□ Bars are stacked with 3 colors (light blue, medium blue, orange)
+□ Target lines display correctly (Conditional and Unconditional)
+□ Legend shows all components (Actual bar, Conditional line, Unconditional line)
+□ Hover tooltip shows breakdown (Actual, Conditional, Unconditional values)
+□ Chart is readable and properly scaled
+□ Layout is responsive
+
+Estimated Dev Time: 2 days
+JIRA Ticket: ARAW-307 (Section 7: GHG Baseline by Sector)
+
+
+SECTION 8: REGIONAL INVESTMENTS & MAP (Two-column Layout)
+----------------------------------------------------------
+Description: Horizontal bar chart + Philippines choropleth map with bubble overlays
+Components:
+Left (33% width): "Investments by Region" (Horizontal bars)
+- 17 Philippine regions listed vertically
+- Bars in blue gradient (dark to light)
+- Sorted by investment amount
+
+Right (67% width): "Climate Impact Drivers/Income Class vs Investments" (Map)
+- Philippines choropleth map
+- Bubble overlays sized by investment amount
+- Color-coded by income class (5 classes, green shades)
+- Legend showing:
+  • Total PH Mainland: ₱15.2 B
+  • Bubble scale (₱1B+, ₱600M+, ₱300M)
+  • Climate Impact Drivers (4 checkboxes)
+  • Income class legend (5 classes)
+- Zoom controls (+ / -)
+- "Show bubble map" toggle checkbox
+
+QA Checklist:
+□ Section title displays
+□ Two-column layout (1/3 left, 2/3 right)
+□ Left: Horizontal bar chart renders
+□ All 17 regions listed (BARMM, Region XIII, Region I, etc.)
+□ Bars display in blue gradient (darkest for highest investment)
+□ Regions sorted by investment amount (highest to lowest)
+□ Hover tooltip shows region name and amount
+□ Right: Philippines map renders correctly
+□ All regional boundaries visible
+□ Zoom controls work (+ and - buttons)
+□ Map can be panned/dragged
+□ Bubble overlays display at correct locations
+□ Bubbles sized by investment amount (3 tiers visible)
+□ Bubbles color-coded by income class (5 colors)
+□ Legend displays in top-left corner
+□ Total PH Mainland shows ₱15.2 B
+□ Climate Impact Drivers checkboxes functional
+□ Income class legend visible with all 5 classes
+□ "Show bubble map" toggle works (shows/hides bubbles)
+□ Hover on bubble shows tooltip (region, investment, income class, CIDs)
+□ Hover on region shows region info
+□ Layout is responsive (stacks on mobile/tablet)
+
+Estimated Dev Time: 5 days
+JIRA Ticket: ARAW-308 (Section 8: Regional Investments & Map)
+
+
+SECTION 9: FOOTER
+-----------------
+Description: Bottom teal bar matching header style
+Components:
+- "Climate Finance Dashboard" title (centered)
+- Partner logos: DOF, Canada, UN (white versions, horizontal row)
+- "Follow Us" social media links (Facebook, Instagram, X, YouTube, LinkedIn)
+- Copyright text: "© Department of Finance. All rights reserved"
+- Scroll to top button (circle with up arrow, bottom-right)
+
+QA Checklist:
+□ Footer displays at bottom with teal background (#049688)
+□ Title "Climate Finance Dashboard" centered and visible
+□ All 3 partner logos display correctly (white versions)
+□ "partnership with" text between DOF and Canada logos
+□ Social media section displays with "Follow Us" label
+□ All 5 social media icons visible (Facebook, Instagram, X, YouTube, LinkedIn)
+□ Icons are clickable (placeholder links OK)
+□ Copyright text displays correctly
+□ Copyright year shows 2025 (or current year if dynamic)
+□ Scroll to top button visible (fixed position, bottom-right)
+□ Scroll to top button works (smooth scroll to header)
+□ Button appears/disappears based on scroll position (optional feature)
+□ All white text is readable on teal background
+□ Footer is full width
+□ Layout is responsive
+
+Estimated Dev Time: 1 day
+JIRA Ticket: ARAW-309 (Section 9: Footer Component)
+
+
+QUALITY ASSURANCE TESTING SEQUENCE:
+====================================
+
+For Lei - QA Testing Approach:
+-------------------------------
+Each section will be developed and deployed to QA environment sequentially.
+After Lei approves a section, development continues on the next section.
+
+Testing Environment: araw-v3-qa.ncience.com (to be set up)
+Testing Devices: Desktop (Chrome, Firefox), iPad, iPhone
+
+General QA Checks for All Sections:
+- Visual accuracy compared to Figma mockups
+- Responsive behavior on different screen sizes
+- No console errors in browser developer tools
+- Loading states (if applicable)
+- Data displays correctly (using mock data initially)
+- No broken images or missing assets
+- Proper spacing and alignment
+- Readable text (contrast, font sizes)
+- All interactive elements functional
+- No overlapping elements
+- Smooth animations/transitions
+
+
+JIRA TICKET SUMMARY (9 Tickets):
+=================================
+ARAW-301: Section 1 - Header Component (1 day)
+ARAW-302: Section 2 - Subheader & Filter Controls (2 days)
+ARAW-303: Section 3 - Side Panel Filters (2 days)
+ARAW-304: Section 4 - Key Metric Cards (2 days)
+ARAW-305: Section 5 - Financing & Emissions Charts (3 days)
+ARAW-306: Section 6 - Climate Investment Overview (3 days)
+ARAW-307: Section 7 - GHG Baseline by Sector (2 days)
+ARAW-308: Section 8 - Regional Investments & Map (5 days)
+ARAW-309: Section 9 - Footer Component (1 day)
+
+Total Development Time: ~21 days (4-5 weeks with testing cycles)
+
+
+DEPLOYMENT WORKFLOW:
+====================
+Development → QA → UAT → Production
+
+Per Section:
+1. Developer completes section on local environment
+2. Developer runs build and basic tests
+3. Deploy to araw-v3-qa.ncience.com
+4. Move JIRA ticket to "Ready for QA"
+
+QA Phase (Lei):
+5. Lei receives notification for QA testing
+6. Lei tests section using checklist above
+7. If bugs found:
+   - Lei reports in JIRA
+   - Developer fixes and redeploys
+   - Return to step 6
+8. If approved:
+   - Lei moves ticket to "Ready for UAT"
+
+UAT Phase (Stakeholders):
+9. Jhonnel/stakeholders review section
+10. Move ticket to "In UAT" for user acceptance testing
+11. Users test functionality and usability
+12. If changes needed:
+    - Create change request
+    - Developer implements
+    - Return to QA phase
+13. If approved:
+    - Move ticket to "Done"
+    - Proceed to next section
+
+After All Sections Complete:
+- Full integration testing (QA + UAT)
+- End-to-end user testing
+- Performance and security review
+- Final stakeholder approval
+- Deploy to production (araw-qa.ncience.com or new domain)
+
+
+DATA APPROACH:
+==============
+Phase 1 (All Sections): Use mock/realistic data
+Phase 2 (After UI Complete): Integrate real data as Carlo provides it
+
+Mock data will be realistic and follow the actual data structures, so the 
+transition to real data will be smooth.
+
+
+DEPENDENCIES & RISKS:
+=====================
+Low Risk:
+- Technical stack is proven (NextJS + HeroUI + TypeScript)
+- Clean fresh start minimizes technical debt
+- Section-by-section approach allows for course correction
+
+Medium Risk:
+- Map component complexity (Section 8) - most time-consuming
+- Data integration when moving from mock to real data
+
+Mitigation:
+- Allocate extra time for Section 8 (map)
+- Keep data structures well-documented for smooth integration
+
+
+NOTES FOR PM (Jhonnel):
+========================
+- Development will be iterative with QA checkpoints after each section
+- If any section needs changes, it can be adjusted before moving to next section
+- Estimated timeline includes QA cycles, but not extensive bug fixing
+- Timeline may extend if significant changes requested after QA
+- All sections use mock data initially; real data integration is Phase 2
+
+
+NOTES FOR QA (Lei):
+===================
+- Each section will be deployed independently for testing
+- Use provided checklists for each section
+- Compare visual output to Figma mockups (available in project files)
+- Test on multiple devices: Desktop (Chrome, Firefox), Tablet, Mobile
+- Focus on functionality and visual accuracy first
+- Performance testing can come later in integration phase
+- Report bugs/issues in JIRA ticket comments
+- Approval needed before development proceeds to next section
+
+
+CONTACT & COLLABORATION:
+=========================
+Questions or clarifications:
+- Technical: Carlo + Agent
+- Design/Mockups: Janika (Figma designs)
+- Data: Carlo (will provide when available)
+- PM: Jhonnel
+- QA: Lei
+
+All specifications and detailed documentation available in:
+/local/v3_*.txt files in the project repository
+
+
+PROJECT START DATE: October 22, 2025
+ESTIMATED COMPLETION: Late November 2025 (4-5 weeks)
+CURRENT STATUS: Planning Complete, Ready to Start Development
+
+=============================================================================
+END OF PROJECT SUMMARY
+=============================================================================
+

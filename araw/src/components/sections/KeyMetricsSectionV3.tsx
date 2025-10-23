@@ -29,7 +29,7 @@ export default function KeyMetricsSectionV3({
   className = ''
 }: KeyMetricsSectionV3Props) {
   return (
-    <div className={`bg-white rounded-lg border border-gray-200 p-6 ${className}`}>
+    <div className={`bg-white rounded-lg border-4 border-gray-200 p-3 ${className}`}>
       {/* KPI Cards Row */}
       <KPICardsRowV3 
         totalInvestment={totalInvestment}
@@ -42,4 +42,5 @@ export default function KeyMetricsSectionV3({
     </div>
   );
 }
+
 
