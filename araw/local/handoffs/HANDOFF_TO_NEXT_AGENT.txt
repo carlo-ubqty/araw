@@ -1,10 +1,10 @@
 ================================================================================
 ARAW V3.0 DASHBOARD - HANDOFF TO NEXT AGENT
 ================================================================================
-Date: October 22, 2025
+Date: October 23, 2025
 Handoff From: Previous Agent Session
 Handoff To: Next Agent Session
-Reason: User updating Cursor (performance issues)
+Reason: End of session - filter system completed, ready for testing
 
 ================================================================================
 CURRENT PROJECT STATE
@@ -30,8 +30,13 @@ JIRA PROGRESS:
 ✅ COMPLETED (continued):
 - ARAW-319: Footer Component (full-width teal, partners, social, scroll-to-top button)
 - Filter System - Centralized state management + backend integration
+- React setState error fix in SidePanelV3 (year filter callback)
+- Year filters confirmed working with database integration
 
 🚧 NEXT UP:
+- THOROUGH TESTING: All filter functionalities (NAP/NDCIP, sectors, status, years)
+- Verify all charts update correctly with filters
+- Test filter combinations and edge cases
 - ARAW-320: Responsive Design
 - ARAW-321: Final Polish & Optimization
 - Additional sidebar filters (Fund Type, Funder, Agency, CIDs, Income Class)
@@ -98,9 +103,34 @@ User clicks NAP button →
             filtered data returned → 
               charts update
 
+✅ RECENT FIXES (Oct 23, 2025):
+--------------------------------
+ISSUE: React setState-during-render error in SidePanelV3
+- Console error: "Cannot update a component (DashboardV3) while rendering a 
+  different component (SidePanelV3)"
+- Root cause: onFilterChange callback was being called INSIDE the setSelectedYears 
+  state updater function (line 103)
+
+FIX: Refactored handleYearToggle() in SidePanelV3.tsx
+- Calculate newYears OUTSIDE of setState
+- Call setSelectedYears(newYears)
+- Then call onFilterChange({ selectedYears: newYears })
+- This ensures parent state updates happen AFTER child state updates
+
+RESULT: Year filters now work without React errors, all API calls successful
+
 ================================================================================
 CRITICAL ARCHITECTURE DECISIONS
 ================================================================================
+
+⚠️ IMPORTANT - DEV SERVER:
+---------------------------
+USE: npx next dev (regular webpack)
+AVOID: npm run dev (uses --turbopack flag, has caching issues)
+
+Issue: Turbopack has aggressive caching that prevents code changes from being 
+reflected even after killing processes and clearing .next/.turbo directories.
+Solution: Use regular webpack build (npx next dev) for development.
 
 MVC PATTERN:
 -----------
