@@ -84,12 +84,13 @@ export default function GHGBySectorChartV3({
               borderRadius: '6px',
               fontSize: '11px'
             }}
-            formatter={(value: number, name: string) => {
+            formatter={(value: any, name: string) => {
               const labels: Record<string, string> = {
                 inventory2015: '2015 Inventory',
                 inventory2020: '2020 Inventory'
               };
-              return [`${value.toFixed(2)} GgCO₂e`, labels[name] || name];
+              const numValue = typeof value === 'number' ? value : 0;
+              return [`${numValue.toFixed(2)} GgCO₂e`, labels[name] || name];
             }}
             labelStyle={{ fontWeight: 600, marginBottom: '4px' }}
           />
