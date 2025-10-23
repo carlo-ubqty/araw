@@ -13,11 +13,8 @@ import { BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip, Legend, Responsive
 
 export interface GHGBySectorData {
   sector: string;
-  actual: number;           // Light blue bar
-  conditional: number;      // Medium blue bar
-  unconditional: number;    // Orange bar
-  conditionalTarget?: number;    // Dark blue line
-  unconditionalTarget?: number;  // Orange line
+  inventory2015: number;    // 2015 inventory bar
+  inventory2020: number;    // 2020 inventory bar
 }
 
 export interface GHGBySectorChartV3Props {
@@ -29,22 +26,21 @@ export interface GHGBySectorChartV3Props {
   className?: string;
 }
 
-// Color scheme for GHG components
+// Color scheme for GHG inventory comparison
 const GHG_COLORS = {
-  actual: '#AFE2FF',           // Light blue
-  conditional: '#006FAF',      // Medium blue
-  unconditional: '#F38A00',    // Orange
+  inventory2015: '#00A5E0',    // Blue for 2015
+  inventory2020: '#0074A9',    // Darker blue for 2020
 };
 
 export default function GHGBySectorChartV3({
   data = [],
-  title = 'GHG VS 2020 BASELINE BY SECTOR',
-  subtitle,
+  title = 'SUMMARY OF THE 2015 AND 2020 PHILIPPINE NATIONAL GHG',
+  subtitle = 'Overview of greenhouse gas emissions in 2015 and 2020.',
   progressPercentage = 40,
   showContainer = true,
   className = ''
 }: GHGBySectorChartV3Props) {
-  const displaySubtitle = subtitle || `${progressPercentage}% of 2030 reduction target achieved 🔺`;
+  const displaySubtitle = subtitle;
 
   const chartContent = (
     <>
@@ -66,16 +62,14 @@ export default function GHGBySectorChartV3({
 
       {/* Chart */}
       <ResponsiveContainer width="100%" height={350}>
-        <BarChart data={data} margin={{ top: 10, right: 20, left: 0, bottom: 80 }}>
+        <BarChart data={data} margin={{ top: 10, right: 20, left: 0, bottom: 10 }}>
           <CartesianGrid strokeDasharray="3 3" stroke="#e5e5e5" vertical={false} />
           <XAxis 
             dataKey="sector" 
-            tick={{ fill: '#666666', fontSize: 10 }}
+            tick={{ fill: '#666666', fontSize: 9 }}
             axisLine={{ stroke: '#e5e5e5' }}
             tickLine={false}
-            angle={-45}
-            textAnchor="end"
-            height={80}
+            height={20}
           />
           <YAxis 
             tick={{ fill: '#666666', fontSize: 12 }}
@@ -92,11 +86,10 @@ export default function GHGBySectorChartV3({
             }}
             formatter={(value: number, name: string) => {
               const labels: Record<string, string> = {
-                actual: 'Actual',
-                conditional: '% Conditional',
-                unconditional: '■ Unconditional'
+                inventory2015: '2015 Inventory',
+                inventory2020: '2020 Inventory'
               };
-              return [`${value} GT`, labels[name] || name];
+              return [`${value.toFixed(2)} GgCO₂e`, labels[name] || name];
             }}
             labelStyle={{ fontWeight: 600, marginBottom: '4px' }}
           />
@@ -106,32 +99,23 @@ export default function GHGBySectorChartV3({
             iconSize={10}
             formatter={(value) => {
               const labels: Record<string, string> = {
-                actual: '■ Actual',
-                conditional: '■ % Conditional',
-                unconditional: '■ Unconditional'
+                inventory2015: '■ 2015 Inventory',
+                inventory2020: '■ 2020 Inventory'
               };
               return labels[value] || value;
             }}
           />
           
-          {/* Stacked Bars */}
+          {/* Grouped Bars (not stacked) */}
           <Bar 
-            dataKey="actual" 
-            stackId="a" 
-            fill={GHG_COLORS.actual}
-            name="actual"
+            dataKey="inventory2015" 
+            fill={GHG_COLORS.inventory2015}
+            name="inventory2015"
           />
           <Bar 
-            dataKey="conditional" 
-            stackId="a" 
-            fill={GHG_COLORS.conditional}
-            name="conditional"
-          />
-          <Bar 
-            dataKey="unconditional" 
-            stackId="a" 
-            fill={GHG_COLORS.unconditional}
-            name="unconditional"
+            dataKey="inventory2020" 
+            fill={GHG_COLORS.inventory2020}
+            name="inventory2020"
           />
         </BarChart>
       </ResponsiveContainer>

@@ -44,13 +44,22 @@ async function importData() {
   console.log('IMPORTING PARSED CCET DATA TO MYSQL');
   console.log('='.repeat(80));
   
-  // Create connection (use socket for local MySQL)
-  const connection = await mysql.createConnection({
-    socketPath: '/tmp/mysql.sock',
-    user: 'root',
-    password: 'root',
-    database: 'araw_climate_finance'
-  });
+  // Create connection from environment variables
+  const connectionConfig: any = {
+    user: process.env.DB_USER || 'root',
+    password: process.env.DB_PASSWORD || 'root',
+    database: process.env.DB_NAME || 'araw_climate_finance'
+  };
+  
+  // Use socket path if provided (faster for local MySQL)
+  if (process.env.DB_SOCKET_PATH) {
+    connectionConfig.socketPath = process.env.DB_SOCKET_PATH;
+  } else {
+    connectionConfig.host = process.env.DB_HOST || 'localhost';
+    connectionConfig.port = parseInt(process.env.DB_PORT || '3306');
+  }
+  
+  const connection = await mysql.createConnection(connectionConfig);
   
   console.log('\n✓ Connected to MySQL');
   

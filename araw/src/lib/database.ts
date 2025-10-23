@@ -80,10 +80,11 @@ export function getPool(): mysql.Pool {
     };
     
     // Use socket for local MySQL (faster and more reliable)
-    if (config.host === 'localhost' && process.env.DB_SOCKET) {
-      poolConfig.socketPath = process.env.DB_SOCKET;
+    // Priority: 1) DB_SOCKET_PATH env var, 2) detect localhost with default socket
+    if (process.env.DB_SOCKET_PATH) {
+      poolConfig.socketPath = process.env.DB_SOCKET_PATH;
     } else if (config.host === 'localhost' && !process.env.DB_HOST) {
-      // Default to socket for localhost
+      // Default to socket for localhost if DB_HOST is not explicitly set
       poolConfig.socketPath = '/tmp/mysql.sock';
     } else {
       poolConfig.host = config.host;

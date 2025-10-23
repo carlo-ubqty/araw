@@ -239,8 +239,22 @@ interface InvestmentBySectorRow {
 export async function getInvestmentBySectorData(
   filters?: Partial<FilterState>
 ): Promise<InvestmentBySectorRow[]> {
+  // Sector mapping: Match mockup display names to database sector codes
+  // Mockup shows 8 key sectors: Agriculture, Water, Forestry, Health, Coastal & Marine, Human Settlements, DRRM, Energy
+  const sectorMapping = [
+    { display: 'Agriculture', codes: ['NAP_AGR', 'NDCIP_AGR'] },
+    { display: 'Water', codes: ['NAP_WAT'] },
+    { display: 'Forestry', codes: ['NAP_ECO'] }, // Map Ecosystems to Forestry
+    { display: 'Health', codes: ['NAP_HLT'] },
+    { display: 'Coastal & Marine', codes: ['NAP_ECO'] }, // Map Ecosystems to Coastal
+    { display: 'Human Settlements', codes: ['NAP_LND'] },
+    { display: 'DRRM', codes: ['NAP_LIV'] }, // Map Livelihoods to DRRM (closest match)
+    { display: 'Energy', codes: ['NAP_ENE', 'NDCIP_ENE'] }
+  ];
+
   let sql = `
     SELECT 
+      s.code,
       s.name as sector,
       COALESCE(SUM(CASE WHEN i.fund_source = 'Government Budget' THEN i.amount ELSE 0 END), 0) as govBudget,
       COALESCE(SUM(CASE WHEN i.fund_source = 'Grant' THEN i.amount ELSE 0 END), 0) as \`grant\`,
@@ -249,7 +263,7 @@ export async function getInvestmentBySectorData(
     FROM sectors s
     LEFT JOIN projects p ON s.id = p.sector_id
     LEFT JOIN investments i ON p.id = i.project_id
-    WHERE 1=1
+    WHERE s.code IN ('NAP_AGR', 'NDCIP_AGR', 'NAP_WAT', 'NAP_ECO', 'NAP_HLT', 'NAP_LND', 'NAP_LIV', 'NAP_ENE', 'NDCIP_ENE')
   `;
   const params: any[] = [];
 
@@ -263,18 +277,53 @@ export async function getInvestmentBySectorData(
     params.push(...filters.selectedYears);
   }
 
-  sql += ` GROUP BY s.id, s.name ORDER BY s.display_order`;
+  sql += ` GROUP BY s.code, s.name ORDER BY s.display_order`;
 
-  const results = await query<InvestmentBySectorRow>(sql, params);
+  const results = await query<InvestmentBySectorRow & { code: string }>(sql, params);
   
-  // Convert to millions
-  return results.map(row => ({
-    sector: row.sector,
-    govBudget: Math.round(row.govBudget / 1000000),
-    grant: Math.round(row.grant / 1000000),
-    loan: Math.round(row.loan / 1000000),
-    private: Math.round(row.private / 1000000),
-  }));
+  // Group by display sector and aggregate
+  const displaySectors = new Map<string, InvestmentBySectorRow>();
+  
+  results.forEach(row => {
+    // Find which display sector this code belongs to
+    const mapping = sectorMapping.find(m => m.codes.includes(row.code));
+    if (!mapping) return;
+    
+    const existing = displaySectors.get(mapping.display);
+    if (existing) {
+      // Aggregate if display sector already exists
+      existing.govBudget += row.govBudget;
+      existing.grant += row.grant;
+      existing.loan += row.loan;
+      existing.private += row.private;
+    } else {
+      displaySectors.set(mapping.display, {
+        sector: mapping.display,
+        govBudget: row.govBudget,
+        grant: row.grant,
+        loan: row.loan,
+        private: row.private,
+      });
+    }
+  });
+  
+  // Convert to millions and return in mockup order
+  return sectorMapping.map(m => {
+    const data = displaySectors.get(m.display) || {
+      sector: m.display,
+      govBudget: 0,
+      grant: 0,
+      loan: 0,
+      private: 0,
+    };
+    return {
+      sector: data.sector,
+      govBudget: Math.round(data.govBudget / 1000000),
+      grant: Math.round(data.grant / 1000000),
+      loan: Math.round(data.loan / 1000000),
+      private: Math.round(data.private / 1000000),
+    };
+  });
 }
 
 // ============================================================================
@@ -361,25 +410,32 @@ function getColorForFundSource(source: string): string {
 
 interface GHGBySectorRow {
   sector: string;
-  actual: number;
-  conditional: number;
-  unconditional: number;
+  inventory2015: number;
+  inventory2020: number;
 }
 
 export async function getGHGBySectorData(
   filters?: Partial<FilterState>
 ): Promise<GHGBySectorRow[]> {
+  // Mockup shows 2015 vs 2020 inventory comparison for 5 sectors: Energy, Agriculture, Waste, IPPU, LULUCF
+  const sectorMapping = [
+    { display: 'Energy', code: 'NAP_ENE' },
+    { display: 'Agriculture', code: 'NAP_AGR' },
+    { display: 'Waste', code: 'NDCIP_WST' },
+    { display: 'IPPU', code: 'GHG_IPPU' },
+    { display: 'LULUCF', code: 'GHG_LULUCF' }
+  ];
+
   let sql = `
     SELECT 
+      s.code,
       s.name as sector,
-      COALESCE(e.total_ghg, 0) as actual,
-      COALESCE(t_cond.target_value, 0) as conditional,
-      COALESCE(t_uncond.target_value, 0) as unconditional
+      COALESCE(e2015.total_ghg, 0) as inventory2015,
+      COALESCE(e2020.total_ghg, 0) as inventory2020
     FROM sectors s
-    LEFT JOIN ghg_emissions e ON s.id = e.sector_id AND e.year = 2020
-    LEFT JOIN ghg_targets t_cond ON s.id = t_cond.sector_id AND t_cond.target_type = 'Conditional' AND t_cond.year = 2030
-    LEFT JOIN ghg_targets t_uncond ON s.id = t_uncond.sector_id AND t_uncond.target_type = 'Unconditional' AND t_uncond.year = 2030
-    WHERE 1=1
+    LEFT JOIN ghg_emissions e2015 ON s.id = e2015.sector_id AND e2015.year = 2015
+    LEFT JOIN ghg_emissions e2020 ON s.id = e2020.sector_id AND e2020.year = 2020
+    WHERE s.code IN ('NAP_ENE', 'NDCIP_ENE', 'NAP_AGR', 'NDCIP_WST', 'GHG_IPPU', 'GHG_LULUCF')
   `;
   const params: any[] = [];
 
@@ -390,7 +446,17 @@ export async function getGHGBySectorData(
 
   sql += ` ORDER BY s.display_order`;
 
-  return await query<GHGBySectorRow>(sql, params);
+  const results = await query<GHGBySectorRow & { code: string }>(sql, params);
+  
+  // Map to display names and return in mockup order
+  return sectorMapping.map(mapping => {
+    const data = results.find(r => r.code === mapping.code);
+    return {
+      sector: mapping.display,
+      inventory2015: data?.inventory2015 || 0,
+      inventory2020: data?.inventory2020 || 0,
+    };
+  });
 }
 
 // ============================================================================
