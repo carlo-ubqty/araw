@@ -34,7 +34,8 @@ import ClimateInvestmentOverviewV3 from '@/components/sections/ClimateInvestment
 import type { SectorInvestmentData } from '@/components/charts/InvestmentBySectorChartV3';
 import type { FundSourceItem } from '@/components/charts/FundSourceBreakdownV3';
 import type { GHGBySectorData } from '@/components/charts/GHGBySectorChartV3';
-import InvestmentsByRegionChartV3, { type RegionalInvestmentData } from '@/components/charts/InvestmentsByRegionChartV3';
+import RegionalInvestmentsMapV3 from '@/components/sections/RegionalInvestmentsMapV3';
+import type { RegionalInvestmentData } from '@/components/charts/InvestmentsByRegionChartV3';
 import type { MapLocationData } from '@/components/map/PhilippinesMapV3';
 import { DashboardServiceV3, type KPIData } from '@/services/dashboardServiceV3';
 import type { FundsData, GHGHistoricalData, GHGTargetData } from '@/components/sections/FinancingEmissionsTrendsV3';
@@ -208,28 +209,28 @@ export default function DashboardV3() {
                 )
               )}
               
-              {/* Regional Investments & Map - ARAW-318 ✅ - 2-COLUMN LAYOUT - WITH SERVICE LAYER */}
+              {/* Regional Investments & Map - ARAW-318 ✅ - WITH SERVICE LAYER */}
               {isLoading ? (
-                <div className="grid grid-cols-3 gap-4 mb-6">
-                  <div className="col-span-1 bg-white rounded-lg border border-gray-200 p-6 h-[550px] flex items-center justify-center">
-                    <p className="text-gray-500">Loading regional data...</p>
-                  </div>
-                  <div className="col-span-2 bg-white rounded-lg border border-gray-200 p-6 h-[550px] flex items-center justify-center">
-                    <p className="text-gray-500">Loading map data...</p>
+                <div className="bg-white rounded-lg border border-gray-200 p-6 mb-6">
+                  <h2 className="text-lg font-semibold mb-6" style={{ color: '#049688' }}>
+                    Regional Investments & Climate Impact Drivers
+                  </h2>
+                  <div className="grid gap-6" style={{ gridTemplateColumns: '1fr 2fr' }}>
+                    <div className="border border-gray-200 rounded-lg p-4 h-[550px] flex items-center justify-center">
+                      <p className="text-gray-500">Loading regional data...</p>
+                    </div>
+                    <div className="border border-gray-200 rounded-lg p-4 h-[550px] flex items-center justify-center">
+                      <p className="text-gray-500">Loading map data...</p>
+                    </div>
                   </div>
                 </div>
               ) : (
-                <div className="grid grid-cols-3 gap-4 mb-6">
-                  <div className="col-span-1">
-                    <InvestmentsByRegionChartV3 data={regionalData} />
-                  </div>
-                  <div className="col-span-2">
-                    <PhilippinesMapV3 
-                      locations={mapLocations}
-                      totalInvestment={mapTotalInvestment}
-                    />
-                  </div>
-                </div>
+                <RegionalInvestmentsMapV3
+                  regionalData={regionalData}
+                  mapLocations={mapLocations}
+                  mapTotalInvestment={mapTotalInvestment}
+                  className="mb-6"
+                />
               )}
               
               {/* Development Progress Indicator */}

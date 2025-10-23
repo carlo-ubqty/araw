@@ -32,6 +32,7 @@ export interface PhilippinesMapV3Props {
   totalInvestment?: string;
   title?: string;
   subtitle?: string;
+  showContainer?: boolean;
   className?: string;
 }
 
@@ -63,6 +64,7 @@ export default function PhilippinesMapV3({
   totalInvestment = '₱15.2 B',
   title = 'CLIMATE IMPACT DRIVERS/INCOME CLASS VS INVESTMENTS',
   subtitle = 'Mapping investments against CIDs and income class.',
+  showContainer = true,
   className = ''
 }: PhilippinesMapV3Props) {
   const [boundaries, setBoundaries] = useState<FeatureCollection | null>(null);
@@ -146,8 +148,8 @@ export default function PhilippinesMapV3({
     return 5;                            // < ₱300M
   };
 
-  return (
-    <div className={`bg-white rounded-lg border border-gray-200 p-6 ${className}`}>
+  const mapContent = (
+    <>
       {/* Title and Subtitle */}
       <div className="mb-4">
         <h3 className="font-semibold text-gray-900" style={{ fontSize: '20px' }}>
@@ -255,7 +257,16 @@ export default function PhilippinesMapV3({
           </div>
         )}
       </div>
+    </>
+  );
+
+  if (!showContainer) {
+    return mapContent;
+  }
+
+  return (
+    <div className={`bg-white rounded-lg border border-gray-200 p-6 ${className}`}>
+      {mapContent}
     </div>
   );
 }
-

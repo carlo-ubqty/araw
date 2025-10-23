@@ -21,6 +21,7 @@ export interface InvestmentsByRegionChartV3Props {
   data?: RegionalInvestmentData[];
   title?: string;
   subtitle?: string;
+  showContainer?: boolean;
   className?: string;
 }
 
@@ -36,6 +37,7 @@ export default function InvestmentsByRegionChartV3({
   data = [],
   title = 'INVESTMENTS BY REGION',
   subtitle = 'BARMM, Region XIII, and Region I lead in allocations',
+  showContainer = true,
   className = ''
 }: InvestmentsByRegionChartV3Props) {
   // Sort data by amount (descending) and add colors
@@ -47,8 +49,8 @@ export default function InvestmentsByRegionChartV3({
       fill: getBarColor(index, data.length)
     }));
 
-  return (
-    <div className={`bg-white rounded-lg border border-gray-200 p-6 ${className}`}>
+  const chartContent = (
+    <>
       {/* Title and Subtitle */}
       <div className="mb-4">
         <h3 className="font-semibold text-gray-900" style={{ fontSize: '20px' }}>
@@ -103,7 +105,16 @@ export default function InvestmentsByRegionChartV3({
           />
         </BarChart>
       </ResponsiveContainer>
+    </>
+  );
+
+  if (!showContainer) {
+    return chartContent;
+  }
+
+  return (
+    <div className={`bg-white rounded-lg border border-gray-200 p-6 ${className}`}>
+      {chartContent}
     </div>
   );
 }
-
