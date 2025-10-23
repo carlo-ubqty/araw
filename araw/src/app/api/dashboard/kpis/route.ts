@@ -38,7 +38,7 @@ export async function GET(request: Request) {
       ghgReductionSubtitle: 'vs 2020 baseline',
       adaptationInvestment: formatCurrency(adaptationInvestment),
       mitigationInvestment: formatCurrency(mitigationInvestment),
-      totalProjects: `${totalProjects.toLocaleString()}`,
+      totalProjects: `${(totalProjects || 0).toLocaleString()}`,
     };
     
     return NextResponse.json(response);
@@ -54,7 +54,12 @@ export async function GET(request: Request) {
 /**
  * Format currency to Billion/Million with proper notation
  */
-function formatCurrency(value: number, currencySymbol: string = '₱'): string {
+function formatCurrency(value: number | null | undefined, currencySymbol: string = '₱'): string {
+  // Handle null, undefined, or NaN
+  if (value == null || isNaN(value)) {
+    return `${currencySymbol} 0.00 M`;
+  }
+  
   if (value === 0) return `${currencySymbol} 0.00 M`;
   
   if (value >= 1_000_000_000) {
