@@ -53,22 +53,32 @@ export async function GET(request: Request) {
 
 /**
  * Format currency to Billion/Million with proper notation
+ * Handles null/undefined values gracefully
  */
 function formatCurrency(value: number | null | undefined, currencySymbol: string = '₱'): string {
-  // Handle null, undefined, or NaN
-  if (value == null || isNaN(value)) {
+  // Safety check: Handle null, undefined, or NaN values
+  if (!value || isNaN(value)) {
     return `${currencySymbol} 0.00 M`;
   }
   
-  if (value === 0) return `${currencySymbol} 0.00 M`;
+  // Convert to absolute number for formatting
+  const numValue = Number(value);
   
-  if (value >= 1_000_000_000) {
-    return `${currencySymbol} ${(value / 1_000_000_000).toFixed(2)} B`;
-  } else if (value >= 1_000_000) {
-    return `${currencySymbol} ${(value / 1_000_000).toFixed(2)} M`;
-  } else if (value >= 1_000) {
-    return `${currencySymbol} ${(value / 1_000).toFixed(2)} K`;
-  } else {
-    return `${currencySymbol} ${value.toFixed(2)}`;
+  if (numValue === 0) {
+    return `${currencySymbol} 0.00 M`;
   }
+  
+  if (numValue >= 1_000_000_000) {
+    return `${currencySymbol} ${(numValue / 1_000_000_000).toFixed(2)} B`;
+  }
+  
+  if (numValue >= 1_000_000) {
+    return `${currencySymbol} ${(numValue / 1_000_000).toFixed(2)} M`;
+  }
+  
+  if (numValue >= 1_000) {
+    return `${currencySymbol} ${(numValue / 1_000).toFixed(2)} K`;
+  }
+  
+  return `${currencySymbol} ${numValue.toFixed(2)}`;
 }
