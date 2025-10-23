@@ -96,13 +96,12 @@ export default function SidePanelV3({ onFilterChange, className = '' }: SidePane
   };
 
   const handleYearToggle = (year: number) => {
-    setSelectedYears(prev => {
-      const newYears = prev.includes(year)
-        ? prev.filter(y => y !== year)
-        : [...prev, year];
-      onFilterChange?.({ selectedYears: newYears });
-      return newYears;
-    });
+    const newYears = selectedYears.includes(year)
+      ? selectedYears.filter(y => y !== year)
+      : [...selectedYears, year];
+    
+    setSelectedYears(newYears);
+    onFilterChange?.({ selectedYears: newYears });
   };
 
   const handleFundTypeToggle = (type: string) => {
