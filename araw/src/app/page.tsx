@@ -34,18 +34,27 @@ import ClimateInvestmentOverviewV3 from '@/components/sections/ClimateInvestment
 import type { SectorInvestmentData } from '@/components/charts/InvestmentBySectorChartV3';
 import type { FundSourceItem } from '@/components/charts/FundSourceBreakdownV3';
 import type { GHGBySectorData } from '@/components/charts/GHGBySectorChartV3';
-import RegionalInvestmentsMapV3 from '@/components/sections/RegionalInvestmentsMapV3';
 import type { RegionalInvestmentData } from '@/components/charts/InvestmentsByRegionChartV3';
 import type { MapLocationData } from '@/components/map/PhilippinesMapV3';
 import { DashboardServiceV3, type KPIData } from '@/services/dashboardServiceV3';
 import type { FundsData, GHGHistoricalData, GHGTargetData } from '@/components/sections/FinancingEmissionsTrendsV3';
 
-// Dynamic import for PhilippinesMapV3 to avoid SSR issues with Leaflet
-const PhilippinesMapV3 = dynamic(() => import('@/components/map/PhilippinesMapV3'), {
+// Dynamic import for RegionalInvestmentsMapV3 to avoid SSR issues with Leaflet map
+const RegionalInvestmentsMapV3 = dynamic(() => import('@/components/sections/RegionalInvestmentsMapV3'), {
   ssr: false,
   loading: () => (
-    <div className="bg-white rounded-lg border border-gray-200 p-6 h-[550px] flex items-center justify-center">
-      <p className="text-gray-500">Loading map...</p>
+    <div className="bg-white rounded-lg border border-gray-200 p-6 mb-6">
+      <h2 className="text-lg font-semibold mb-6" style={{ color: '#049688' }}>
+        Regional Investments & Climate Impact Drivers
+      </h2>
+      <div className="grid gap-6" style={{ gridTemplateColumns: '1fr 2fr' }}>
+        <div className="border border-gray-200 rounded-lg p-4 h-[550px] flex items-center justify-center">
+          <p className="text-gray-500">Loading regional data...</p>
+        </div>
+        <div className="border border-gray-200 rounded-lg p-4 h-[550px] flex items-center justify-center">
+          <p className="text-gray-500">Loading map...</p>
+        </div>
+      </div>
     </div>
   ),
 });
