@@ -27,10 +27,76 @@ JIRA PROGRESS:
 - ARAW-317: GHG by Sector Chart (with MVC architecture + tests)
 - ARAW-318: Regional Investments & Map (with MVC architecture + tests)
 
+✅ COMPLETED (continued):
+- ARAW-319: Footer Component (full-width teal, partners, social, scroll-to-top button)
+- Filter System - Centralized state management + backend integration
+
 🚧 NEXT UP:
-- ARAW-319: Footer Component
 - ARAW-320: Responsive Design
 - ARAW-321: Final Polish & Optimization
+- Additional sidebar filters (Fund Type, Funder, Agency, CIDs, Income Class)
+
+================================================================================
+FILTER SYSTEM - FULLY INTEGRATED
+================================================================================
+
+✅ CENTRALIZED STATE MANAGEMENT:
+---------------------------------
+Location: src/app/page.tsx
+
+Filter State (maintained at page level):
+- dataView: 'NAP' | 'NDCIP' (toggle in subheader)
+- selectedSectors: string[] (chips in subheader)
+- displayMode: 'amount' | 'projects' (toggle in subheader)
+- projectStatus: 'ongoing' | 'completed' (toggle in subheader)
+- selectedYears: number[] (checkboxes in sidebar)
+
+✅ FRONTEND INTEGRATION:
+------------------------
+- SubheaderV3: 4 filter controls → callbacks to page state
+- SidePanelV3: Year filter → callback to page state
+- useEffect: Triggers data refetch when ANY filter changes
+- All service calls receive filter object
+
+✅ BACKEND INTEGRATION:
+-----------------------
+Service Layer (dashboardServiceV3.ts):
+- Converts filter state to URL query params
+- Passes to API routes via fetch()
+
+API Routes (app/api/dashboard/*):
+- /api/dashboard/kpis → parses years, dataView, sectors, projectStatus
+- /api/dashboard/charts → same filter parsing
+
+Database Service (dashboardDataService.ts):
+- All SQL queries updated with dynamic WHERE clauses
+- Filters applied: dataView, selectedSectors, selectedYears, projectStatus
+- Functions updated:
+  * getTotalInvestment()
+  * getAdaptationInvestment()
+  * getMitigationInvestment()
+  * getTotalProjects()
+  * getFundsMobilizedData()
+  * getFundSourceBreakdownData()
+  * getInvestmentBySectorData()
+  * getInvestmentsByRegionData()
+
+✅ DYNAMIC KPI CARD (Card 4):
+------------------------------
+- AMOUNT mode: Shows "MITIGATION INVESTMENT" (₱ amount)
+- PROJECTS mode: Shows "TOTAL PROJECTS" (count)
+- Switches based on displayMode toggle
+
+✅ DATA FLOW:
+--------------
+User clicks NAP button → 
+  page.tsx updates dataView → 
+    useEffect triggers → 
+      service calls with filters → 
+        API route receives params → 
+          database queries with WHERE clauses → 
+            filtered data returned → 
+              charts update
 
 ================================================================================
 CRITICAL ARCHITECTURE DECISIONS
