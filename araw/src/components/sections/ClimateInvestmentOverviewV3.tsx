@@ -39,7 +39,7 @@ export default function ClimateInvestmentOverviewV3({
       </h2>
 
       {/* 2 Column Layout - 60/40 split */}
-      <div className="grid gap-6" style={{ gridTemplateColumns: '1.5fr 1fr' }}>
+      <div className="grid gap-6" style={{ gridTemplateColumns: '1.5fr 1fr', minHeight: '800px' }}>
         {/* Left Column: Investment by Sector (top) and GHG by Sector (bottom) stacked */}
         <div className="flex flex-col gap-6">
           {/* Investment by Sector */}
@@ -59,8 +59,8 @@ export default function ClimateInvestmentOverviewV3({
           </div>
         </div>
 
-        {/* Right Column: Fund Source Breakdown */}
-        <div className="border border-gray-200 rounded-lg p-4">
+        {/* Right Column: Fund Source Breakdown - Full Height */}
+        <div className="border border-gray-200 rounded-lg p-4 flex flex-col">
           {fundSourceMain && (
             <FundSourceBreakdownV3 
               mainSource={fundSourceMain}

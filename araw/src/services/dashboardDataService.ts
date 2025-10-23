@@ -333,11 +333,6 @@ export async function getInvestmentBySectorData(
 export async function getFundSourceBreakdownData(
   filters?: Partial<FilterState>
 ) {
-  // TODO: Database has incorrect scale for Government Budget (1.396 trillion vs millions for others)
-  // Using mockup data until database is corrected. Query exists but is commented out.
-  // The import from Excel had unit conversion issues.
-  
-  /* Original query (commented out due to bad data):
   let sql = `
     SELECT 
       i.fund_source,
@@ -360,34 +355,58 @@ export async function getFundSourceBreakdownData(
 
   sql += ` GROUP BY i.fund_source`;
   const results = await query<{ fund_source: string; total: number }>(sql, params);
-  */
-
-  // Mock data from mockup (matching dashboard design)
+  
+  // Calculate totals and percentages from database data
+  const fundMap = new Map<string, number>();
+  let grandTotal = 0;
+  
+  results.forEach(row => {
+    const amountInMillions = row.total / 1000000;
+    fundMap.set(row.fund_source, amountInMillions);
+    grandTotal += amountInMillions;
+  });
+  
+  // Helper to format currency and percentage
+  const formatData = (fundSource: string) => {
+    const amount = fundMap.get(fundSource) || 0;
+    const percentage = grandTotal > 0 ? Math.round((amount / grandTotal) * 100) : 0;
+    return {
+      amount: `₱ ${Math.round(amount)} M`,
+      percentage: `${percentage}%`
+    };
+  };
+  
+  // Return structured data with database values
+  const govData = formatData('Government Budget');
+  const grantData = formatData('Grant');
+  const loanData = formatData('Loan');
+  const privateData = formatData('Private');
+  
   return {
     mainSource: {
       label: 'GOVERNMENT BUDGET',
-      amount: '₱ 980 M',
-      percentage: '40%',
-      color: '#1B9988'
+      amount: govData.amount,
+      percentage: govData.percentage,
+      color: '#00AE9A'  // Investment by Sector palette - color 02
     },
     subSources: [
       {
         label: 'GRANT',
-        amount: '₱ 310 M',
-        percentage: '32%',
-        color: '#85C928'
+        amount: grantData.amount,
+        percentage: grantData.percentage,
+        color: '#63CD00'  // Investment by Sector palette - color 03
       },
       {
         label: 'LOAN',
-        amount: '₱ 175 M',
-        percentage: '18%',
-        color: '#1B9988'
+        amount: loanData.amount,
+        percentage: loanData.percentage,
+        color: '#129900'  // Investment by Sector palette - color 04
       },
       {
         label: 'PRIVATE',
-        amount: '₱ 95 M',
-        percentage: '10%',
-        color: '#C1CD23'
+        amount: privateData.amount,
+        percentage: privateData.percentage,
+        color: '#A6C012'  // Investment by Sector palette - color 05
       }
     ]
   };

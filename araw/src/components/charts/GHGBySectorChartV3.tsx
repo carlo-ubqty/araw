@@ -26,10 +26,10 @@ export interface GHGBySectorChartV3Props {
   className?: string;
 }
 
-// Color scheme for GHG inventory comparison
+// Color scheme for GHG inventory comparison (from mockup)
 const GHG_COLORS = {
-  inventory2015: '#00A5E0',    // Blue for 2015
-  inventory2020: '#0074A9',    // Darker blue for 2020
+  inventory2015: '#28C0DB',    // 2015 Inventory - mockup color 01
+  inventory2020: '#3490D6',    // 2020 Inventory - mockup color 02
 };
 
 export default function GHGBySectorChartV3({
